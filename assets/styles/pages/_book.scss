@@ -1,0 +1,92 @@
+.is-book {
+  #content {
+    section {
+      &.book {
+        .wowbook-page-content {
+          padding: $gutter-width;
+        }
+      } //end .is-book #content section.book
+    } //end .is-book #content section
+  } //end .is-book #content
+
+
+  // Mobile
+  @media (max-width: $screen-xs-max) {
+    .wowbook-toolbar {
+      display: none !important;
+    }
+
+    #content {
+      section {
+        &.book {
+          #mybook {
+            display: none;
+          }
+        } //end .is-book #content section.book
+      } //end .is-book #content section
+    } //end .is-book #content
+  } //end Mobile
+  // Tablet +
+  @media (min-width: $screen-sm-min) {
+    #content {
+      section {
+        &.book {
+          > .content {
+            display: none;
+          }
+        } //end .is-book #content section.book
+      } //end .is-book #content section
+    } //end .is-book #content
+  } //end Tablet +
+  // Tablet, Narrow
+  @media (min-width: $screen-sm-min) and (max-width: $screen-md-max) {
+    #siteHeader {
+      display: none;
+    }
+
+    #content {
+      section {
+        &.book {
+          @include stretch($offset-top: $bookToolbarHeight, $offset-bottom: $footerHeight);
+
+          position: fixed;
+          z-index: 500;
+        } //end .is-book #content section.book
+      } //end .is-book #content section
+    } //end .is-book #content
+
+    #siteFooter {
+      @include stretch-x();
+
+      position: fixed;
+      bottom: 0;
+      z-index: 10000;
+    } //end #siteFooter
+  } //end Tablet, Narrow
+  // Wide +
+  @media (min-width: $screen-lg-min) {
+    #content {
+      section {
+        &.book {
+          height: $bookHeight;
+        } //end .is-book #content section.book
+      } //end .is-book #content section
+    } //end .is-book #content
+  } //end Wide +
+} //end .is-book
+
+
+
+// -- MAIN STORY ----------------------------------
+
+.is-book.is-main-story {
+
+} //end .is-book.is-main-story
+
+
+
+// -- SIDE STORIES ----------------------------------
+
+.is-book.is-side-story {
+
+} //end .is-book.is-side-story

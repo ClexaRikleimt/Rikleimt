@@ -1,0 +1,40 @@
+// ################################### BOOTSTRAP MIXINS ####################################
+// Have to include Bootstrap SCSS AFTER our variables and mixins,
+// which means they're not available within the variables or mixins files.
+// So, as a workaround, copy to this file anything you need.
+
+// Creates a wrapper for a series of columns
+@mixin make-row($gutter: $grid-gutter-width) {
+  margin-left:  ceil(($gutter / -2));
+  margin-right: floor(($gutter / -2));
+
+  @include clearfix;
+}
+
+@mixin make-grid-column($columns: $grid-columns, $gutter: $grid-gutter-width) {
+  position: relative;
+  float: left;
+  width: percentage(($columns / $grid-columns));
+  min-height: 1px;
+  padding-left:  ($gutter / 2);
+  padding-right: ($gutter / 2);
+}
+
+
+
+
+// ################################### MODIFIED BOOTSTRAP MIXINS ####################################
+// These are based on Bootstrap's mixins, but modified to fit some different needs.
+
+// TABLE LAYOUT
+
+@mixin make-row-table($gutter: $grid-gutter-width) {
+  margin-left:  ceil(($gutter / -2));
+  margin-right: floor(($gutter / -2));
+}
+
+@mixin make-grid-column-table(/* $columns: $grid-columns, */ $gutter: $grid-gutter-width) {
+  // width: percentage(($columns / $grid-columns));
+  padding-left:  ($gutter / 2);
+  padding-right: ($gutter / 2);
+}

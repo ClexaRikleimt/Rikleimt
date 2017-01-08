@@ -1,0 +1,1267 @@
+// ################################### FUNCTIONS ####################################
+
+// -- Calculate radius ----------------------------------
+// Return a value to be used in a border-radius context, when there are concentric shapes that are almost touching.
+//
+// $radius: (int) Base value; number to calculate from
+// $diff: (int) How much to substract from base value
+@function calculateRadius($radius: $globalRadius, $diff: 2) {
+  @return if($radius > $diff, $radius - $diff, 0);
+}
+
+
+// -- Contrast Color ----------------------------------
+// Home-made function based on the original compass one... the doc is broken so I can't find the original code, but this seems to work fine so far.
+@function contrast-color($color, $dark: #000, $light: #FFF, $threshold: $contrasted-lightness-threshold) {
+  @if $color == null {
+    @return null;
+  }
+  @else {
+    @return if(lightness($color) < $threshold, $light, $dark);
+  }
+}
+
+
+// -- Return fractionned column count ----------------------------------
+// Returns an int to be used in a span-columns() or columns() context
+//
+// $cols: (int) Total columns to divide
+// $division: Divide into this many
+@function getDividedColCount($cols, $division: 2) {
+  @return floor($cols / $division);
+}
+
+
+// -- Return value for given property and side ----------------------------------
+// Checks length of list and returns proper value for either top, right, bottom or left sides.
+//
+// $list: List of values
+// $side: Top, right, bottom or left
+@function getPropertyValue($list: false, $side: false) {
+  $value: 0;
+
+  $sidePosAssoc: (
+    top: (
+      '4values': 1,
+      '2values': 1
+    ),
+    right: (
+      '4values': 2,
+      '2values': 2
+    ),
+    bottom: (
+      '4values': 3,
+      '2values': 1
+    ),
+    left: (
+      '4values': 4,
+      '2values': 2
+    )
+  );
+
+  @if type-of($list) == number {
+    $value: $list;
+  }
+  @else if type-of($list) == list and type-of($side) == string {
+    @if(map-has-key($sidePosAssoc, $side)) {
+      $pos: map-get($sidePosAssoc, $side);
+
+      @if(map-has-key($pos, #{length($list)}values)) {
+        $value: nth($list, map-get($pos, #{length($list)}values));
+      }
+      @else {
+        @warn "getPropertyValue function does not allow a list of #{length($list)} values.";
+      }
+    }
+    @else {
+      @warn "#{$side} side does not exist.";
+    }
+  }
+  @else {
+    @warn "All arguments must be present.";
+  }
+
+  @return $value;
+}
+
+
+
+// ##################################### MIXINS #####################################
+
+// -- Font Importer ----------------------------------
+// $path: The path that contains the fonts (main font folder)
+// $fonts: An array of arrays that contains the name you'll be using to call the font, and the filename (without the extension).
+//
+// @example:
+// Simple List: $fontlist: "DINSchriftReg" "dinschrift_regular";
+// Multiple List: $fontlist: "DINSchriftReg" "dinschrift_regular", "DINSchriftMittel" "dinschrift_mittelschrift", "DINSchriftBold" "dinschrift_bold_cond";
+// @include importFonts($path: "/fonts/din/", $fonts: $fontlist);
+@mixin importFonts($path, $fonts) {
+  // Flag for the simple list
+  $simpleList: 0;
+
+  @each $fontsInfos in $fonts {
+    // Multiple list render
+    @if length($fontsInfos) >= 2 {
+      @font-face {font-family: "#{nth($fontsInfos,1)}";
+      src: url('#{$path}#{nth($fontsInfos,2)}.eot');
+      src: url('#{$path}#{nth($fontsInfos,2)}.eot?#iefix') format('eot'),
+           url('#{$path}#{nth($fontsInfos,2)}.woff') format('woff'),
+           url('#{$path}#{nth($fontsInfos,2)}.ttf') format('truetype'),
+           url('#{$path}#{nth($fontsInfos,2)}.svg##{nth($fontsInfos,3)}') format('svg');
+      }
+    } @else {
+      // Simple list detected
+      $simpleList: 1;
+    }
+  }
+
+  // Simple list render
+  @if $simpleList != 0 {
+    @font-face {font-family: "#{nth($fonts,1)}";
+    src: url('#{$path}#{nth($fonts,2)}.eot');
+    src: url('#{$path}#{nth($fonts,2)}.eot?#iefix') format('eot'),
+         url('#{$path}#{nth($fonts,2)}.woff') format('woff'),
+         url('#{$path}#{nth($fonts,2)}.ttf') format('truetype'),
+         url('#{$path}#{nth($fonts,2)}.svg##{nth($fonts,3)}') format('svg');
+    }
+  }
+} //end @mixin importFonts(...)
+
+
+// -- Font-face ----------------------------------
+// Set the basic font properties, especially when using a special font.
+// If using Google fonts (not recommended), set the default $weight value to false and you can then call it with a weight when needed.
+//
+// $size: Font size. Default: false (property won't be printed)
+// $family: Font family. Default: false (property won't be printed)
+// $weight: Font weight. Default: normal (to make sure there is no "faux-bold" when using a special font)
+// $style: Font style. Default: normal (to make sure there is no "faux-italic" when using a special font)
+// $lineHeight: Line-height. Default: true, which uses $size if it's set. Possible values: true, false, or any number (eg. 100px)
+// $important: (bool) Add !important to all properties
+@mixin fontface($size: false, $family: false, $weight: normal, $style: normal, $lineHeight: true, $important: false) {
+  font: {
+    @if $size {
+      size: $size #{if($important, '!important', '')};
+    }
+    @if $family {
+      family: $family #{if($important, '!important', '')};
+    }
+    @if $weight {
+      weight: $weight !important;
+    }
+    @if $style {
+      style: $style !important;
+    }
+  }
+
+  @if $lineHeight {
+    @if type-of($lineHeight) == number {
+      line-height: $lineHeight #{if($important, '!important', '')};
+    }
+    @else if $size {
+      line-height: $size #{if($important, '!important', '')};
+    }
+  }
+
+  @if $weight or $style {
+    * {
+      @if $weight {
+        font-weight: $weight #{if($important, '!important', '')};
+      }
+      @if $style {
+        font-style: $style #{if($important, '!important', '')};
+      }
+    }
+  }
+} //end @mixin fontface(...)
+
+
+// -- Hover effect ----------------------------------
+// Change opacity when hovering an element.
+//
+// $opacity: Desired opacity
+@mixin hoverEffect($opacity: .9) {
+  @if $opacity == loud {
+    @include opacity(.5);
+  }
+  @else {
+    @include opacity($opacity);
+  }
+}
+
+
+// -- Link ----------------------------------
+// Set the basic properties for links.
+//
+// $normal: Color for both :link and :visited
+// $hover: Color for both :hover and :focus
+// $active: Color for :active
+//
+// $underlineOn: Which link state(s) for which there should be an underline. Possible values: normal, hover, active, or a list of states separated by a space.
+// $underlineOff: Which link state(s) for which there should NOT be an underline. Possible values: normal, hover, active, or a list of states separated by a space.
+//
+// $invert: Set to true to use the basic "inverted" link colors
+//
+// Examples:
+// link($invert: true)
+// link($underlineOn: hover, $underlineOff: normal active)
+@mixin link($normal: $clrLinkNormal, $hover: $clrLinkHover, $active: $clrLinkActive, $underlineOn: false, $underlineOff: false, $invert: false) {
+  @if $invert {
+    $normal: $clrLinkNormal-invert;
+    $hover: $clrLinkHover-invert;
+    $active: $clrLinkActive-invert;
+
+    @if $underlineOn == false and $underlineOff == false {
+      $underlineOn: normal active;
+      $underlineOff: hover;
+    }
+  }
+
+  &,
+  &:link,
+  &:visited {
+    color: $normal;
+
+    @if $underlineOn != false {
+      @each $state in $underlineOn {
+        @if $state == normal {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    @if $underlineOff != false {
+      @each $state in $underlineOff {
+        @if $state == normal {
+          text-decoration: none;
+        }
+      }
+    }
+  }
+  &:hover,
+  &:focus {
+    color: $hover;
+
+    @if $underlineOn != false {
+      @each $state in $underlineOn {
+        @if $state == hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    @if $underlineOff != false {
+      @each $state in $underlineOff {
+        @if $state == hover {
+          text-decoration: none;
+        }
+      }
+    }
+  }
+  &:active {
+    color: $active;
+
+    @if $underlineOn != false {
+      @each $state in $underlineOn {
+        @if $state == active {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    @if $underlineOff != false {
+      @each $state in $underlineOff {
+        @if $state == active {
+          text-decoration: none;
+        }
+      }
+    }
+  }
+} //end @mixin link(...)
+
+
+// -- Link Image ----------------------------------
+// Change opacity on hover and active of an image link
+//
+// $normal: Opacity for both :link and :visited
+// $hover: Opacity for both :hover and :focus
+// $active: Opacity for :active
+//
+// $transition: CSS transition. Set to false so the mixin doesn't print code
+@mixin linkImg($normal: 1, $hover: .7, $active: .5, $transition: all .1s ease-out) {
+  @if $transition != false {
+    @include transition($transition);
+  }
+
+  &:link,
+  &:visited {
+    opacity: $normal;
+  }
+  &:hover,
+  &:focus {
+    opacity: $hover;
+  }
+  &:active {
+    opacity: $active;
+  }
+} //end @mixin linkImg(...)
+
+
+// -- Use a font for icons (bootstrap) ----------------------------------
+// Prints the :before (or :after) code and calls the correct icon font.
+//
+// $name: Icon name in the icon font stylesheet
+// $location: Pseudo element to use. Possible values: before, after
+@mixin customIcons($name: false, $location: before) {
+  @if $name {
+    &:#{$location} {
+      @extend .glyphicon-#{$name};
+      @extend .glyphicon;
+
+      @include fontface($family: $iconFont);
+
+      display: block;
+    }
+  }
+} //end @mixin customIcons(...)
+
+
+// -- Button appearance - Base ----------------------------------
+// Set global properties.
+//
+// $transition: CSS transition. Set to false so the mixin doesn't print code
+@mixin customBtnsBase($transition: all .1s ease-out) {
+  @if $transition != false {
+    @include transition($transition);
+  }
+
+  display: block;
+  text-align: center;
+  text-decoration: none;
+} //end @mixin customBtnsBase(...)
+
+
+// -- Button appearance - Size ----------------------------------
+// Set button size and padding.
+//
+// $padding: Button padding
+// $fontface: (bool) Set to false so the mixin doesn't print font-face code
+// $size: Change font-size according to this value. Eg.: "$size: small" will set smaller buttons.
+@mixin customBtnsSize($padding: $spacingMed $spacingBig, $fontface: true, $size: false) {
+  @if $fontface {
+    @include fontface($size: 13px, $family: $headingFont);
+
+    @if $size and $size == small {
+      @include fontface($size: 15px, $family: $headingFont);
+    }
+    @else if $size and $size == large {
+      @include fontface($size: 31px, $family: $headingFontBold);
+    }
+    @else if $size and $size == tabs {
+      @include fontface($size: 18px, $family: $headingFont);
+    }
+    @else if $size and $size == pager {
+      @include fontface($size: 18px, $family: $headingFontBold);
+    }
+    @else {
+      text-transform: uppercase;
+    }
+  }
+
+  padding: $padding;
+} //end @mixin customBtnsSize(...)
+
+
+// -- Button appearance - Arrow ----------------------------------
+// Display an arrow inside the button
+//
+// $btnPaddingHori: Right padding, to place the arrow properly
+// $spacing: Spacing between arrow and text
+// $size: Arrow size
+@mixin customBtnsArrow($btnPaddingHori: $gutter-width, $spacing: $spacingBase, $size: 14px) {
+  @include customIcons($name: chevron-right);
+
+  position: relative;
+  padding-left: $btnPaddingHori + ($size - 3px) + $spacing; //btn padding + arrow width + spacing
+
+  &:before {
+    @include stretch-y();
+
+    display: block;
+    position: absolute;
+    left: #{$btnPaddingHori - 3px};
+    font-size: $size;
+    line-height: #{$size + 3px};
+    width: $size;
+    height: #{$size + 3px};
+    margin: auto 0;
+  }
+} //end @mixin customBtnsArrow(...)
+
+
+// -- Button appearance - Color ----------------------------------
+// Set button colors for each state.
+//
+// $normal: Background color for both :link and :visited
+// $hover: Background color for both :hover and :focus
+// $active: Background color for :active
+// $normalText: Text color for both :link and :visited
+// $hoverText: Text color for both :hover and :focus
+// $activeText: Text color for :active
+//
+// $state: Set properties for only the specified state. Possible values: normal, hover, active
+//
+// $grad: (bool) Set a basic gradient as background color. For customBtns(), it can also be a list of states (normal hover active) to have a gradient only on some of them.
+// $gradAmount: Percent used with lighten or darken effect. Eg.: 20%
+// $gradInvert: Which link state(s) for which the gradient should be in the opposite direction.
+// $gradPosition: (map) Gradient start and end values. Eg.: (start: 20%, end: 50%)
+// $gradDesaturation: (bool) Desaturate as well as darken or lighten, to have less intense colors. Percent. Eg.: 20%. Default: false (no desaturation).
+// $gradSaturation: (bool) Saturate as well as darken or lighten, to have more intense colors. Percent. Eg.: 20%. Default: false (no saturation).
+// $gradScale: Fluidly scales one or more properties of a color. Possible values: false or a map, such as (red: 40%, green: -20%, blue: -20%).
+// http://sass-lang.com/documentation/Sass/Script/Functions.html#scale_color-instance_method
+//
+// $invert: (bool) Set to true to use the basic "inverted" link colors
+//
+// $shadowOn: Which link state(s) for which there should be a shadow. Possible values: normal, hover, active, or a list of states separated by a space.
+// $shadowOff: Which link state(s) for which there should NOT be a shadow. Possible values: normal, hover, active, or a list of states separated by a space.
+// $shadowStyle: (map) Shadow to use for each link state
+// Examples:
+// customBtns($shadowOn: hover, $shadowOff: normal active)
+//
+// $hasBgImg: (bool) Set to true if a background image is set elsewhere for a specific button, so it's not removed for certain states.
+// Examples: Search form has a button with an icon on it. Setting $hasBgImg as true makes sure the icon is not removed.
+@mixin customBtnsColorState($grad, $gradAmount, $gradInvert, $gradPosition, $gradDesaturation, $gradSaturation, $gradScale, $shadowOn, $shadowOff, $shadowStyle, $hasBgImg, $state, $normal: null, $normalText: null, $hover: null, $hoverText: null, $active: null, $activeText: null) {
+  $invert: false;
+
+  @if $shadowOn != false {
+    @each $shadowState in $shadowOn {
+      @if $shadowState == $state {
+        box-shadow: $shadowStyle;
+      }
+    }
+  }
+
+  @if $shadowOff != false {
+    @each $shadowState in $shadowOff {
+      @if $shadowState == $state {
+        box-shadow: none;
+      }
+    }
+  }
+
+  @if $gradInvert != false {
+    @each $gradState in $gradInvert {
+      @if $gradState == $state {
+        $invert: true;
+      }
+    }
+  }
+
+  @if $hasBgImg == false {
+    background: none;
+  }
+
+  @if $state == normal {
+    background-color: $normal;
+
+    @if $normalText != false {
+      color: $normalText;
+    }
+
+    @if $grad == true {
+      @include customGradient($color: $normal, $amount: $gradAmount, $position: $gradPosition, $desaturation: $gradDesaturation, $saturation: $gradSaturation, $scale: $gradScale, $invert: $invert);
+    }
+  }
+  @if $state == hover {
+    background-color: $hover;
+
+    @if $hoverText != false {
+      color: $hoverText;
+    }
+
+    @if $grad == true {
+      @include customGradient($color: $hover, $amount: $gradAmount, $position: $gradPosition, $desaturation: $gradDesaturation, $saturation: $gradSaturation, $scale: $gradScale, $invert: $invert);
+    }
+  }
+  @if $state == active {
+    background-color: $active;
+
+    @if $activeText != false {
+      color: $activeText;
+    }
+
+    @if $grad == true {
+      @include customGradient($color: $active, $amount: $gradAmount, $position: $gradPosition, $desaturation: $gradDesaturation, $saturation: $gradSaturation, $scale: $gradScale, $invert: $invert);
+    }
+  }
+}
+@mixin customBtnsColorNormal($normal, $normalText, $grad, $gradAmount, $gradInvert, $gradPosition, $gradDesaturation, $gradSaturation, $gradScale, $shadowOn, $shadowOff, $shadowStyle, $hasBgImg) {
+  // if $grad is a string or list of states, set as true if 'normal' is among them
+  @if type-of($grad) == list or type-of($grad) == string {
+    @include customBtnsColorState($normal: $normal, $normalText: $normalText, $grad: if(index($grad, 'normal'), true, false), $gradAmount: $gradAmount, $gradInvert: $gradInvert, $gradPosition: $gradPosition, $gradDesaturation: $gradDesaturation, $gradSaturation: $gradSaturation, $gradScale: $gradScale, $shadowOn: $shadowOn, $shadowOff: $shadowOff, $shadowStyle: $shadowStyle, $hasBgImg: $hasBgImg, $state: normal);
+  }
+  // otherwise it's either true or false, so we pass the parameter as-is
+  @else {
+    @include customBtnsColorState($normal: $normal, $normalText: $normalText, $grad: $grad, $gradAmount: $gradAmount, $gradInvert: $gradInvert, $gradPosition: $gradPosition, $gradDesaturation: $gradDesaturation, $gradSaturation: $gradSaturation, $gradScale: $gradScale, $shadowOn: $shadowOn, $shadowOff: $shadowOff, $shadowStyle: $shadowStyle, $hasBgImg: $hasBgImg, $state: normal);
+  }
+} //end @mixin customBtnsNormal(...)
+@mixin customBtnsColorHover($hover, $hoverText, $grad, $gradAmount, $gradInvert, $gradPosition, $gradDesaturation, $gradSaturation, $gradScale, $shadowOn, $shadowOff, $shadowStyle, $hasBgImg) {
+  // if $grad is a string or list of states, set as true if 'hover' is among them
+  @if type-of($grad) == list or type-of($grad) == string {
+    @include customBtnsColorState($hover: $hover, $hoverText: $hoverText, $grad: if(index($grad, 'hover'), true, false), $gradAmount: $gradAmount, $gradInvert: $gradInvert, $gradPosition: $gradPosition, $gradDesaturation: $gradDesaturation, $gradSaturation: $gradSaturation, $gradScale: $gradScale, $shadowOn: $shadowOn, $shadowOff: $shadowOff, $shadowStyle: $shadowStyle, $hasBgImg: $hasBgImg, $state: hover);
+  }
+  // otherwise it's either true or false, so we pass the parameter as-is
+  @else {
+    @include customBtnsColorState($hover: $hover, $hoverText: $hoverText, $grad: $grad, $gradAmount: $gradAmount, $gradInvert: $gradInvert, $gradPosition: $gradPosition, $gradDesaturation: $gradDesaturation, $gradSaturation: $gradSaturation, $gradScale: $gradScale, $shadowOn: $shadowOn, $shadowOff: $shadowOff, $shadowStyle: $shadowStyle, $hasBgImg: $hasBgImg, $state: hover);
+  }
+} //end @mixin customBtnsHover(...)
+@mixin customBtnsColorActive($active, $activeText, $grad, $gradAmount, $gradInvert, $gradPosition, $gradDesaturation, $gradSaturation, $gradScale, $shadowOn, $shadowOff, $shadowStyle, $hasBgImg) {
+  // if $grad is a string or list of states, set as true if 'active' is among them
+  @if type-of($grad) == list or type-of($grad) == string {
+    @include customBtnsColorState($active: $active, $activeText: $activeText, $grad: if(index($grad, 'active'), true, false), $gradAmount: $gradAmount, $gradInvert: $gradInvert, $gradPosition: $gradPosition, $gradDesaturation: $gradDesaturation, $gradSaturation: $gradSaturation, $gradScale: $gradScale, $shadowOn: $shadowOn, $shadowOff: $shadowOff, $shadowStyle: $shadowStyle, $hasBgImg: $hasBgImg, $state: active);
+  }
+  // otherwise it's either true or false, so we pass the parameter as-is
+  @else {
+    @include customBtnsColorState($active: $active, $activeText: $activeText, $grad: $grad, $gradAmount: $gradAmount, $gradInvert: $gradInvert, $gradPosition: $gradPosition, $gradDesaturation: $gradDesaturation, $gradSaturation: $gradSaturation, $gradScale: $gradScale, $shadowOn: $shadowOn, $shadowOff: $shadowOff, $shadowStyle: $shadowStyle, $hasBgImg: $hasBgImg, $state: active);
+  }
+} //end @mixin customBtnsActive(...)
+@mixin customBtnsColor($normal: $clrBtnNormalBG, $hover: $clrBtnHoverBG, $active: $clrBtnActiveBG, $normalText: $clrBtnNormalText, $hoverText: $clrBtnHoverText, $activeText: $clrBtnActiveText, $state: false, $grad: false, $gradAmount: 20%, $gradInvert: active, $gradPosition: false, $gradDesaturation: false, $gradSaturation: false, $gradScale: false, $invert: false, $shadowOn: normal hover active, $shadowOff: false, $shadowStyle: (normal: $btnNormalShadow, hover: $btnHoverShadow, active: $btnActiveShadow), $hasBgImg: false) {
+
+  @if(type-of($shadowStyle) != map) {
+    @warn "$shadowStyle argument of customBtns mixin has to be a map.";
+  }
+
+  $shadowNormal: map-get($shadowStyle, normal);
+  $shadowHover: map-get($shadowStyle, hover);
+  $shadowActive: map-get($shadowStyle, active);
+
+  @if $invert {
+    $normal: $clrBtnNormalBG-invert;
+    $hover: $clrBtnHoverBG-invert;
+    $active: $clrBtnActiveBG-invert;
+
+    $normalText: $clrBtnNormalText-invert;
+    $hoverText: $clrBtnHoverText-invert;
+    $activeText: $clrBtnActiveText-invert;
+  }
+
+
+  @if $state == false {
+    &,
+    &:link,
+    &:visited {
+      @include customBtnsColorNormal($normal: $normal, $normalText: $normalText, $grad: $grad, $gradAmount: $gradAmount, $gradInvert: $gradInvert, $gradPosition: $gradPosition, $gradDesaturation: $gradDesaturation, $gradSaturation: $gradSaturation, $gradScale: $gradScale, $shadowOn: $shadowOn, $shadowOff: $shadowOff, $shadowStyle: $shadowNormal, $hasBgImg: $hasBgImg);
+    }
+    &:hover,
+    &:focus {
+      @include customBtnsColorHover($hover: $hover, $hoverText: $hoverText, $grad: $grad, $gradAmount: $gradAmount, $gradInvert: $gradInvert, $gradPosition: $gradPosition, $gradDesaturation: $gradDesaturation, $gradSaturation: $gradSaturation, $gradScale: $gradScale, $shadowOn: $shadowOn, $shadowOff: $shadowOff, $shadowStyle: $shadowHover, $hasBgImg: $hasBgImg);
+    }
+    &:active {
+      @include customBtnsColorActive($active: $active, $activeText: $activeText, $grad: $grad, $gradAmount: $gradAmount, $gradInvert: $gradInvert, $gradPosition: $gradPosition, $gradDesaturation: $gradDesaturation, $gradSaturation: $gradSaturation, $gradScale: $gradScale, $shadowOn: $shadowOn, $shadowOff: $shadowOff, $shadowStyle: $shadowActive, $hasBgImg: $hasBgImg);
+    }
+  }
+  @else if $state == normal {
+    @include customBtnsColorNormal($normal: $normal, $normalText: $normalText, $grad: $grad, $gradAmount: $gradAmount, $gradInvert: $gradInvert, $gradPosition: $gradPosition, $gradDesaturation: $gradDesaturation, $gradSaturation: $gradSaturation, $gradScale: $gradScale, $shadowOn: $shadowOn, $shadowOff: $shadowOff, $shadowStyle: $shadowNormal, $hasBgImg: $hasBgImg);
+  }
+  @else if $state == hover {
+    @include customBtnsColorHover($hover: $hover, $hoverText: $hoverText, $grad: $grad, $gradAmount: $gradAmount, $gradInvert: $gradInvert, $gradPosition: $gradPosition, $gradDesaturation: $gradDesaturation, $gradSaturation: $gradSaturation, $gradScale: $gradScale, $shadowOn: $shadowOn, $shadowOff: $shadowOff, $shadowStyle: $shadowHover, $hasBgImg: $hasBgImg);
+  }
+  @else if $state == active {
+    @include customBtnsColorActive($active: $active, $activeText: $activeText, $grad: $grad, $gradAmount: $gradAmount, $gradInvert: $gradInvert, $gradPosition: $gradPosition, $gradDesaturation: $gradDesaturation, $gradSaturation: $gradSaturation, $gradScale: $gradScale, $shadowOn: $shadowOn, $shadowOff: $shadowOff, $shadowStyle: $shadowActive, $hasBgImg: $hasBgImg);
+  }
+} //end @mixin customBtnsColor(...)
+
+
+// -- Button appearance - Use predermined style ----------------------------------
+// Display a button using predetermined styles (like what Bootstrap does with "primary", "default", etc).
+//
+// $style: Name of a predetermined style
+// $output: Which properties should be outputted
+// $state: Set properties for only the specified state. Possible values: normal, hover, active, false
+// $arrow: (bool) Display an arrow inside the button
+// $invert: (bool) Use inverted colors
+@mixin customBtns($style: primary, $output: base size color, $size: false, $state: false, $arrow: false, $invert: false) {
+  @if $output != false {
+    @each $property in $output {
+      // Global stuff, such as radius
+      @if $property == base {
+        @include customBtnsBase();
+
+        border-radius: $btnRadius;
+      }
+      // Font size and button padding
+      @else if $property == size {
+        @if $size and $size == pager {
+          @include customBtnsSize($padding: $spacingMini $spacingSmall, $size: $size);
+        }
+        @else {
+          @include customBtnsSize($size: $size);
+        }
+
+        // Display an arrow inside the button
+        @if $arrow {
+          @include customBtnsArrow();
+        }
+      }
+
+      // Quiet btns
+      @if $style == quiet {
+        //Colors and shadows
+        @if $property == color {
+          @include customBtnsColor($normal: if($invert, $clrBtnQuietNormalBG-invert, $clrBtnQuietNormalBG), $hover: if($invert, $clrBtnQuietHoverBG-invert, $clrBtnQuietHoverBG), $active: if($invert, $clrBtnQuietActiveBG-invert, $clrBtnQuietActiveBG), $normalText: if($invert, $clrBtnQuietNormalText-invert, $clrBtnQuietNormalText), $hoverText: if($invert, $clrBtnQuietHoverText-invert, $clrBtnQuietHoverText), $activeText: if($invert, $clrBtnQuietActiveText-invert, $clrBtnQuietActiveText), $shadowStyle: (normal: if($invert, $btnQuietNormalShadow-invert, $btnQuietNormalShadow), hover: if($invert, $btnQuietHoverShadow-invert, $btnQuietHoverShadow), active: if($invert, $btnQuietActiveShadow-invert, $btnQuietActiveShadow)), $state: $state);
+        }
+      }
+      // Really quiet btns
+      @else if $style == quiet2 {
+        //Colors and shadows
+        @if $property == color {
+          @include customBtnsColor($normal: if($invert, $clrBtnQuiet2NormalBG-invert, $clrBtnQuiet2NormalBG), $hover: if($invert, $clrBtnQuiet2HoverBG-invert, $clrBtnQuiet2HoverBG), $active: if($invert, $clrBtnQuiet2ActiveBG-invert, $clrBtnQuiet2ActiveBG), $normalText: if($invert, $clrBtnQuiet2NormalText-invert, $clrBtnQuiet2NormalText), $hoverText: if($invert, $clrBtnQuiet2HoverText-invert, $clrBtnQuiet2HoverText), $activeText: if($invert, $clrBtnQuiet2ActiveText-invert, $clrBtnQuiet2ActiveText), $shadowStyle: (normal: if($invert, $btnQuiet2NormalShadow-invert, $btnQuiet2NormalShadow), hover: if($invert, $btnQuiet2HoverShadow-invert, $btnQuiet2HoverShadow), active: if($invert, $btnQuiet2ActiveShadow-invert, $btnQuiet2ActiveShadow)), $state: $state);
+        }
+      }
+      // Submit btns
+      @else if $style == submit {
+        border-radius: $btnSubmitRadius;
+
+        //Colors and shadows
+        @if $property == color {
+          @include customBtnsColor($normal: if($invert, $clrBtnSubmitNormalBG-invert, $clrBtnSubmitNormalBG), $hover: if($invert, $clrBtnSubmitHoverBG-invert, $clrBtnSubmitHoverBG), $active: if($invert, $clrBtnSubmitActiveBG-invert, $clrBtnSubmitActiveBG), $normalText: if($invert, $clrBtnSubmitNormalText-invert, $clrBtnSubmitNormalText), $hoverText: if($invert, $clrBtnSubmitHoverText-invert, $clrBtnSubmitHoverText), $activeText: if($invert, $clrBtnSubmitActiveText-invert, $clrBtnSubmitActiveText), $shadowStyle: (normal: if($invert, $btnSubmitNormalShadow-invert, $btnSubmitNormalShadow), hover: if($invert, $btnSubmitHoverShadow-invert, $btnSubmitHoverShadow), active: if($invert, $btnSubmitActiveShadow-invert, $btnSubmitActiveShadow)), $state: $state);
+        }
+      }
+      // Tabs
+      @else if $style == tabs {
+        border-radius: $tabRadius $tabRadius 0 0;
+
+        //Colors and shadows
+        @if $property == color {
+          @include customBtnsColor($normal: if($invert, $clrTabNormalBG-invert, $clrTabNormalBG), $hover: if($invert, $clrTabHoverBG-invert, $clrTabHoverBG), $active: if($invert, $clrTabActiveBG-invert, $clrTabActiveBG), $normalText: if($invert, $clrTabNormalText-invert, $clrTabNormalText), $hoverText: if($invert, $clrTabHoverText-invert, $clrTabHoverText), $activeText: if($invert, $clrTabActiveText-invert, $clrTabActiveText), $shadowStyle: (normal: if($invert, $tabNormalShadow-invert, $tabNormalShadow), hover: if($invert, $tabHoverShadow-invert, $tabHoverShadow), active: if($invert, $tabActiveShadow-invert, $tabActiveShadow)), $state: $state);
+        }
+      }
+      // Tabs - Current
+      @else if $style == tabs-current {
+        border-radius: $tabRadius $tabRadius 0 0;
+
+        //Colors and shadows
+        @if $property == color {
+          @include customBtnsColor($normal: if($invert, $clrTabCurrentNormalBG-invert, $clrTabCurrentNormalBG), $hover: if($invert, $clrTabCurrentHoverBG-invert, $clrTabCurrentHoverBG), $active: if($invert, $clrTabCurrentActiveBG-invert, $clrTabCurrentActiveBG), $normalText: if($invert, $clrTabCurrentNormalText-invert, $clrTabCurrentNormalText), $hoverText: if($invert, $clrTabCurrentHoverText-invert, $clrTabCurrentHoverText), $activeText: if($invert, $clrTabCurrentActiveText-invert, $clrTabCurrentActiveText), $shadowStyle: (normal: if($invert, $tabCurrentNormalShadow-invert, $tabCurrentNormalShadow), hover: if($invert, $tabCurrentHoverShadow-invert, $tabCurrentHoverShadow), active: if($invert, $tabCurrentActiveShadow-invert, $tabCurrentActiveShadow)), $state: $state);
+        }
+      }
+      @else if $style == slider-arrows {
+        border-radius: $roundRadius;
+
+        //Colors and shadows
+        @if $property == color {
+          @include customBtnsColor($normal: $clrSliderArrowNormalBG, $hover: $clrSliderArrowHoverBG, $active: $clrSliderArrowActiveBG, $normalText: $clrSliderArrowNormalText, $hoverText: $clrSliderArrowHoverText, $activeText: $clrSliderArrowActiveText, $shadowOn: false, $shadowOff: normal hover active, $state: $state);
+        }
+      }
+      // Mobile header btns
+      @else if $style == xs-topbar {
+        border-radius: 0;
+
+        //Colors and shadows
+        @if $property == color {
+          @include customBtnsColor($normal: $xs-clrHeaderBtnNormalBG, $normalText: $xs-clrHeaderBtnNormalText, $hover: $xs-clrHeaderBtnHoverBG, $hoverText: $xs-clrHeaderBtnHoverText, $active: $xs-clrHeaderBtnActiveBG, $activeText: $xs-clrHeaderBtnActiveText, $state: $state);
+        }
+      }
+      // Normal btns
+      @else {
+        //Colors and shadows
+        @if $property == color {
+          @include customBtnsColor($state: $state, $invert: $invert);
+        }
+      }
+    } //end @each $property in $output {
+  } //end @if $output != false {
+} //end @mixin customBtns(...)
+
+
+// -- Gradients ----------------------------------
+// Build a simple 2-color gradient using only 1 base color.
+//
+// $color: Base color
+// $angle: Angle of gradient. Eg.: 120deg
+// $position: (map) Start and end values. Eg.: (start: 20%, end: 50%)
+// $effect: Effect to apply. Possible values: darken, lighten
+// $amount: Percent used with the $effect. Eg.: 20%
+//
+// $desaturation: Desaturate as well as darken or lighten, to have less intense colors. Percent. Eg.: 20%. Default: false (no desaturation).
+// $saturation: Saturate as well as darken or lighten, to have more intense colors. Percent. Eg.: 20%. Default: false (no saturation).
+// $scale: Fluidly scales one or more properties of a color. Possible values: false or a map, such as (red: 40%, green: -20%, blue: -20%).
+// http://sass-lang.com/documentation/Sass/Script/Functions.html#scale_color-instance_method
+//
+// $invert: Dark to light instead of light to dark
+@mixin customGradient($color: false, $angle: false, $position: false, $effect: darken, $amount: 20%, $desaturation: false, $saturation: false, $scale: false, $invert: false) {
+  @if $color {
+    $posStartDefault: 0%;
+    $posEndDefault: 100%;
+
+    // if $position is either true or false, we use default values
+    @if type-of($position) == bool {
+      $position: (start: $posStartDefault, end: $posEndDefault);
+    }
+
+    @if type-of($position) == map {
+      $colorChanged: if($effect == lighten, lighten($color, $amount), darken($color, $amount));
+
+      @if $desaturation {
+        $colorChanged: desaturate($colorChanged, $desaturation);
+      }
+      @if $saturation {
+        $colorChanged: saturate($colorChanged, $saturation);
+      }
+      @if $scale {
+        @if type-of($scale) == map {
+          // raise error if both RGB colors and HSL values are specified (official SASS mixin doesn't allow it)
+          @if (map-has-key($scale, red) or map-has-key($scale, green) or map-has-key($scale, blue)) and (map-has-key($scale, saturation) or map-has-key($scale, lightness)) {
+            @warn "You can't specify both RGB properties ($red, $green, $blue) and HSL properties ($saturation, $lightness) at the same time in $scale argument of customGradient mixin.";
+          }
+          @else {
+            $scaleAlpha: if(map-has-key($scale, alpha), map-get($scale, alpha), 0%);
+
+            // if RGB colors are speficied
+            @if map-has-key($scale, red) or map-has-key($scale, green) or map-has-key($scale, blue) {
+              $scaleRed: if(map-has-key($scale, red), map-get($scale, red), 0%);
+              $scaleGreen: if(map-has-key($scale, green), map-get($scale, green), 0%);
+              $scaleBlue: if(map-has-key($scale, blue), map-get($scale, blue), 0%);
+
+              $colorChanged: scale_color($color: $colorChanged, $red: $scaleRed, $green: $scaleGreen, $blue: $scaleBlue, $alpha: $scaleAlpha);
+            }
+            // else if HSL colors are specified
+            @else if map-has-key($scale, saturation) or map-has-key($scale, lightness) {
+              $scaleSaturation: if(map-has-key($scale, saturation), map-get($scale, saturation), 0%);
+              $scaleLightness: if(map-has-key($scale, lightness), map-get($scale, lightness), 0%);
+
+              $colorChanged: scale_color($color: $colorChanged, $saturation: $scaleSaturation, $lightness: $scaleLightness, $alpha: $scaleAlpha);
+            }
+            @else {
+              $colorChanged: scale_color($color: $colorChanged, $alpha: $scaleAlpha);
+            }
+          }
+        }
+        @else {
+          @warn "$scale argument of customGradient mixin has to be a map.";
+        }
+      }
+
+      $color1: $color;
+      $color2: $colorChanged;
+
+      @if $invert {
+        $color1: $colorChanged;
+        $color2: $color;
+      }
+
+      background-color: $color1;
+
+      @if not map-has-key($position, start) {
+        $position: map_merge($position, (start: $posStartDefault));
+      }
+      @if not map-has-key($position, end) {
+        $position: map_merge($position, (end: $posEndDefault));
+      }
+
+      @if map-has-key($position, start) and map-has-key($position, end) {
+        @if $angle {
+          // @include background-image(linear-gradient($angle, $color1 map-get($position, start), $color2 map-get($position, end)));
+          background: linear-gradient($angle, $color1 map-get($position, start), $color2 map-get($position, end));
+        }
+        @else {
+          // @include background-image(linear-gradient($color1 map-get($position, start), $color2 map-get($position, end)));
+          background: linear-gradient($color1 map-get($position, start), $color2 map-get($position, end));
+        }
+      }
+      @else {
+        @warn "Both start and end values have to be present in $position argument of customGradient mixin.";
+      }
+
+      // @if $ieFilter {
+      //   .ie & {
+      //     @include filter-gradient($color1, $color2);
+      //   }
+      // }
+      // @else {
+      //   .ie & {
+      //     filter: none;
+      //   }
+      // }
+
+    }
+    @else {
+      @warn "$position argument of customGradient mixin has to be a map.";
+    }
+  }
+  @else {
+    @warn "$color argument of customGradient mixin is mandatory.";
+  }
+} //end @mixin customGradient(...)
+
+
+// -- Reset UL ----------------------------------
+// Reset basic UL properties
+@mixin resetUL() {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+} //end @mixin resetUL(...)
+
+
+// -- Box ----------------------------------
+// Add basic "box" style
+//
+// $border: Border properties. Eg. $border: 1px transparentize($clrSepLinesTrans, .8) solid
+//          Set to false not to display a border at all.
+@mixin customBox($border: 1px $clrSepLines solid) {
+  padding: $spacingMed;
+
+  @if type-of($border) != bool and $border {
+    border: $border;
+  }
+} //end @mixin customBox(...)
+
+
+// -- Basic list ----------------------------------
+// Build a basic list with optional floating LIs.
+//
+// $marginUL: Margin on the UL element. Setting this to false won't print the property.
+// $paddingUL: Padding on the UL element. Setting this to false won't print the property.
+// $marginLI: Margin on the LI elements
+// $paddingLI: Padding on the LI elements
+// $float: (bool) If true, the LI elements will float
+// $direction: Which way to float. Possible values: left, right
+// $removeOnFirst: Removes left value of property. Possible values: margin, padding, border. Set to false to deactivate.
+@mixin customlist($marginUL: 0, $paddingUL: 0, $marginLI: 0, $paddingLI: 0, $float: false, $direction: left, $removeOnFirst: margin padding border, $elem: li) {
+  @if $float {
+    @include clearfix();
+  }
+
+  list-style: none;
+
+  @if type-of($marginUL) != bool and $marginUL {
+    margin: $marginUL;
+  }
+  @if type-of($paddingUL) != bool and $paddingUL {
+    padding: $paddingUL;
+  }
+
+  #{$elem} {
+    margin: $marginLI;
+    padding: $paddingLI;
+
+    @if $float {
+      & {
+        float: $direction;
+      }
+      @if $removeOnFirst {
+        &.first,
+        &:first-child {
+          @each $property in $removeOnFirst {
+            @if $property == border {
+              #{$property}-left: none !important;
+            }
+            @else {
+              #{$property}-left: 0 !important;
+            }
+          }
+        }
+      }
+      &.last {
+        margin-right: 0 !important;
+        padding-right: 0 !important;
+      }
+    }
+    @else {
+      @if $removeOnFirst {
+        &.first,
+        &:first-child {
+          @each $property in $removeOnFirst {
+            @if $property == border {
+              #{$property}-top: none !important;
+            }
+            @else {
+              #{$property}-top: 0 !important;
+            }
+          }
+        }
+      }
+      &.last {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+      }
+    }
+  }
+} //end @mixin customlist(...)
+
+
+// -- Item list ----------------------------------
+// Build a more complex list with optional floating items.
+//
+// $wrapperCols: Total columns of the closest wrapper
+// $colCount: (int) How many columns are to be displayed (what the visitor sees)
+// $elem: Class or tag name of element to be targetted. Eg.: li, '.item', etc
+// $selector: nth-something. Either 'child' or 'of-type'. Default: child.
+// $itemSpacingV: Vertical spacing between rows
+// $sepLine: Add a border between elements. Possible values: false or a map, such as (width: 1px, color: $clrSepLines, style: dashed, location: left)
+// $offset: (int) How many items to leave alone before the list really starts (eg. 1 full width item, then columnized list)
+// $gutter: Padding on left and right side of columns
+@mixin itemlist($wrapperCols: $total-columns, $colCount: 2, $elem: '> li', $selector: child, $itemSpacingV: $grid-gutter-width, $sepLine: false, $offset: 0, $gutter: $grid-gutter-width) {
+
+  @include resetUL();
+
+  @if $colCount > 1 and $colCount > $offset {
+    @include make-row($gutter: $gutter);
+
+    #{$elem} {
+      // Only columnize past a certain item
+      &:nth-#{$selector}(n+#{$offset + 1}) {
+        @include make-grid-column($columns: getDividedColCount($cols: $wrapperCols, $division: $colCount), $gutter: $gutter);
+      }
+      &:nth-#{$selector}(-n+#{$offset}) {
+        @include make-grid-column($columns: $wrapperCols);
+      }
+
+      position: relative;
+      margin-top: $itemSpacingV;
+
+      // Reset clears and margins in case this has already been called with different parameters
+      &:nth-#{$selector}(n) {
+        clear: none;
+
+        @if $sepLine {
+          border: none;
+        }
+      }
+
+      // Set new stuff
+      @if $sepLine {
+        @if(type-of($sepLine) == map and map-has-key($sepLine, width) and map-has-key($sepLine, color) and map-has-key($sepLine, style) and map-has-key($sepLine, location)) {
+          &:nth-#{$selector}(n) {
+            @include addSepLine($margin: false, $padding: false, $borderWidth: map-get($sepLine, width), $borderColor: map-get($sepLine, color), $borderStyle: map-get($sepLine, style), $location: map-get($sepLine, location));
+          }
+        }
+        @else {
+          @warn "$sepLine argument of itemlist mixin requires a width, color, style and location.";
+        }
+      }
+
+      // Clear and remove left border on first column
+      &:nth-#{$selector}(#{$colCount}n+#{$offset + 1}) {
+        clear: both;
+
+        @if $sepLine {
+          border-left: none;
+        }
+      }
+
+      // Remove margin and border on first row
+      @if $offset > 0 {
+        &:first-#{$selector}{
+          margin-top: 0;
+
+          @if $sepLine {
+            border-top: none;
+          }
+        }
+      }
+      @else {
+        &:nth-#{$selector}(-n+#{$colCount}) {
+          margin-top: 0;
+
+          @if $sepLine {
+            border-top: none;
+          }
+        }
+      }
+    }
+  }
+  @else {
+    #{$elem} {
+      // @include resetColumns();
+      // @include make-grid-column($columns: $wrapperCols);
+
+      margin-top: $itemSpacingV;
+
+      // Reset clears and margins in case this has already been called with different parameters
+      &:nth-#{$selector}(n) {
+        // @include resetColumns();
+
+        @if $sepLine {
+          padding-top: $itemSpacingV;
+          border-top: map-get($sepLine, width) map-get($sepLine, color) map-get($sepLine, style);
+        }
+      }
+
+      &:first-#{$selector} {
+        margin-top: 0;
+
+        @if $sepLine {
+          padding-top: 0;
+          border-top: none;
+        }
+      }
+    }
+  }
+} //end @mixin itemlist(...)
+
+
+// -- Add separation line ----------------------------------
+// Add a separation line before or after an element.
+//
+// $margin: Element margin after the border (or before if $location is set to "top" or "left")
+// $padding: Element padding between its content and border
+// $borderWidth: Size of the border
+// $borderColor: Color of the border
+// $borderStyle: Style of the border
+// $location: Where to put the border. Possible values: left, right, top, bottom
+// $invert: (bool) Set to true to use the basic "inverted" border color
+@mixin addSepLine($margin: $spacingBig, $padding: $spacingBig, $borderWidth: 1px, $borderColor: $clrSepLines, $borderStyle: solid, $location: top, $invert: false) {
+  @if $invert {
+    $borderColor: $clrSepLines-invert;
+  }
+
+  @if type-of($margin) == number {
+    margin-#{$location}: $margin;
+  }
+  @if type-of($padding) == number {
+    padding-#{$location}: $padding;
+  }
+  border-#{$location}: $borderWidth $borderColor $borderStyle;
+} //end @mixin addSepLine(...)
+
+
+// -- Add deco line ----------------------------------
+// Add a decorative line before or after an element.
+//
+// $width: Horizontal length of line
+// $height: Vertical length of line
+// $bg: Line color
+// $location: Where the line should be placed
+// $position: Alignment. Possible values:
+//            if $location = top or bottom: left, right, center
+//            if $location = left or right: top, bottom, center
+// $pseudo: Which pseudo element to use
+//
+// $offsetLeft: Line position from the left (px)
+// $offsetRight: Line position from the right (px)
+// $offsetTop: Line position from the top (px)
+// $offsetBottom: Line position from the bottom (px)
+@mixin addDecoLine($width: $decoLineLength, $height: $decoLineThickness, $bg: $clrLoudBG2, $location: bottom, $position: center, $pseudo: before, $offsetLeft: 0, $offsetRight: 0, $offsetTop: 0, $offsetBottom: 0) {
+
+  &:#{$pseudo} {
+    content: '';
+    display: block;
+    position: absolute;
+
+    @if $width != false {
+      width: $width;
+    }
+
+    @if $height != false {
+      height: $height;
+    }
+
+    @if $location != false {
+      @if $location == top or $location == bottom {
+        @if $location == top {
+          top: $offsetTop;
+        }
+        @else if $location == bottom {
+          bottom: $offsetBottom;
+        }
+
+        @if $position == center {
+          left: 0;
+          right: 0;
+          margin: 0 auto;
+        }
+        @else if $position == right {
+          right: $offsetRight;
+          margin: 0 auto;
+        }
+        @else {
+          left: $offsetLeft;
+          margin: 0;
+        }
+      }
+      @else {
+        @if $location == left {
+          left: $offsetLeft;
+        }
+        @else if $location == right {
+          right: $offsetRight;
+        }
+
+        @if $position == center {
+          top: 0;
+          bottom: 0;
+          margin: auto 0;
+        }
+        @else if $position == bottom {
+          bottom: $offsetBottom;
+          margin: 0 auto;
+        }
+        @else {
+          top: $offsetTop;
+          margin: 0;
+        }
+      }
+    }
+
+    @if $bg != false {
+      background: $bg;
+    }
+  }
+} //end @mixin addDecoLine(...)
+
+
+// -- Add triangle ----------------------------------
+// Add a decorative triangle before or after an element.
+//
+// $baseLength: Length of the base of the shape. Should always be an even number as it's divided by 2 within the mixin.
+// $height: Length of the height of the shape
+//
+// $bg: Shape color
+//
+// $orientation: Which way the shape should point towards. Possible values: up, down, left, right.
+// $location: Where the shape should be placed
+// $position: Alignment. Possible values:
+//            if $location = top or bottom: left, right, center
+//            if $location = left or right: top, bottom, center
+//
+// $offsetLeft: Shape position from the left (px)
+// $offsetRight: Shape position from the right (px)
+// $offsetTop: Shape position from the top (px)
+// $offsetBottom: Shape position from the bottom (px)
+//
+// $pseudo: Which pseudo element to use
+@mixin addDecoTriangle($baseLength: 40px, $height: 20px, $bg: $clrLoudBG2, $orientation: down, $location: bottom, $position: center, $offsetLeft: 0, $offsetRight: 0, $offsetTop: 0, $offsetBottom: 0, $pseudo: before) {
+
+  &:#{$pseudo} {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: {
+      style: solid;
+      color: transparent;
+    }
+
+    @if $orientation == left {
+      border: {
+        width: #{floor($baseLength / 2)} $height #{floor($baseLength / 2)} 0;
+        right-color: $bg;
+      }
+    }
+    @else if $orientation == right {
+      border: {
+        width: #{floor($baseLength / 2)} 0 #{floor($baseLength / 2)} $height;
+        left-color: $bg;
+      }
+    }
+    @else if $orientation == up {
+      border: {
+        width: 0 #{floor($baseLength / 2)} $height #{floor($baseLength / 2)};
+        bottom-color: $bg;
+      }
+    }
+    // down
+    @else {
+      border: {
+        width: $height #{floor($baseLength / 2)} 0 #{floor($baseLength / 2)};
+        top-color: $bg;
+      }
+    }
+
+    @if $location == top or $location == bottom {
+      @if $location == top {
+        top: $offsetTop;
+      }
+      @else if $location == bottom {
+        bottom: $offsetBottom;
+      }
+
+      @if $position == center {
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+      }
+      @else if $position == right {
+        right: $offsetRight;
+        margin: 0 auto;
+      }
+      @else {
+        left: $offsetLeft;
+        margin: 0;
+      }
+    }
+    @else {
+      @if $location == left {
+        left: $offsetLeft;
+      }
+      @else if $location == right {
+        right: $offsetRight;
+      }
+
+      @if $position == center {
+        top: 0;
+        bottom: 0;
+        margin: auto 0;
+      }
+      @else if $position == bottom {
+        bottom: $offsetBottom;
+        margin: 0 auto;
+      }
+      @else {
+        top: $offsetTop;
+        margin: 0;
+      }
+    }
+  }
+} //end @mixin addDecoTriangle(...)
+
+
+// // -- Replace some text with an image ----------------------------------
+// // Hide text and put an image in its place.
+// //
+// // $width: Image width
+// // $height: Image height
+// @mixin textReplacedByImg($width: false, $height: false) {
+//   display: block;
+
+//   @if $width {
+//     height: $width;
+//   }
+
+//   @if $height {
+//     height: $height;
+//   }
+
+//   overflow: hidden;
+//   text-indent: -9999px;
+// } //end @mixin textReplacedByImg(...)
+
+
+// -- Vertically align any content ----------------------------------
+// Vertically align content with no set height (although it requires a height on its container).
+//
+// $align: Element position. Possible values: top, middle, bottom.
+// $elem: Class or tag name of element to be targetted. Eg.: img, '.content', etc
+@mixin verticallyAlignContent($align: middle, $elem: 'img, svg') {
+  font: 0/0 a;         // remove the gap between inline(-block) elements
+
+  &:before {
+    content: ' ';
+    display: inline-block;
+    vertical-align: $align;
+    height: 100%;
+  }
+
+  #{$elem} {
+    display: inline-block;
+    font: $baseFontSize $baseFont; // reset font
+    vertical-align: $align;
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+  }
+} //end @mixin verticallyAlignContent(...)

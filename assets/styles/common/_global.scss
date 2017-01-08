@@ -1,0 +1,579 @@
+// -- FONT-FACE ------------------
+@include importFonts($path: "../fonts/", $fonts: $fontlist);
+
+
+// -- GLOBAL CLASSES/IDs/SELECTORS ------------------
+body {
+  color: $clrText;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  background: $clrBodyBG;
+  // background: $clrBodyBG url(../images/global/bg.jpg) top center no-repeat fixed;
+
+  @if variable-exists(textFont) {
+    @include fontface($size: 15px, $family: $textFont, $lineHeight: false);
+  }
+  @else {
+    font: $baseFontSize $baseFont;
+  }
+} //end body
+
+a {
+  @include link($underlineOn: hover, $underlineOff: normal active);
+
+  font-weight: normal;
+  text-decoration: none;
+
+  img {
+    border: none;
+  }
+}
+
+h1 {
+  @include fontface($size: 35px, $family: $headingFontBold);
+
+  margin: 0;
+  padding: 0;
+}
+
+h2 {
+  @include fontface($size: 30px, $family: $headingFontBold);
+
+  margin: 0 0 $spacingSmall 0;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+h3 {
+  @include fontface($size: 23px, $family: $headingFont);
+
+  margin: 0 0 $spacingSmall 0;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+h4 {
+  @include fontface($size: 17px, $family: $headingFont);
+
+  text-transform: uppercase;
+  margin: 0;
+}
+
+p {
+  margin: 0 0 ($line-height-computed / 2) 0;
+}
+
+.text {
+  line-height: 20px;
+  text-align: left;
+
+  a {
+    @include link($underlineOn: normal active, $underlineOff: hover);
+  }
+
+  strong,
+  b {
+    @if variable-exists(textFont) {
+      @if variable-exists(textFontBold) {
+        @include fontface($family: $textFontBold);
+      }
+      @else {
+        @warn "For browsers to display proper bold weight, please set correct font in #{textFontBold} variable.";
+      }
+    }
+    @else {
+      font-weight: bold;
+    }
+
+    em,
+    i {
+      @if variable-exists(textFont) {
+        @if variable-exists(textFontBoldItalic) {
+          @include fontface($family: $textFontBoldItalic);
+        }
+        @else {
+          @warn "For browsers to display proper italic style, please set correct font in #{textFontBoldItalic} variable.";
+        }
+      }
+      @else {
+        font-style: italic;
+      }
+    } //end .text strong em
+  } //end .text strong
+  em,
+  i {
+    @if variable-exists(textFont) {
+      @if variable-exists(textFontItalic) {
+        @include fontface($family: $textFontItalic);
+      }
+      @else {
+        @warn "For browsers to display proper italic style, please set correct font in #{textFontItalic} variable.";
+      }
+    }
+    @else {
+      font-style: italic;
+    }
+
+    strong,
+    b {
+      @if variable-exists(textFont) {
+        @if variable-exists(textFontBoldItalic) {
+          @include fontface($family: $textFontBoldItalic);
+        }
+        @else {
+          @warn "For browsers to display proper bold weight, please set correct font in #{textFontBoldItalic} variable.";
+        }
+      }
+      @else {
+        font-weight: bold;
+      }
+    } //end .text em strong
+  } //end .text em
+
+  h2:not(:first-child),
+  h3:not(:first-child),
+  .textMore h2,
+  .textMore h3 {
+    margin-top: $spacing4XL;
+  }
+
+  h2 + h3 {
+    margin-top: 0 !important;
+  }
+
+  p {
+    margin: 0 0 15px 0;
+    padding: 0;
+
+    &.last {
+      margin-bottom: 0;
+    }
+
+    &.readmore {
+      margin-bottom: 0;
+    }
+
+    &.copyr {
+      line-height: 14px;
+
+      @if variable-exists(textFont) {
+        font-size: 12px;
+      }
+      @else {
+        font-size: 11px;
+      }
+    }
+  } //end .text p
+
+  .copyr {
+    * {
+      line-height: 14px;
+
+      @if variable-exists(textFont) {
+        font-size: 12px;
+      }
+      @else {
+        font-size: 11px;
+      }
+    }
+
+    ul {
+      li {
+        background-position: 0 5px;
+      }
+    }
+  } //end .text .copyr
+
+  ul:not(.woocommerce-error),
+  ol {
+    text-align: left;
+    margin: 0 0 15px 0;
+    padding: 0 0 0 15px;
+
+    > li {
+      list-style-type: none;
+      margin-top: $spacingBase;
+      padding: 0;
+
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+
+    &.nopad {
+      padding-left: 0;
+    }
+
+    &.last {
+      margin-bottom: 0;
+    }
+  } //end .text ul (, ol)
+
+  ul:not(.woocommerce-error) {
+    > li {
+      @include customIcons($name: chevron-right);
+
+      position: relative;
+      padding-left: 16px;
+
+      &:before {
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        font-size: 14px;
+        color: $clrLoudBG1;
+        line-height: inherit;
+      }
+    } //end .text ul > li
+  } //end .text ul
+
+  ol {
+    counter-reset: li; // Initiate a counter
+
+    > li {
+      position: relative;
+      background-color: $clrQuietBG1;
+      border-radius: $globalRadius;
+
+      &:before{
+        @include transition(all .3s ease-out);
+        @include fontface($size: 18px, $family: if(variable-exists(headingFontBoldItalic), $headingFontBoldItalic, $headingFontBold), $lineHeight: false);
+
+        content: counter(li);
+        display: block;
+        counter-increment: li;
+        text-align: center;
+        line-height: #{40px - ($spacingBase * 2)}; // circle height minus top and bottom border-width
+        color: $clrLoudBG1Text;
+        width: 40px;
+        height: 40px;
+        background: $clrLoudBG1;
+        border: $spacingBase solid $clrContentBG;
+        border-radius: $roundRadius;
+      }
+
+      &:hover {
+        &:before {
+          transform: rotate(360deg);
+        }
+      }
+    } //end .text ol > li
+
+
+    // Mobile
+    @media (max-width: $screen-xs-max) {
+      padding: {
+        left: 0;
+        top: 20px;
+      }
+
+      > li {
+        padding: #{$spacingBase + 15px} $spacingSmall;
+
+        &:before {
+          @include stretch-x($offset-left: -#{$spacingBase}, $offset-right: -#{$spacingBase});
+
+          top: -20px;
+          margin: 0 auto;
+        }
+      } //end .text ol > li
+    } //end Mobile
+    // Tablet +
+    @media (min-width: $screen-sm-min) {
+      padding-left: 30px;
+
+      > li {
+        padding: $spacingBase $spacingSmall $spacingBase #{$spacingSmall + 15px};
+
+        &:before {
+          @include stretch-y($offset-top: -#{$spacingBase}, $offset-bottom: -#{$spacingBase});
+
+          left: -20px;
+          margin: auto 0;
+        }
+      } //end .text ol > li
+    } //end Tablet +
+  } //end .text ol
+
+  a {
+    font-weight: normal;
+
+    &.bold {
+      &:link, &:visited,
+      &:hover, &:focus, &:active {
+        @if variable-exists(textFont) {
+          @if variable-exists(textFontBold) {
+            @include fontface($family: $textFontBold);
+          }
+          @else {
+            @warn "For browsers to display proper bold weight, please set correct font in #{textFontBold} variable.";
+          }
+        }
+        @else {
+          font-weight: bold;
+        }
+      }
+    }
+  } //end .text a
+
+  .readmore {
+    line-height: 14px;
+
+    @if variable-exists(textFont) {
+      font-size: 12px;
+    }
+    @else {
+      font-size: 11px;
+    }
+  }
+
+  .textMore.in + .readmore {
+    margin-top: 15px;
+  }
+
+  :last-child {
+    margin-bottom: 0;
+  }
+
+  #mainContent article & {
+    img {
+      display: block;
+      max-width: 100% !important;
+      height: auto !important;
+    }
+
+    figure {
+      text-align: center;
+      max-width: 100%;
+      margin: {
+        top: 0;
+        bottom: 15px;
+      }
+      padding: $spacingBase;
+      border: 1px $clrSepLines solid;
+
+      figcaption {
+        @if variable-exists(textFont) {
+          font-size: 12px;
+        }
+        @else {
+          font-size: 11px;
+        }
+
+        padding: 0;
+      } //end #mainContent article .text figure figcaption
+
+      img + figcaption {
+        margin-top: $spacingBase;
+      }
+    } //end #mainContent article .text figure
+  } //end #mainContent article .text
+} //end .text
+p.last {
+  margin-bottom: 0;
+}
+
+.nobr { white-space: nowrap; }
+
+%invert {
+  color: $clrText-invert;
+
+  a {
+    @include link($invert: true);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: $clrText-invert;
+  }
+
+  ul:not(.woocommerce-error) {
+    > li {
+      padding: 0 0 0 17px;
+      border: none;
+
+      &:before {
+        left: 0;
+        top: 0;
+        color: $clrLoudBG1-invert;
+      }
+    } //end %invert .text ul > li
+  } //end %invert .text ul
+
+  ol {
+    > li {
+      background-color: $clrQuietBG1-invert;
+
+      &:before{
+        color: $clrLoudBG1Text-invert;
+        background: $clrLoudBG1-invert;
+        border-color: $clrContentBG-invert;
+      }
+    } //end %invert .text ol > li
+  } //end %invert .text ol
+} //end %invert
+
+%globalNav {
+  nav {
+    h2,
+    button {
+      display: none;
+    }
+
+    > ul {
+      @include resetUL();
+
+      display: table;
+      width: 100%;
+      list-style: none;
+      margin: 0;
+      // border-right: 1px transparentize($clrSepLinesTrans-invert, .8) solid;
+
+      > li {
+        display: table-cell;
+        vertical-align: middle;
+        // border-left: 1px transparentize($clrSepLinesTrans-invert, .8) solid;
+
+        > a {
+          // @include transition();
+
+          display: block;
+          text-align: center;
+        }
+
+        // &:first-child {
+        //   border-left: none;
+        // }
+      }
+    } //end %globalNav nav > ul
+  } //end %globalNav nav
+} //end %globalNav
+
+.tabs:not(.dropdown-menu) {
+  @include customlist($marginLI: 0 0 0 $spacingBase, $float: true);
+
+  li {
+    &:not(:first-child) {
+      margin-left: $spacingBase !important;
+    }
+
+    a {
+      @include customBtns($output: base size, $size: tabs);
+    } //end .tabs li a
+
+    &.active {
+      a {
+        @include customBtns($style: tabs-current, $output: color);
+
+        cursor: default;
+      }
+    } //end .tabs li.active
+
+    &:not(.active) {
+      a {
+        @include customBtns($style: tabs, $output: color);
+      }
+    } //end .tabs li.active
+  } //end .tabs li
+
+
+  // Mobile, Tablet
+  @media (max-width: $screen-sm-max) {
+    li {
+      &:not(:first-child) {
+        margin-left: 1px !important;
+      }
+
+      a {
+        @include fontface($size: 14px);
+
+        padding: $spacingSmall $spacingMed;
+      } //end .tabs li a
+
+      &.active {
+        a {
+          @include fontface($size: 14px);
+
+          padding: $spacingSmall $spacingMed;
+        }
+      } //end .tabs li.active
+    } //end .tabs li
+  } //end Mobile, Tablet
+} //end .tabs
+
+.tabs-group {
+  button {
+    @include customBtns($style: tabs-current);
+
+    border: none;
+  }
+
+  &:not(.btn-group) {
+    > button {
+      display: none;
+    }
+  }
+} //end .tabs-group
+
+.tab-content {
+  @include customBox();
+
+  background: $clrQuietBG1;
+
+  h3 {
+    @include fontface($size: 16px, $family: $headingFontBold);
+
+    text-transform: uppercase;
+  }
+
+  .list-only {
+    .text {
+      ul {
+        padding-left: 0;
+      }
+    }
+  }
+
+  > .tab-pane {
+    display: none;
+  }
+  > .active {
+    display: block;
+  }
+} //end .tab-content
+
+
+
+
+// -- MISC ----------------------------
+// Element added through JS so we can change its layout in CSS and have a better way to trigger each breakpoint
+#responsiveResTrig {
+  // Mobile
+  @media (max-width: $screen-xs-max) {
+    width: 50px;
+  } //end Mobile
+  // Tablet
+  @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+    width: 75px;
+  } //end Tablet
+  // Narrow
+  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+    width: 100px;
+  } //end Narrow
+  // Wide
+  @media (min-width: $screen-lg-min) and (max-width: $screen-lg-max) {
+    width: 200px;
+  } //end Wide
+  // Extra-wide
+  @media (min-width: $screen-xl-min) {
+    width: 300px;
+  } //end Extra-wide
+} //end #responsiveResTrig

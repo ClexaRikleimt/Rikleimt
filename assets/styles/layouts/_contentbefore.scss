@@ -1,0 +1,4 @@
+#contentBefore {
+  @include clearfix();
+  @include addSepLine($location: bottom);
+} //end #contentBefore

@@ -1,0 +1,75 @@
+#mainnav {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 20000;
+  width: $mainnavBorderWidth;
+
+  nav {
+    @include stretch-y();
+    @include transition(all .3s ease-in-out);
+
+    right: -#{$mainnavWidth};
+    width: $mainnavWidth;
+    padding: $spacingMed;
+    background: $clrMainnavBG;
+    box-shadow: 0 0 0 $mainnavBorderWidth $clrMainnavBorder;
+    border-left: 1px transparentize(#000, .8) solid;
+
+    h2 {
+      display: none;
+    }
+
+    button {
+      @include stretch-y();
+      @include customBtnsBase();
+      @include customBtnsColor($normal: $clrMainnavTrigNormalBG, $hover: $clrMainnavTrigHoverBG, $active: $clrMainnavTrigActiveBG, $normalText: $clrMainnavTrigNormalText, $hoverText: $clrMainnavTrigHoverText, $activeText: $clrMainnavTrigActiveText, $shadowOn: active, $shadowOff: normal hover);
+
+      display: block;
+      margin: auto 0;
+      border: none;
+      outline: none;
+    } //end #mainnav nav button
+
+    ul {
+      @include resetUL();
+    }
+  } //end #mainnav nav
+
+  &.opened {
+    nav {
+      right: 0;
+    }
+  }
+
+
+  // Mobile, Tablet, Narrow
+  @media (max-width: $screen-md-max) {
+    nav {
+      button {
+        @include border-left-radius($sm-mainnavTrigRadius);
+
+        left: -#{$mainnavBorderWidth + 1px};
+        width: $sm-mainnavTrigWidth;
+        height: $sm-mainnavTrigHeight;
+
+        > span {
+          display: none;
+        }
+      } //end #mainnav nav button
+    } //end #mainnav nav
+  } //end Mobile¸, Tablet, Narrow
+  // Wide +
+  @media (min-width: $screen-lg-min) {
+    nav {
+      button {
+        @include border-left-radius($mainnavTrigRadius);
+
+        left: -#{$mainnavTrigWidth + $mainnavBorderWidth};
+        width: $mainnavTrigWidth;
+        height: $mainnavTrigHeight;
+      } //end #mainnav nav button
+    } //end #mainnav nav
+  } //end Wide +
+} //end #mainnav

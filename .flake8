@@ -1,0 +1,6 @@
+[flake8]
+exclude = 
+	node_modules,
+	bower_components,
+	rikleimt/config.py
+max-line-length = 120

@@ -1,0 +1,416 @@
+// ##################################### COLORS #####################################
+
+$clrBodyBG: #FFF;
+
+
+// -- Normal colors (content on main bg color (content bg)) ----------------------------------
+// - Content BG
+$clrContentBG: #FFF;
+
+// - Quiet BGs (a bg that doesn't stand out too much compared to the content bg -- can also be used as alternate colors)
+$clrQuietBG1: contrast-color($clrContentBG, darken($clrContentBG, 5%), lighten($clrContentBG, 5%));
+$clrQuietBG2: contrast-color($clrContentBG, darken($clrContentBG, 10%), lighten($clrContentBG, 10%));
+
+// - Loud BGs (a bg that DOES stand out compared to the content bg)
+$clrLoudBG1: contrast-color($clrContentBG, darken($clrContentBG, 75%), lighten($clrContentBG, 75%));
+$clrLoudBG2: #00F;
+$clrLoudBG1Text: contrast-color($clrLoudBG1, #000, #FFF);
+$clrLoudBG2Text: contrast-color($clrLoudBG2, #000, #FFF);
+
+// - Text
+$clrText: contrast-color($clrContentBG, darken($clrContentBG, 80%), lighten($clrContentBG, 80%));
+$clrTextEmph: contrast-color($clrContentBG, darken($clrText, 80%), lighten($clrText, 80%));
+$clrTextEmph2: #00F;
+$clrTextQuiet: contrast-color($clrContentBG, lighten($clrText, 10%), darken($clrText, 10%));
+$clrTextQuiet2: contrast-color($clrContentBG, lighten($clrText, 20%), darken($clrText, 20%));
+
+// - Normal links
+$clrLinkNormal: #00F;
+$clrLinkHover: contrast-color($clrContentBG, #000, #FFF);
+$clrLinkActive: $clrLinkHover;
+
+// - Quiet links - ones that don't stand out as much
+$clrLinkQuietNormal: contrast-color($clrContentBG, lighten($clrLinkNormal, 30%), darken($clrLinkNormal, 30%));
+$clrLinkQuietHover: contrast-color($clrContentBG, lighten($clrLinkQuietNormal, 30%), darken($clrLinkQuietNormal, 30%));
+$clrLinkQuietActive: contrast-color($clrContentBG, lighten($clrLinkQuietHover, 10%), darken($clrLinkQuietHover, 10%));
+
+// - Quiet links 2 - Same color as text
+$clrLinkQuiet2Normal: $clrText;
+$clrLinkQuiet2Hover: $clrLinkNormal;
+$clrLinkQuiet2Active: contrast-color($clrContentBG, lighten($clrLinkQuiet2Hover, 10%), darken($clrLinkQuiet2Hover, 10%));
+
+// - Emph links - ones based on the "emph" text color
+$clrLinkEmphNormal: $clrTextEmph;
+$clrLinkEmphHover: contrast-color($clrContentBG, lighten($clrLinkEmphNormal, 30%), darken($clrLinkEmphNormal, 30%));
+$clrLinkEmphActive: contrast-color($clrContentBG, lighten($clrLinkEmphHover, 10%), darken($clrLinkEmphHover, 10%));
+
+// - Normal buttons - anywhere on the site, but not submit btns
+$clrBtnNormalBG: $clrLinkNormal;
+$clrBtnHoverBG: contrast-color($clrContentBG, darken($clrBtnNormalBG, 10%), lighten($clrBtnNormalBG, 10%));
+$clrBtnActiveBG: contrast-color($clrContentBG, darken($clrBtnHoverBG, 5%), lighten($clrBtnHoverBG, 5%));
+$clrBtnNormalText: contrast-color($clrBtnNormalBG, #000, #FFF);
+$clrBtnHoverText: contrast-color($clrBtnHoverBG, #000, #FFF);
+$clrBtnActiveText: contrast-color($clrBtnActiveBG, #000, #FFF);
+
+// - Quiet buttons - don't stand out as much
+$clrBtnQuietNormalBG: contrast-color($clrContentBG, darken($clrContentBG, 50%), lighten($clrContentBG, 50%));
+$clrBtnQuietHoverBG: $clrBtnHoverBG;
+$clrBtnQuietActiveBG: $clrBtnActiveBG;
+$clrBtnQuietNormalText: contrast-color($clrBtnQuietNormalBG, #000, #FFF);
+$clrBtnQuietHoverText: $clrBtnHoverText;
+$clrBtnQuietActiveText: $clrBtnActiveText;
+
+// - Really quiet buttons - useful when we have a lot of buttons close together
+$clrBtnQuiet2NormalBG: $clrQuietBG2;
+$clrBtnQuiet2HoverBG: $clrBtnHoverBG;
+$clrBtnQuiet2ActiveBG: contrast-color($clrContentBG, darken($clrBtnQuiet2HoverBG, 5%), lighten($clrBtnQuiet2HoverBG, 5%));
+$clrBtnQuiet2NormalText: contrast-color($clrBtnQuiet2NormalBG, #000, #FFF);
+$clrBtnQuiet2HoverText: contrast-color($clrBtnQuiet2HoverBG, #000, #FFF);
+$clrBtnQuiet2ActiveText: contrast-color($clrBtnQuiet2ActiveBG, #000, #FFF);
+
+// // - Really, really quiet buttons - useful when we have a lot of buttons close together
+// $clrBtnQuiet3NormalBG: $clrContentBG;
+// $clrBtnQuiet3HoverBG: contrast-color($clrContentBG, darken($clrBtnQuiet3NormalBG, 10%), lighten($clrBtnQuiet3NormalBG, 10%));
+// $clrBtnQuiet3ActiveBG: contrast-color($clrContentBG, darken($clrBtnQuiet3HoverBG, 5%), lighten($clrBtnQuiet3HoverBG, 5%));
+// $clrBtnQuiet3NormalText: contrast-color($clrBtnQuiet3NormalBG, #666, #999);
+// $clrBtnQuiet3HoverText: contrast-color($clrBtnQuiet3HoverBG, #000, #FFF);
+// $clrBtnQuiet3ActiveText: contrast-color($clrBtnQuiet3ActiveBG, #000, #FFF);
+
+// // - Loud buttons - stand out a lot - style 1
+// $clrBtnLoudNormalBG: #FFC643;
+// $clrBtnLoudHoverBG: contrast-color($clrContentBG, lighten($clrBtnLoudNormalBG, 10%), darken($clrBtnLoudNormalBG, 10%));
+// $clrBtnLoudActiveBG: desaturate($clrBtnLoudHoverBG, 100%);
+// $clrBtnLoudNormalText: contrast-color($clrBtnLoudNormalBG, #000, #FFF);
+// $clrBtnLoudHoverText: contrast-color($clrBtnLoudHoverBG, #000, #FFF);
+// $clrBtnLoudActiveText: contrast-color($clrBtnLoudActiveBG, #000, #FFF);
+
+// // - Loud buttons - stand out a lot - style 2
+// $clrBtnLoud2NormalBG: contrast-color($clrContentBG, darken($clrContentBG, 75%), lighten($clrContentBG, 75%));
+// $clrBtnLoud2HoverBG: contrast-color($clrContentBG, lighten($clrBtnLoud2NormalBG, 10%), darken($clrBtnLoud2NormalBG, 10%));
+// $clrBtnLoud2ActiveBG: desaturate($clrBtnLoud2HoverBG, 100%);
+// $clrBtnLoud2NormalText: contrast-color($clrBtnLoud2NormalBG, #000, #FFF);
+// $clrBtnLoud2HoverText: contrast-color($clrBtnLoud2HoverBG, #000, #FFF);
+// $clrBtnLoud2ActiveText: contrast-color($clrBtnLoud2ActiveBG, #000, #FFF);
+
+// - Submit buttons
+// if same as normal buttons:
+  $clrBtnSubmitNormalBG: $clrBtnNormalBG;
+  $clrBtnSubmitHoverBG: $clrBtnHoverBG;
+  $clrBtnSubmitActiveBG: $clrBtnActiveBG;
+  $clrBtnSubmitNormalText: $clrBtnNormalText;
+  $clrBtnSubmitHoverText: $clrBtnHoverText;
+  $clrBtnSubmitActiveText: $clrBtnActiveText;
+// if different from normal buttons, style here:
+  // $clrBtnSubmitNormalBG: #0F0;
+  // $clrBtnSubmitHoverBG: contrast-color($clrContentBG, darken($clrBtnSubmitNormalBG, 10%), lighten($clrBtnSubmitNormalBG, 10%));
+  // $clrBtnSubmitActiveBG: contrast-color($clrContentBG, darken($clrBtnSubmitHoverBG, 5%), lighten($clrBtnSubmitHoverBG, 5%));
+  // $clrBtnSubmitNormalText: contrast-color($clrBtnSubmitNormalBG, #000, #FFF);
+  // $clrBtnSubmitHoverText: contrast-color($clrBtnSubmitHoverBG, #000, #FFF);
+  // $clrBtnSubmitActiveText: contrast-color($clrBtnSubmitActiveBG, #000, #FFF);
+
+// - Tabs
+// $clrTabCurrentNormalBG: contrast-color($clrContentBG, darken($clrContentBG, 75%), lighten($clrContentBG, 75%));
+// $clrTabCurrentHoverBG: contrast-color($clrContentBG, lighten($clrTabCurrentNormalBG, 5%), darken($clrTabCurrentNormalBG, 5%));
+// $clrTabCurrentActiveBG: contrast-color($clrContentBG, darken($clrTabCurrentHoverBG, 5%), lighten($clrTabCurrentHoverBG, 5%));
+// $clrTabCurrentNormalText: contrast-color($clrTabCurrentNormalBG, #000, #FFF);
+// $clrTabCurrentHoverText: contrast-color($clrTabCurrentHoverBG, #000, #FFF);
+// $clrTabCurrentActiveText: contrast-color($clrTabCurrentActiveBG, #000, #FFF);
+$clrTabCurrentNormalBG: $clrBtnNormalBG;
+$clrTabCurrentHoverBG: $clrTabCurrentNormalBG;
+$clrTabCurrentActiveBG: $clrTabCurrentNormalBG;
+$clrTabCurrentNormalText: $clrBtnNormalText;
+$clrTabCurrentHoverText: $clrTabCurrentNormalText;
+$clrTabCurrentActiveText: $clrTabCurrentNormalText;
+
+$clrTabNormalBG: $clrBtnQuietNormalBG;
+$clrTabHoverBG: $clrBtnQuietHoverBG;
+$clrTabActiveBG: $clrBtnQuietActiveBG;
+$clrTabNormalText: $clrBtnQuietNormalText;
+$clrTabHoverText: $clrBtnQuietHoverText;
+$clrTabActiveText: $clrBtnQuietActiveText;
+
+// - Separation lines and borders
+$clrSepLines: contrast-color($clrContentBG, darken($clrContentBG, 20%), lighten($clrContentBG, 20%));
+
+// Keep these 2 colors as-is, and play with the opacity wherever they are used instead
+$clrSepLinesTrans: contrast-color($clrContentBG, #000, #FFF);
+$clrSepLinesTrans2: contrast-color($clrContentBG, #FFF, #000);
+
+// - Data tables
+$clrTableHeaderBG: contrast-color($clrContentBG, darken($clrContentBG, 75%), lighten($clrContentBG, 75%));
+$clrTableHeaderText: contrast-color($clrTableHeaderBG, #000, #FFF);
+$clrTableHeaderSepLines: contrast-color($clrTableHeaderBG, darken($clrTableHeaderBG, 20%), lighten($clrTableHeaderBG, 20%));
+$clrTableSubHeaderBG: $clrQuietBG2;
+$clrTableSubHeaderText: $clrText;
+
+
+
+
+// -- Inverted colors (eg.: If the normal bg is white, then the inverted color could be any type of dark color and light text.) ----------------------------------
+// - Content BG
+$clrContentBG-invert: invert($clrContentBG);
+
+// - Quiet BGs (a bg that doesn't stand out too much compared to the content bg -- can also be used as alternate colors)
+$clrQuietBG1-invert: contrast-color($clrContentBG-invert, darken($clrContentBG-invert, 5%), lighten($clrContentBG-invert, 5%));
+$clrQuietBG2-invert: contrast-color($clrContentBG-invert, darken($clrContentBG-invert, 10%), lighten($clrContentBG-invert, 10%));
+
+// - Loud BGs (a bg that DOES stand out compared to the content bg)
+$clrLoudBG1-invert: contrast-color($clrContentBG-invert, darken($clrContentBG-invert, 75%), lighten($clrContentBG-invert, 75%));
+$clrLoudBG1Text-invert: contrast-color($clrLoudBG1-invert, #000, #FFF);
+
+// - Text
+$clrText-invert: contrast-color($clrContentBG-invert, darken($clrContentBG-invert, 80%), lighten($clrContentBG-invert, 80%));
+$clrTextEmph-invert: contrast-color($clrContentBG-invert, darken($clrText-invert, 80%), lighten($clrText-invert, 80%));
+$clrTextEmph2-invert: #0F0;
+$clrTextQuiet-invert: contrast-color($clrContentBG-invert, lighten($clrText-invert, 10%), darken($clrText-invert, 10%));
+$clrTextQuiet2-invert: contrast-color($clrContentBG-invert, lighten($clrText-invert, 20%), darken($clrText-invert, 20%));
+
+// - Normal links
+$clrLinkNormal-invert: $clrTextEmph-invert;
+$clrLinkHover-invert: contrast-color($clrContentBG-invert, lighten($clrLinkNormal-invert, 30%), darken($clrLinkNormal-invert, 30%));
+$clrLinkActive-invert: contrast-color($clrContentBG-invert, lighten($clrLinkHover-invert, 10%), darken($clrLinkHover-invert, 10%));
+
+// - Quiet links - ones that don't stand out as much
+$clrLinkQuietNormal-invert: contrast-color($clrContentBG-invert, lighten($clrLinkNormal-invert, 30%), darken($clrLinkNormal-invert, 30%));
+$clrLinkQuietHover-invert: contrast-color($clrContentBG-invert, lighten($clrLinkQuietNormal-invert, 30%), darken($clrLinkQuietNormal-invert, 30%));
+$clrLinkQuietActive-invert: contrast-color($clrContentBG-invert, lighten($clrLinkQuietHover-invert, 10%), darken($clrLinkQuietHover-invert, 10%));
+
+// - Normal buttons - anywhere on the site, but not submit btns
+// if same base color as normal buttons:
+  $clrBtnNormalBG-invert: $clrBtnNormalBG;
+  $clrBtnHoverBG-invert: $clrBtnHoverBG;
+  $clrBtnActiveBG-invert: $clrBtnActiveBG;
+  $clrBtnNormalText-invert: $clrBtnNormalText;
+  $clrBtnHoverText-invert: $clrBtnHoverText;
+  $clrBtnActiveText-invert: $clrBtnActiveText;
+// if different from normal buttons, style here:
+  // $clrBtnNormalBG-invert: $clrLinkNormal-invert;
+  // $clrBtnHoverBG-invert: contrast-color($clrContentBG-invert, lighten($clrBtnNormalBG-invert, 5%), darken($clrBtnNormalBG-invert, 5%));
+  // $clrBtnActiveBG-invert: contrast-color($clrContentBG-invert, lighten($clrBtnHoverBG-invert, 5%), darken($clrBtnHoverBG-invert, 5%));
+  // $clrBtnNormalText-invert: contrast-color($clrBtnNormalBG-invert, #000, #FFF);
+  // $clrBtnHoverText-invert: contrast-color($clrBtnHoverBG-invert, #000, #FFF);
+  // $clrBtnActiveText-invert: contrast-color($clrBtnActiveBG-invert, #000, #FFF);
+
+// // - Quiet buttons - don't stand out as much
+// $clrBtnQuietNormalBG-invert: contrast-color($clrContentBG-invert, darken($clrContentBG-invert, 70%), lighten($clrContentBG-invert, 70%));
+// $clrBtnQuietHoverBG-invert: $clrBtnNormalBG-invert;
+// $clrBtnQuietActiveBG-invert: contrast-color($clrContentBG-invert, darken($clrBtnQuietHoverBG-invert, 5%), lighten($clrBtnQuietHoverBG-invert, 5%));
+// $clrBtnQuietNormalText-invert: contrast-color($clrBtnQuietNormalBG-invert, #000, #FFF);
+// $clrBtnQuietHoverText-invert: contrast-color($clrBtnQuietHoverBG-invert, #000, #FFF);
+// $clrBtnQuietActiveText-invert: contrast-color($clrBtnQuietActiveBG-invert, #000, #FFF);
+
+// // - Really quiet buttons - useful when we have a lot of buttons close together
+// $clrBtnQuiet2NormalBG-invert: $clrQuietBG1-invert;
+// $clrBtnQuiet2HoverBG-invert: $clrBtnNormalBG-invert;
+// $clrBtnQuiet2ActiveBG-invert: contrast-color($clrContentBG-invert, darken($clrBtnQuiet2HoverBG-invert, 5%), lighten($clrBtnQuiet2HoverBG-invert, 5%));
+// $clrBtnQuiet2NormalText-invert: $clrLinkNormal-invert;
+// $clrBtnQuiet2HoverText-invert: contrast-color($clrBtnQuiet2HoverBG-invert, #000, #FFF);
+// $clrBtnQuiet2ActiveText-invert: contrast-color($clrBtnQuiet2ActiveBG-invert, #000, #FFF);
+
+// - Submit buttons
+// if same as normal buttons:
+  $clrBtnSubmitNormalBG-invert: $clrBtnNormalBG-invert;
+  $clrBtnSubmitHoverBG-invert: $clrBtnHoverBG-invert;
+  $clrBtnSubmitActiveBG-invert: $clrBtnActiveBG-invert;
+  $clrBtnSubmitNormalText-invert: $clrBtnNormalText-invert;
+  $clrBtnSubmitHoverText-invert: $clrBtnHoverText-invert;
+  $clrBtnSubmitActiveText-invert: $clrBtnActiveText-invert;
+// if different from normal buttons, style here:
+  // $clrBtnSubmitNormalBG-invert: #0F0;
+  // $clrBtnSubmitHoverBG-invert: contrast-color($clrContentBG, darken($clrBtnSubmitNormalBG-invert, 10%), lighten($clrBtnSubmitNormalBG-invert, 10%));
+  // $clrBtnSubmitActiveBG-invert: contrast-color($clrContentBG, darken($clrBtnSubmitHoverBG-invert, 5%), lighten($clrBtnSubmitHoverBG-invert, 5%));
+  // $clrBtnSubmitNormalText-invert: contrast-color($clrBtnSubmitNormalBG-invert, #000, #FFF);
+  // $clrBtnSubmitHoverText-invert: contrast-color($clrBtnSubmitHoverBG-invert, #000, #FFF);
+  // $clrBtnSubmitActiveText-invert: contrast-color($clrBtnSubmitActiveBG-invert, #000, #FFF);
+
+// - Tabs
+$clrTabCurrentNormalBG-invert: contrast-color($clrContentBG-invert, darken($clrContentBG-invert, 75%), lighten($clrContentBG-invert, 75%));
+$clrTabCurrentHoverBG-invert: $clrTabCurrentNormalBG-invert;
+$clrTabCurrentActiveBG-invert: $clrTabCurrentNormalBG-invert;
+$clrTabCurrentNormalText-invert: contrast-color($clrTabCurrentNormalBG-invert, #000, #FFF);
+$clrTabCurrentHoverText-invert: $clrTabCurrentNormalText-invert;
+$clrTabCurrentActiveText-invert: $clrTabCurrentNormalText-invert;
+
+$clrTabNormalBG-invert: $clrBtnNormalBG-invert;
+$clrTabHoverBG-invert: $clrBtnHoverBG-invert;
+$clrTabActiveBG-invert: $clrBtnActiveBG-invert;
+$clrTabNormalText-invert: $clrBtnNormalText-invert;
+$clrTabHoverText-invert: $clrBtnHoverText-invert;
+$clrTabActiveText-invert: $clrBtnActiveText-invert;
+
+// - Separation lines and borders
+$clrSepLines-invert: contrast-color($clrContentBG-invert, darken($clrContentBG-invert, 20%), lighten($clrContentBG-invert, 20%));
+
+// Keep these 2 colors as-is, and play with the opacity wherever they are used instead
+$clrSepLinesTrans-invert: contrast-color($clrContentBG-invert, #000, #FFF);
+$clrSepLinesTrans2-invert: contrast-color($clrContentBG-invert, #FFF, #000);
+
+// // - Data tables
+// $clrTableHeaderBG-invert: contrast-color($clrContentBG-invert, darken($clrContentBG-invert, 75%), lighten($clrContentBG-invert, 75%));
+// $clrTableHeaderText-invert: contrast-color($clrTableHeaderBG-invert, #000, #FFF);
+
+
+
+
+// -- HEADER ----------------------------------
+// [...]
+
+
+// -- MAIN NAV ----------------------------------
+$clrMainnavBG: $clrLoudBG1;
+$clrMainnavBorder: contrast-color($clrMainnavBG, darken($clrMainnavBG, 30%), lighten($clrMainnavBG, 30%));
+
+$clrMainnavTrigNormalBG: $clrMainnavBorder;
+$clrMainnavTrigHoverBG: darken($clrMainnavTrigNormalBG, 10%);
+$clrMainnavTrigActiveBG: darken($clrMainnavTrigHoverBG, 5%);
+$clrMainnavTrigNormalText: contrast-color($clrMainnavTrigNormalBG, #000, #FFF);
+$clrMainnavTrigHoverText: contrast-color($clrMainnavTrigHoverBG, #000, #FFF);
+$clrMainnavTrigActiveText: contrast-color($clrMainnavTrigActiveBG, #000, #FFF);
+
+
+// -- SIDEBAR ----------------------------------
+// [...]
+
+
+// -- FOOTER ----------------------------------
+// Main
+$clrFooterMainBG: $clrQuietBG2;
+$clrFooterMainLinkNormal: $clrText;
+$clrFooterMainLinkHover: contrast-color($clrFooterMainBG, lighten($clrFooterMainLinkNormal, 30%), darken($clrFooterMainLinkNormal, 30%));
+$clrFooterMainLinkActive: contrast-color($clrFooterMainBG, lighten($clrFooterMainLinkHover, 10%), darken($clrFooterMainLinkHover, 10%));
+
+$clrFooterMainSocialLinkNormal: $clrFooterMainLinkNormal;
+$clrFooterMainSocialLinkHover: $clrFooterMainLinkHover;
+$clrFooterMainSocialLinkActive: $clrFooterMainLinkActive;
+
+// Sub
+$clrFooterSubBG: $clrLoudBG1;
+$clrFooterSubText: $clrLoudBG1Text;
+$clrFooterSubLinkNormal: contrast-color($clrFooterSubBG, $clrLinkNormal, $clrLinkNormal-invert);
+$clrFooterSubLinkHover: mix($clrFooterSubBG, $clrFooterSubLinkNormal, $weight: 40%);
+$clrFooterSubLinkActive: mix($clrFooterSubBG, $clrFooterSubLinkNormal, $weight: 60%);
+
+
+// -- FORMS ----------------------------------
+// [...]
+
+
+// -- GALLERIES ----------------------------------
+$clrGalleryBigArrowNormalBG: transparentize(#000, .5);
+$clrGalleryBigArrowHoverBG: transparentize(#000, .1);
+$clrGalleryBigArrowActiveBG: transparentize(#000, .3);
+$clrGalleryBigArrowNormalText: #FFF;
+$clrGalleryBigArrowHoverText: #CCC;
+$clrGalleryBigArrowActiveText: #999;
+
+$clrGalleryThumbsArrowNormalText: $clrLinkQuietNormal;
+$clrGalleryThumbsArrowHoverText: $clrLinkQuietHover;
+$clrGalleryThumbsArrowActiveText: $clrLinkQuietActive;
+
+
+// -- PAGER ----------------------------------
+// [...]
+
+
+// -- HOME ----------------------------------
+// [...]
+
+
+// -- STORY ARCHIVES ----------------------------------
+// [...]
+
+
+// -- CONTACT ----------------------------------
+// [...]
+
+
+
+// -- SHADOWS ----------------------------------
+$btnNormalShadow: none;
+$btnHoverShadow: $btnNormalShadow;
+$btnActiveShadow: inset 0 0 2px transparentize(#000, 0.1);
+
+$btnQuietNormalShadow: none;
+$btnQuietHoverShadow: $btnQuietNormalShadow;
+$btnQuietActiveShadow: inset 0 0 2px transparentize(#000, 0.1);
+
+$btnQuiet2NormalShadow: inset 0 0 0 3px $clrBtnQuiet2NormalText;
+$btnQuiet2HoverShadow: none;
+$btnQuiet2ActiveShadow: inset 0 0 3px transparentize(#000, .1);
+
+$btnSubmitNormalShadow: $btnNormalShadow;
+$btnSubmitHoverShadow: $btnHoverShadow;
+$btnSubmitActiveShadow: $btnActiveShadow;
+
+$tabNormalShadow: none;
+$tabHoverShadow: $tabNormalShadow;
+$tabActiveShadow: inset 0 0 2px transparentize(#000, 0.1);
+$tabCurrentNormalShadow: $tabNormalShadow;
+$tabCurrentHoverShadow: $tabCurrentNormalShadow;
+$tabCurrentActiveShadow: $tabCurrentNormalShadow;
+
+
+// invert
+$btnNormalShadow-invert: inset 0 0 0 1px transparentize(#FFF, 0.7);
+$btnHoverShadow-invert: none;
+$btnActiveShadow-invert: inset 0 0 2px transparentize(#000, 0.1);
+
+// $btnQuiet2NormalShadow-invert: inset 0 0 0 3px $clrBtnQuiet2NormalText-invert;
+// $btnQuiet2HoverShadow-invert: none;
+// $btnQuiet2ActiveShadow-invert: inset 0 0 3px transparentize(#000, .1);
+
+
+
+// ##################################### BOOTSTRAP VARIABLES & COLORS #####################################
+
+// // Fonts
+// //** File name for all font files.
+// $icon-font-name: "glyphicons-regular";
+// //** Element ID within SVG icon file.
+// $icon-font-svg-id: "glyphiconsregular";
+
+
+// Radius
+$border-radius-base: $globalRadius;
+$border-radius-large: $globalRadius;
+
+$btn-border-radius-base: $btnRadius;
+$btn-border-radius-large: $btnRadius;
+$btn-border-radius-small: $btnRadius;
+
+
+// Padding
+$padding-base-vertical: $spacingMini;
+$padding-base-horizontal: $spacingBig;
+
+$padding-large-vertical: $spacingBig;
+$padding-large-horizontal: $padding-base-horizontal;
+
+$padding-small-vertical: $padding-base-vertical;
+$padding-small-horizontal: $padding-base-horizontal;
+
+$padding-xs-vertical: $padding-base-vertical;
+$padding-xs-horizontal: $padding-base-horizontal;
+
+
+// Forms
+$input-height-base: 38px;
+
+
+// // -- Colors ----------------------------------
+// $brand-primary: $clrLoudBG2;
+// $text-color: $clrText;
+
+// // Btns
+// $btn-primary-color: $clrBtnNormalText;
+// $btn-primary-bg: $clrBtnNormalBG;
+// // $btn-primary-border: contrast-color($clrContentBG, darken($clrBtnNormalBG, 10%), lighten($clrBtnNormalBG, 10%));
+// $btn-primary-border: transparent;
+
+// $btn-default-color: $clrBtnQuiet2NormalText;
+// $btn-default-bg: $clrBtnQuiet2NormalBG;
+// $btn-default-border: transparent;
+
+
+// Headings
+$page-header-border-color: $clrSepLines;

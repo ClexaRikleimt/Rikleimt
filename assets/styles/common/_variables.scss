@@ -1,0 +1,266 @@
+// INFOS
+// @media (max-width: $screen-xs-max) { ... }
+// @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) { ... }
+// @media (min-width: $screen-md-min) and (max-width: $screen-md-max) { ... }
+// @media (min-width: $screen-lg-min) { ... }
+//
+//
+// $screen-xs-max = max 767
+//
+// $screen-sm-min = min 768
+// $screen-sm-max = max 991
+//
+// $screen-md-min = min 992
+// $screen-md-max = max 1199
+//
+// $screen-lg-min = min 1200
+//
+//
+// http://www.sitepoint.com/5-useful-sass-mixins-bootstrap/
+
+
+
+
+// ##################################### BOOTSTRAP VARIABLES #####################################
+
+// Glyphicons font path
+// $icon-font-path:        "../fonts/glyphicons/";
+
+
+// Grid settings
+$wrapWidthMax: 1170px;
+
+$total-columns: 12;
+$grid-columns: $total-columns; //Bootstrap default
+$grid-gutter-width: 30px; //Bootstrap default
+
+$grid-padding: floor($grid-gutter-width / 2);
+$gutter-width: $grid-padding;
+
+
+
+// ##################################### CUSTOM #####################################
+
+$contrasted-lightness-threshold: 60%; //"The $threshold is a percent between 0% and 100% and it determines when the lightness of $color changes from "dark" to "light"."
+                                      //A higher number means the dark color range is larger (Plus le nombre augmente, plus le range de couleurs foncées augmente.)
+// $customContrasted-lightness-threshold: 75%; //Changed so only some items use a different threshold
+
+// -- MISC/GLOBAL ----------------------------------
+$hasOuterWrap: false; // Set as true if site needs to have a "fixed-width" wrapper around content (design is not full width)
+                      // Ideally, this should only be for non-responsive sites.
+                      // Otherwise some additional tweaks will be needed here and there (such as icon position in mobile menu)
+
+
+
+// -- TEXTS ----------------------------------
+$baseFont: Arial, Helvetica, sans-serif;
+$baseFontSize: 14px;
+
+$headingFont: "SourceSansPro", $baseFont;
+// $headingFontThin: "SourceSansProThin", $baseFont;
+$headingFontLight: "SourceSansProLight", $baseFont;
+$headingFontBold: "SourceSansProBold", $baseFont;
+$headingFontBlack: "SourceSansProBlack", $baseFont;
+
+$headingFontItalic: "SourceSansProItalic", $baseFont;
+// $headingFontThinItalic: "SourceSansProThinItalic", $baseFont;
+// $headingFontLightItalic: "SourceSansProLightItalic", $baseFont;
+$headingFontBoldItalic: "SourceSansProBoldItalic", $baseFont;
+// $headingFontBlackItalic: "SourceSansProBlackItalic", $baseFont;
+
+$textFont: "SourceSansPro", $baseFont;
+$textFontBold: "SourceSansProBold", $baseFont;
+$textFontItalic: "SourceSansProItalic", $baseFont;
+$textFontBoldItalic: "SourceSansProBoldItalic", $baseFont;
+
+// $iconFont: "Glyphicons";
+$iconFont: "Glyphicons Halflings";
+
+// Font Import (@font-face)
+            // Font family, folder/filename, svg font id (hashtag)
+$fontlist:  ("SourceSansPro",      "source-sans-pro/sourcesanspro-regular-webfont", "source_sans_proregular"),
+            ("SourceSansProLight", "source-sans-pro/sourcesanspro-light-webfont",   "source_sans_prolight"),
+            ("SourceSansProBold",  "source-sans-pro/sourcesanspro-bold-webfont",    "source_sans_probold"),
+            ("SourceSansProItalic",     "source-sans-pro/sourcesanspro-italic-webfont",     "source_sans_proitalic"),
+            ("SourceSansProBoldItalic", "source-sans-pro/sourcesanspro-bolditalic-webfont", "source_sans_probold_italic"),
+            ("SourceSansProBlack", "source-sans-pro/sourcesanspro-black-webfont",   "source_sans_problack");
+
+            // ("Kanit",           "kanit/kanit-regular-webfont",    "kanitregular"),
+            // ("KanitThin",       "kanit/kanit-thin-webfont",       "kanitthin"),
+            // ("KanitExtraLight", "kanit/kanit-extralight-webfont", "kanitextralight"),
+            // ("KanitLight",      "kanit/kanit-light-webfont",      "kanitlight"),
+            // ("KanitMedium",     "kanit/kanit-medium-webfont",     "kanitmedium"),
+            // ("KanitSemiBold",   "kanit/kanit-semibold-webfont",   "kanitsemibold"),
+            // ("KanitBold",       "kanit/kanit-bold-webfont",       "kanitbold"),
+            // ("KanitExtraBold",  "kanit/kanit-extrabold-webfont",  "kanitextrabold"),
+            // ("KanitBlack",      "kanit/kanit-black-webfont",      "kanitblack");
+
+            // ("Yantramanav",        "yantramanav/yantramanav-regular-webfont", "yantramanavregular"),
+            // ("YantramanavLight",   "yantramanav/yantramanav-light-webfont",   "yantramanavlight"),
+            // ("YantramanavBold",    "yantramanav/yantramanav-bold-webfont",    "yantramanavbold"),
+            // ("YantramanavThin",    "yantramanav/yantramanav-thin-webfont",    "yantramanavthin"),
+            // ("YantramanavMedium",  "yantramanav/yantramanav-medium-webfont",  "yantramanavmedium"),
+            // ("YantramanavBlack",   "yantramanav/yantramanav-black-webfont",   "yantramanavblack");
+
+            // ("PTSansNarrow",            "pt-sans/ptsans_narrow_regular",   "pt_sans_narrowregular"),
+            // ("PTSansNarrowBold",        "pt-sans/ptsans_narrow_bold",      "pt_sans_narrowbold"),
+            // ("PTSansNarrowItalic",      "pt-sans/ptsans_narrow_bold",      "pt_sans_narrowbold"),
+            // ("PTSansNarrowBoldItalic",  "pt-sans/ptsans_narrow_bold",      "pt_sans_narrowbold");
+            // ("PTSans",            "pt-sans/ptsans_regular",      "pt_sansregular"),
+            // ("PTSansBold",        "pt-sans/ptsans_bold",         "pt_sansbold"),
+            // ("PTSansItalic",      "pt-sans/ptsans_italic",       "pt_sansitalic"),
+            // ("PTSansBoldItalic",  "pt-sans/ptsans_bold-italic",  "pt_sansbold_italic");
+            // ("PTSansItalic",      "pt-sans/ptsans_italic",       "pt_sansitalic"),
+            // ("PTSansBoldItalic",  "pt-sans/ptsans_bold-italic",  "pt_sansbold_italic");
+
+            // ("ProximaNova",      "proxima-nova/proximanova_alt_regular-webfont", "proxima_nova_alt_rgregular"),
+            // ("ProximaNovaThin",  "proxima-nova/proximanova_alt_thin-webfont",    "proxima_nova_altthin"),
+            // ("ProximaNovaLight", "proxima-nova/proximanova_alt_light-webfont",   "proxima_nova_altlight"),
+            // ("ProximaNovaBold",  "proxima-nova/proximanova_alt_bold-webfont",    "proxima_nova_alt_rgbold"),
+            // ("ProximaNovaItalic",     "proxima-nova/proximanova_alt_regular_italic-webfont",  "proxima_nova_altRgIt"),
+            // ("ProximaNovaBoldItalic", "proxima-nova/proximanova_alt_bold_italic-webfont",      "proxima_nova_alt_rgBdIt"),
+            // ("ProximaNovaBlack", "proxima-nova/proximanova_alt_black-webfont",   "proxima_nova_altblack");
+
+            // ("Roboto",      "roboto/roboto-regular-webfont", "robotoregular"),
+            // ("RobotoThin",  "roboto/roboto-thin-webfont",    "robotothin"),
+            // ("RobotoLight", "roboto/roboto-light-webfont",   "robotolight"),
+            // ("RobotoBold",  "roboto/roboto-bold-webfont",    "robotobold"),
+            // ("RobotoBlack", "roboto/roboto-black-webfont",   "robotoblack");
+            // ("RobotoItalic",      "roboto/roboto-italic-webfont",      "robotoitalic"),
+            // ("RobotoThinItalic",  "roboto/roboto-thinitalic-webfont",  "robotothin_italic"),
+            // ("RobotoLightItalic", "roboto/roboto-lightitalic-webfont", "robotolight_italic"),
+            // ("RobotoBoldItalic",  "roboto/roboto-bolditalic-webfont",  "robotobold_italic"),
+            // ("RobotoBlackItalic", "roboto/roboto-blackitalic-webfont", "robotoblack_italic");
+
+            // ("RobotoCondensed",      "roboto-condensed/robotocondensed-regular-webfont", "roboto_condensedregular"),
+            // ("RobotoCondensedLight", "roboto-condensed/robotocondensed-light-webfont",   "roboto_condensedlight"),
+            // ("RobotoCondensedBold",  "roboto-condensed/robotocondensed-bold-webfont",    "roboto_condensedbold"),
+            // ("RobotoCondensedItalic",      "roboto-condensed/robotocondensed-italic-webfont",      "roboto_condenseditalic"),
+            // ("RobotoCondensedLightItalic", "roboto-condensed/robotocondensed-lightitalic-webfont", "roboto_condensedlight_italic"),
+            // ("RobotoCondensedBoldItalic",  "roboto-condensed/robotocondensed-bolditalic-webfont",  "roboto_condensedbold_italic");
+
+            // ("YanoneKaf",           "yanonekaffeesatz-regular-webfont",    "yanone_kaffeesatzregular"),
+            // ("YanoneKafLight",      "yanonekaffeesatz-light-webfont",      "yanone_kaffeesatzlight"),
+            // // ("YanoneKafExtraLight", "yanonekaffeesatz-extralight-webfont", "yanone_kaffeesatzextra_light"),
+            // ("YanoneKafBold",       "yanonekaffeesatz-bold-webfont",       "yanone_kaffeesatzbold");
+
+            // ("OpenSans",            "open-sans/opensans-regular-webfont",         "open_sansregular"),
+            // ("OpenSansItalic",      "open-sans/opensans-italic-webfont",          "open_sansitalic"),
+            // ("OpenSansLight",       "open-sans/opensans-light-webfont",           "open_sanslight"),
+            // ("OpenSansLightItalic", "open-sans/opensans-lightitalic-webfont",     "open_sanslight_italic"),
+            // ("OpenSansBold",        "open-sans/opensans-bold-webfont",            "open_sansbold"),
+            // ("OpenSansBoldItalic",  "open-sans/opensans-bolditalic-webfont",      "open_sansbold_italic"),
+            // ("OpenSansBlack",       "open-sans/opensans-extrabold-webfont",       "open_sansextrabold"),
+            // ("OpenSansBlackItalic", "open-sans/opensans-extrabolditalic-webfont", "open_sansextrabold_italic");
+
+            // ("Oswald",      "oswald/oswald-regular-webfont", "oswaldbook"),
+            // ("OswaldLight", "oswald/oswald-light-webfont",   "oswaldlight"),
+            // ("OswaldBold",  "oswald/oswald-bold-webfont",    "oswaldbold");
+
+// $iconFontlist: $iconFont "#{'icomoon/'+$iconFont+'/'+$iconFont}" $iconFont;
+
+
+// -- PADDING ----------------------------------
+$spacingMini: 3px;
+$spacingBase: 5px;
+$spacingSmall: $spacingBase * 2;  //10
+$spacingMed: $spacingSmall + $spacingBase;  //15
+$spacingBig: $spacingSmall * 2;   //20
+$spacingXL: $spacingSmall * 3;    //30
+$spacingXXL: $spacingSmall * 4;   //40
+$spacing3XL: $spacingSmall * 5;   //50
+$spacing4XL: $spacingSmall * 6;   //60
+
+
+// -- RADIUS ----------------------------------
+$globalRadius: 3px;
+$roundRadius: 1000px;
+$btnRadius: $globalRadius;
+$formInputRadius: $globalRadius;
+$btnSubmitRadius: $formInputRadius;
+$btnGroupRadius: $globalRadius;
+$tabRadius: $globalRadius;
+$pagerRadius: $globalRadius;
+
+
+// -- ICONS/ELEM CLASSES ----------------------------------
+$formIconClassAssociations: (
+  // glyphicon: class
+  user: ('name'),
+  envelope: ('email')
+);
+
+
+
+// ##################################### DIMENSIONS & PATHS #####################################
+
+$imageFolder: '../images/';
+
+
+// -- GLOBAL ----------------------------------
+$sidebarCols: 4;
+$contentCols: ($total-columns - $sidebarCols);
+
+// // Home
+// $sidebarHomeCols: getDividedColCount($total-columns, $division: 2);
+// $contentHomeCols: $total-columns - $sidebarHomeCols;
+
+
+// -- HEADER ----------------------------------
+// Logo
+$logoImg: 'global/logo.png'; //only used to calculate dimensions below
+$logoImgWidth: image-width($logoImg);
+$logoImgHeight: image-height($logoImg);
+
+$headerLogoWidth: 175px;
+$headerLogoHeight: (($headerLogoWidth * $logoImgHeight) / $logoImgWidth);
+
+// Book toolbar
+$bookToolbarHeight: 49px;
+
+
+// -- MAINNAV ----------------------------------
+$mainnavWidth: 150px;
+$mainnavBorderWidth: 10px;
+
+$mainnavTrigWidth: 50px;
+$mainnavTrigHeight: $mainnavTrigWidth;
+$mainnavTrigRadius: $globalRadius;
+
+
+// Tablet
+$sm-mainnavTrigWidth: $mainnavBorderWidth;
+$sm-mainnavTrigHeight: 100%;
+$sm-mainnavTrigRadius: 0;
+
+
+// -- SIDEBAR ----------------------------------
+// [...]
+
+
+// -- FOOTER ----------------------------------
+$footerHeight: 37px; //for book's bottom offset on Tablet
+
+
+// -- FORMS ----------------------------------
+// [...]
+
+
+// -- GALLERIES ----------------------------------
+// [...]
+
+
+// -- HOME ----------------------------------
+// [...]
+
+
+// -- BOOK ----------------------------------
+$bookHeight: 700px;
+
+
+// -- STORY ARCHIVES ----------------------------------
+// [...]
+
+
+// -- CONTACT ----------------------------------
+// [...]

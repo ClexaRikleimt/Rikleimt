@@ -1,0 +1,46 @@
+// ################################### COMPASS/SUSY FUNCTIONS & MIXINS ####################################
+
+// When we need to use :before for something else, as Bootstrap's version sets both before and after
+@mixin pie-clearfix {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+
+// ################################### POSITIONING ####################################
+@mixin stretch($offset-top: 0, $offset-right: 0, $offset-bottom: 0, $offset-left: 0) {
+  position: absolute;
+  @if $offset-top {
+    top: $offset-top;
+  }
+  @if $offset-bottom {
+    bottom: $offset-bottom;
+  }
+  @if $offset-left {
+    left: $offset-left;
+  }
+  @if $offset-right {
+    right: $offset-right;
+  }
+}
+
+@mixin stretch-x($offset-left: 0, $offset-right: 0) {
+  @include stretch(false, $offset-right, false, $offset-left);
+}
+
+@mixin stretch-y($offset-top: 0, $offset-bottom: 0) {
+  @include stretch($offset-top, false, $offset-bottom, false);
+}
+
+
+// ################################### MISC ####################################
+
+// -- Column width ----------------------------------
+// Inpired by the "columns" one in SUSY, made for Bootstrap.
+// Uses the same default as the make-grid-column mixin.
+@function columns($columns: $grid-columns) {
+  @return percentage(($columns / $grid-columns));
+}

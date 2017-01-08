@@ -1,0 +1,9 @@
+#content {
+  @include clearfix();
+
+  padding: $gutter-width 0;
+} //end #content
+
+#mainContent {
+  @include clearfix();
+} //end #content #mainContent

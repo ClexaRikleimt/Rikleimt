@@ -1,0 +1,34 @@
+{
+  "name": "sage",
+  "homepage": "https://roots.io/sage/",
+  "authors": [
+    "Ben Word <ben@benword.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "bootstrap-sass": "3.3.5",
+    "matchHeight": "~0.7.0",
+    "jquery-hoverintent": "^1.8.1",
+    "slick-carousel": "^1.6.0",
+    "jquery-touch-events": "^1.0.5"
+  },
+  "overrides": {
+    "bootstrap-sass": {
+      "main": [
+        "./assets/javascripts/bootstrap/transition.js",
+        "./assets/javascripts/bootstrap/alert.js",
+        "./assets/javascripts/bootstrap/button.js",
+        "./assets/javascripts/bootstrap/carousel.js",
+        "./assets/javascripts/bootstrap/collapse.js",
+        "./assets/javascripts/bootstrap/dropdown.js",
+        "./assets/javascripts/bootstrap/modal.js",
+        "./assets/javascripts/bootstrap/tooltip.js",
+        "./assets/javascripts/bootstrap/popover.js",
+        "./assets/javascripts/bootstrap/scrollspy.js",
+        "./assets/javascripts/bootstrap/tab.js",
+        "./assets/javascripts/bootstrap/affix.js"
+      ]
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Index{% endblock %}
+
+{% block bodyclasses %}is-home{% endblock %}
+
+{% block content %}
+  <div class="text">
+    <p>Hello world, this is the home page! Please <a href="{{ url_for('template_book') }}">visit the book page</a> instead.</p>
+  </div>
+{% endblock %}

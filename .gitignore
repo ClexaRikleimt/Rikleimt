@@ -1,0 +1,18 @@
+# Include your project-specific ignores in this file
+# Read about how to use .gitignore: https://help.github.com/articles/ignoring-files
+node_modules
+npm-debug.log
+assets/styles/devtools/_imagehelper.scss
+favicons.zip
+
+.idea/
+
+rikleimt/static/plugins/
+rikleimt/__pycache__/
+rikleimt/config.py
+
+static/plugins/
+
+config.py
+__pycache__/
+

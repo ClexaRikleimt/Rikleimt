@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en"> {# TODO: CHANGE TO REAL LANGUAGE OF PAGE #}
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% block title %}{% endblock %} | [[ site_name ]]</title>
+  {% block extraCSS %}{% endblock %}
+
+  {% assets 'scss_main' %}
+    <link rel="stylesheet" type='text/css' media='all' href="{{ ASSET_URL }}">
+  {% endassets %}
+
+  <!-- Favicons -->
+  <!-- <link rel="apple-touch-icon" sizes="57x57" href="/favicons/apple-touch-icon-57x57.png?v=RyyAda0KgM">
+  <link rel="apple-touch-icon" sizes="60x60" href="/favicons/apple-touch-icon-60x60.png?v=RyyAda0KgM">
+  <link rel="apple-touch-icon" sizes="72x72" href="/favicons/apple-touch-icon-72x72.png?v=RyyAda0KgM">
+  <link rel="apple-touch-icon" sizes="76x76" href="/favicons/apple-touch-icon-76x76.png?v=RyyAda0KgM">
+  <link rel="apple-touch-icon" sizes="114x114" href="/favicons/apple-touch-icon-114x114.png?v=RyyAda0KgM">
+  <link rel="apple-touch-icon" sizes="120x120" href="/favicons/apple-touch-icon-120x120.png?v=RyyAda0KgM">
+  <link rel="apple-touch-icon" sizes="144x144" href="/favicons/apple-touch-icon-144x144.png?v=RyyAda0KgM">
+  <link rel="apple-touch-icon" sizes="152x152" href="/favicons/apple-touch-icon-152x152.png?v=RyyAda0KgM">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon-180x180.png?v=RyyAda0KgM">
+  <link rel="icon" type="image/png" href="/favicons/favicon-32x32.png?v=RyyAda0KgM" sizes="32x32">
+  <link rel="icon" type="image/png" href="/favicons/android-chrome-192x192.png?v=RyyAda0KgM" sizes="192x192">
+  <link rel="icon" type="image/png" href="/favicons/favicon-96x96.png?v=RyyAda0KgM" sizes="96x96">
+  <link rel="icon" type="image/png" href="/favicons/favicon-16x16.png?v=RyyAda0KgM" sizes="16x16">
+  <link rel="manifest" href="/favicons/manifest.json?v=RyyAda0KgM">
+  <link rel="mask-icon" href="/favicons/safari-pinned-tab.svg?v=RyyAda0KgM" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#333333">
+  <meta name="msapplication-TileImage" content="/favicons/mstile-144x144.png?v=RyyAda0KgM">
+  <meta name="msapplication-config" content="/favicons/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff"> -->
+  <!-- /end Favicons -->
+</head>
+<body class="{% block bodyclasses %}{% endblock %}">
+  <div id="page">
+    <div id="mainnav" class="opened">
+      <nav>
+        <h2><span>Menu</span></h2>
+        <button class="hamburger hamburger--vortex" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></button>
+        <ul>
+          <li><a href="#"><span>[[ _('Home') ]]</span></a></li>
+          <li><a href="#"><span>[[ _('Story') ]]</span></a></li>
+          <li><a href="#"><span>[[ _('Side Stories') ]]</span></a></li>
+          <li><a href="#"><span>[[ _('Archive') ]]</span></a></li>
+          <li><a href="#"><span>[[ _('WB Wiki') ]]</span></a></li>
+          <li><a href="#"><span>[[ _('Promotional Artwork') ]]</span></a></li>
+          <li><a href="#"><span>[[ _('FAQ') ]]</span></a></li>
+          <li><a href="#"><span>[[ _('About Us') ]]</span></a></li>
+          <li><a href="#"><span>[[ _('Contact Us') ]]</span></a></li>
+          <li><a href="#"><span>[[ _('Settings') ]]</span></a></li>
+        </ul>
+      </nav>
+    </div> <!-- /#mainnav -->
+
+    <header id="siteHeader" role="banner">
+      <div class="inner">
+        <div class="logo"><a href="#"><img src="{{ url_for('static', filename='images/global/logo.png') }}" /></a></div>
+      </div>
+    </header> <!-- /#siteHeader -->
+
+    <section id="content" role="document">
+      <div class="inner">
+        {% block content %}{% endblock %}
+      </div>
+    </section>
+
+    <footer id="siteFooter" role="contentinfo">
+      <div class="sub">
+        <div class="inner">
+          <div class="copyright">
+            <p>&copy; [[ current_year 22]] [[ site_name ]]. [[ _('All rights reserved.') ]]</p>
+          </div>
+        </div>
+      </div><!-- /#siteFooter .sub -->
+    </footer><!-- /#siteFooter -->
+  </div> <!-- /#page -->
+
+  <script type='text/javascript' src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+  {% assets 'js_main' %}
+    <script type='text/javascript' src='{{ ASSET_URL }}'></script>
+  {% endassets %}
+
+  {% block extraScripts %}{% endblock %}
+
+</body>
+</html>

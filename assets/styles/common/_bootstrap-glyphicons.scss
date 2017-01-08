@@ -1,0 +1,307 @@
+//
+// Glyphicons for Bootstrap
+//
+// Since icons are fonts, they can be placed anywhere text is placed and are
+// thus automatically sized to match the surrounding child. To use, create an
+// inline element with the appropriate classes, like so:
+//
+// <a href="#"><span class="glyphicon glyphicon-star"></span> Star</a>
+
+@at-root {
+  // Import the fonts
+  @font-face {
+    font-family: 'Glyphicons Halflings';
+    src: url('#{$icon-font-path}#{$icon-font-name}.eot');
+    src: url('#{$icon-font-path}#{$icon-font-name}.eot?#iefix') format('embedded-opentype'),
+         url('#{$icon-font-path}#{$icon-font-name}.woff2') format('woff2'),
+         url('#{$icon-font-path}#{$icon-font-name}.woff') format('woff'),
+         url('#{$icon-font-path}#{$icon-font-name}.ttf') format('truetype'),
+         url('#{$icon-font-path}#{$icon-font-name}.svg##{$icon-font-svg-id}') format('svg');
+  }
+}
+
+// Catchall baseclass
+.glyphicon {
+  // position: relative;
+  // top: 1px;
+  // display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: normal;
+  // line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Individual icons
+.glyphicon-asterisk               { content: "\2a"; }
+.glyphicon-plus                   { content: "\2b"; }
+.glyphicon-euro,
+.glyphicon-eur                    { content: "\20ac"; }
+.glyphicon-minus                  { content: "\2212"; }
+.glyphicon-cloud                  { content: "\2601"; }
+.glyphicon-envelope               { content: "\2709"; }
+.glyphicon-pencil                 { content: "\270f"; }
+.glyphicon-glass                  { content: "\e001"; }
+.glyphicon-music                  { content: "\e002"; }
+.glyphicon-search                 { content: "\e003"; }
+.glyphicon-heart                  { content: "\e005"; }
+.glyphicon-star                   { content: "\e006"; }
+.glyphicon-star-empty             { content: "\e007"; }
+.glyphicon-user                   { content: "\e008"; }
+.glyphicon-film                   { content: "\e009"; }
+.glyphicon-th-large               { content: "\e010"; }
+.glyphicon-th                     { content: "\e011"; }
+.glyphicon-th-list                { content: "\e012"; }
+.glyphicon-ok                     { content: "\e013"; }
+.glyphicon-remove                 { content: "\e014"; }
+.glyphicon-zoom-in                { content: "\e015"; }
+.glyphicon-zoom-out               { content: "\e016"; }
+.glyphicon-off                    { content: "\e017"; }
+.glyphicon-signal                 { content: "\e018"; }
+.glyphicon-cog                    { content: "\e019"; }
+.glyphicon-trash                  { content: "\e020"; }
+.glyphicon-home                   { content: "\e021"; }
+.glyphicon-file                   { content: "\e022"; }
+.glyphicon-time                   { content: "\e023"; }
+.glyphicon-road                   { content: "\e024"; }
+.glyphicon-download-alt           { content: "\e025"; }
+.glyphicon-download               { content: "\e026"; }
+.glyphicon-upload                 { content: "\e027"; }
+.glyphicon-inbox                  { content: "\e028"; }
+.glyphicon-play-circle            { content: "\e029"; }
+.glyphicon-repeat                 { content: "\e030"; }
+.glyphicon-refresh                { content: "\e031"; }
+.glyphicon-list-alt               { content: "\e032"; }
+.glyphicon-lock                   { content: "\e033"; }
+.glyphicon-flag                   { content: "\e034"; }
+.glyphicon-headphones             { content: "\e035"; }
+.glyphicon-volume-off             { content: "\e036"; }
+.glyphicon-volume-down            { content: "\e037"; }
+.glyphicon-volume-up              { content: "\e038"; }
+.glyphicon-qrcode                 { content: "\e039"; }
+.glyphicon-barcode                { content: "\e040"; }
+.glyphicon-tag                    { content: "\e041"; }
+.glyphicon-tags                   { content: "\e042"; }
+.glyphicon-book                   { content: "\e043"; }
+.glyphicon-bookmark               { content: "\e044"; }
+.glyphicon-print                  { content: "\e045"; }
+.glyphicon-camera                 { content: "\e046"; }
+.glyphicon-font                   { content: "\e047"; }
+.glyphicon-bold                   { content: "\e048"; }
+.glyphicon-italic                 { content: "\e049"; }
+.glyphicon-text-height            { content: "\e050"; }
+.glyphicon-text-width             { content: "\e051"; }
+.glyphicon-align-left             { content: "\e052"; }
+.glyphicon-align-center           { content: "\e053"; }
+.glyphicon-align-right            { content: "\e054"; }
+.glyphicon-align-justify          { content: "\e055"; }
+.glyphicon-list                   { content: "\e056"; }
+.glyphicon-indent-left            { content: "\e057"; }
+.glyphicon-indent-right           { content: "\e058"; }
+.glyphicon-facetime-video         { content: "\e059"; }
+.glyphicon-picture                { content: "\e060"; }
+.glyphicon-map-marker             { content: "\e062"; }
+.glyphicon-adjust                 { content: "\e063"; }
+.glyphicon-tint                   { content: "\e064"; }
+.glyphicon-edit                   { content: "\e065"; }
+.glyphicon-share                  { content: "\e066"; }
+.glyphicon-check                  { content: "\e067"; }
+.glyphicon-move                   { content: "\e068"; }
+.glyphicon-step-backward          { content: "\e069"; }
+.glyphicon-fast-backward          { content: "\e070"; }
+.glyphicon-backward               { content: "\e071"; }
+.glyphicon-play                   { content: "\e072"; }
+.glyphicon-pause                  { content: "\e073"; }
+.glyphicon-stop                   { content: "\e074"; }
+.glyphicon-forward                { content: "\e075"; }
+.glyphicon-fast-forward           { content: "\e076"; }
+.glyphicon-step-forward           { content: "\e077"; }
+.glyphicon-eject                  { content: "\e078"; }
+.glyphicon-chevron-left           { content: "\e079"; }
+.glyphicon-chevron-right          { content: "\e080"; }
+.glyphicon-plus-sign              { content: "\e081"; }
+.glyphicon-minus-sign             { content: "\e082"; }
+.glyphicon-remove-sign            { content: "\e083"; }
+.glyphicon-ok-sign                { content: "\e084"; }
+.glyphicon-question-sign          { content: "\e085"; }
+.glyphicon-info-sign              { content: "\e086"; }
+.glyphicon-screenshot             { content: "\e087"; }
+.glyphicon-remove-circle          { content: "\e088"; }
+.glyphicon-ok-circle              { content: "\e089"; }
+.glyphicon-ban-circle             { content: "\e090"; }
+.glyphicon-arrow-left             { content: "\e091"; }
+.glyphicon-arrow-right            { content: "\e092"; }
+.glyphicon-arrow-up               { content: "\e093"; }
+.glyphicon-arrow-down             { content: "\e094"; }
+.glyphicon-share-alt              { content: "\e095"; }
+.glyphicon-resize-full            { content: "\e096"; }
+.glyphicon-resize-small           { content: "\e097"; }
+.glyphicon-exclamation-sign       { content: "\e101"; }
+.glyphicon-gift                   { content: "\e102"; }
+.glyphicon-leaf                   { content: "\e103"; }
+.glyphicon-fire                   { content: "\e104"; }
+.glyphicon-eye-open               { content: "\e105"; }
+.glyphicon-eye-close              { content: "\e106"; }
+.glyphicon-warning-sign           { content: "\e107"; }
+.glyphicon-plane                  { content: "\e108"; }
+.glyphicon-calendar               { content: "\e109"; }
+.glyphicon-random                 { content: "\e110"; }
+.glyphicon-comment                { content: "\e111"; }
+.glyphicon-magnet                 { content: "\e112"; }
+.glyphicon-chevron-up             { content: "\e113"; }
+.glyphicon-chevron-down           { content: "\e114"; }
+.glyphicon-retweet                { content: "\e115"; }
+.glyphicon-shopping-cart          { content: "\e116"; }
+.glyphicon-folder-close           { content: "\e117"; }
+.glyphicon-folder-open            { content: "\e118"; }
+.glyphicon-resize-vertical        { content: "\e119"; }
+.glyphicon-resize-horizontal      { content: "\e120"; }
+.glyphicon-hdd                    { content: "\e121"; }
+.glyphicon-bullhorn               { content: "\e122"; }
+.glyphicon-bell                   { content: "\e123"; }
+.glyphicon-certificate            { content: "\e124"; }
+.glyphicon-thumbs-up              { content: "\e125"; }
+.glyphicon-thumbs-down            { content: "\e126"; }
+.glyphicon-hand-right             { content: "\e127"; }
+.glyphicon-hand-left              { content: "\e128"; }
+.glyphicon-hand-up                { content: "\e129"; }
+.glyphicon-hand-down              { content: "\e130"; }
+.glyphicon-circle-arrow-right     { content: "\e131"; }
+.glyphicon-circle-arrow-left      { content: "\e132"; }
+.glyphicon-circle-arrow-up        { content: "\e133"; }
+.glyphicon-circle-arrow-down      { content: "\e134"; }
+.glyphicon-globe                  { content: "\e135"; }
+.glyphicon-wrench                 { content: "\e136"; }
+.glyphicon-tasks                  { content: "\e137"; }
+.glyphicon-filter                 { content: "\e138"; }
+.glyphicon-briefcase              { content: "\e139"; }
+.glyphicon-fullscreen             { content: "\e140"; }
+.glyphicon-dashboard              { content: "\e141"; }
+.glyphicon-paperclip              { content: "\e142"; }
+.glyphicon-heart-empty            { content: "\e143"; }
+.glyphicon-link                   { content: "\e144"; }
+.glyphicon-phone                  { content: "\e145"; }
+.glyphicon-pushpin                { content: "\e146"; }
+.glyphicon-usd                    { content: "\e148"; }
+.glyphicon-gbp                    { content: "\e149"; }
+.glyphicon-sort                   { content: "\e150"; }
+.glyphicon-sort-by-alphabet       { content: "\e151"; }
+.glyphicon-sort-by-alphabet-alt   { content: "\e152"; }
+.glyphicon-sort-by-order          { content: "\e153"; }
+.glyphicon-sort-by-order-alt      { content: "\e154"; }
+.glyphicon-sort-by-attributes     { content: "\e155"; }
+.glyphicon-sort-by-attributes-alt { content: "\e156"; }
+.glyphicon-unchecked              { content: "\e157"; }
+.glyphicon-expand                 { content: "\e158"; }
+.glyphicon-collapse-down          { content: "\e159"; }
+.glyphicon-collapse-up            { content: "\e160"; }
+.glyphicon-log-in                 { content: "\e161"; }
+.glyphicon-flash                  { content: "\e162"; }
+.glyphicon-log-out                { content: "\e163"; }
+.glyphicon-new-window             { content: "\e164"; }
+.glyphicon-record                 { content: "\e165"; }
+.glyphicon-save                   { content: "\e166"; }
+.glyphicon-open                   { content: "\e167"; }
+.glyphicon-saved                  { content: "\e168"; }
+.glyphicon-import                 { content: "\e169"; }
+.glyphicon-export                 { content: "\e170"; }
+.glyphicon-send                   { content: "\e171"; }
+.glyphicon-floppy-disk            { content: "\e172"; }
+.glyphicon-floppy-saved           { content: "\e173"; }
+.glyphicon-floppy-remove          { content: "\e174"; }
+.glyphicon-floppy-save            { content: "\e175"; }
+.glyphicon-floppy-open            { content: "\e176"; }
+.glyphicon-credit-card            { content: "\e177"; }
+.glyphicon-transfer               { content: "\e178"; }
+.glyphicon-cutlery                { content: "\e179"; }
+.glyphicon-header                 { content: "\e180"; }
+.glyphicon-compressed             { content: "\e181"; }
+.glyphicon-earphone               { content: "\e182"; }
+.glyphicon-phone-alt              { content: "\e183"; }
+.glyphicon-tower                  { content: "\e184"; }
+.glyphicon-stats                  { content: "\e185"; }
+.glyphicon-sd-video               { content: "\e186"; }
+.glyphicon-hd-video               { content: "\e187"; }
+.glyphicon-subtitles              { content: "\e188"; }
+.glyphicon-sound-stereo           { content: "\e189"; }
+.glyphicon-sound-dolby            { content: "\e190"; }
+.glyphicon-sound-5-1              { content: "\e191"; }
+.glyphicon-sound-6-1              { content: "\e192"; }
+.glyphicon-sound-7-1              { content: "\e193"; }
+.glyphicon-copyright-mark         { content: "\e194"; }
+.glyphicon-registration-mark      { content: "\e195"; }
+.glyphicon-cloud-download         { content: "\e197"; }
+.glyphicon-cloud-upload           { content: "\e198"; }
+.glyphicon-tree-conifer           { content: "\e199"; }
+.glyphicon-tree-deciduous         { content: "\e200"; }
+.glyphicon-cd                     { content: "\e201"; }
+.glyphicon-save-file              { content: "\e202"; }
+.glyphicon-open-file              { content: "\e203"; }
+.glyphicon-level-up               { content: "\e204"; }
+.glyphicon-copy                   { content: "\e205"; }
+.glyphicon-paste                  { content: "\e206"; }
+// The following 2 Glyphicons are omitted for the time being because
+// they currently use Unicode codepoints that are outside the
+// Basic Multilingual Plane (BMP). Older buggy versions of WebKit can't handle
+// non-BMP codepoints in CSS string escapes, and thus can't display these two icons.
+// Notably, the bug affects some older versions of the Android Browser.
+// More info: https://github.com/twbs/bootstrap/issues/10106
+// .glyphicon-door                   { content: "\1f6aa"; }
+// .glyphicon-key                    { content: "\1f511"; }
+.glyphicon-alert                  { content: "\e209"; }
+.glyphicon-equalizer              { content: "\e210"; }
+.glyphicon-king                   { content: "\e211"; }
+.glyphicon-queen                  { content: "\e212"; }
+.glyphicon-pawn                   { content: "\e213"; }
+.glyphicon-bishop                 { content: "\e214"; }
+.glyphicon-knight                 { content: "\e215"; }
+.glyphicon-baby-formula           { content: "\e216"; }
+.glyphicon-tent                   { content: "\26fa"; }
+.glyphicon-blackboard             { content: "\e218"; }
+.glyphicon-bed                    { content: "\e219"; }
+.glyphicon-apple                  { content: "\f8ff"; }
+.glyphicon-erase                  { content: "\e221"; }
+.glyphicon-hourglass              { content: "\231b"; }
+.glyphicon-lamp                   { content: "\e223"; }
+.glyphicon-duplicate              { content: "\e224"; }
+.glyphicon-piggy-bank             { content: "\e225"; }
+.glyphicon-scissors               { content: "\e226"; }
+.glyphicon-bitcoin                { content: "\e227"; }
+.glyphicon-btc                    { content: "\e227"; }
+.glyphicon-xbt                    { content: "\e227"; }
+.glyphicon-yen                    { content: "\00a5"; }
+.glyphicon-jpy                    { content: "\00a5"; }
+.glyphicon-ruble                  { content: "\20bd"; }
+.glyphicon-rub                    { content: "\20bd"; }
+.glyphicon-scale                  { content: "\e230"; }
+.glyphicon-ice-lolly              { content: "\e231"; }
+.glyphicon-ice-lolly-tasted       { content: "\e232"; }
+.glyphicon-education              { content: "\e233"; }
+.glyphicon-option-horizontal      { content: "\e234"; }
+.glyphicon-option-vertical        { content: "\e235"; }
+.glyphicon-menu-hamburger         { content: "\e236"; }
+.glyphicon-modal-window           { content: "\e237"; }
+.glyphicon-oil                    { content: "\e238"; }
+.glyphicon-grain                  { content: "\e239"; }
+.glyphicon-sunglasses             { content: "\e240"; }
+.glyphicon-text-size              { content: "\e241"; }
+.glyphicon-text-color             { content: "\e242"; }
+.glyphicon-text-background        { content: "\e243"; }
+.glyphicon-object-align-top       { content: "\e244"; }
+.glyphicon-object-align-bottom    { content: "\e245"; }
+.glyphicon-object-align-horizontal{ content: "\e246"; }
+.glyphicon-object-align-left      { content: "\e247"; }
+.glyphicon-object-align-vertical  { content: "\e248"; }
+.glyphicon-object-align-right     { content: "\e249"; }
+.glyphicon-triangle-right         { content: "\e250"; }
+.glyphicon-triangle-left          { content: "\e251"; }
+.glyphicon-triangle-bottom        { content: "\e252"; }
+.glyphicon-triangle-top           { content: "\e253"; }
+.glyphicon-console                { content: "\e254"; }
+.glyphicon-superscript            { content: "\e255"; }
+.glyphicon-subscript              { content: "\e256"; }
+.glyphicon-menu-left              { content: "\e257"; }
+.glyphicon-menu-right             { content: "\e258"; }
+.glyphicon-menu-down              { content: "\e259"; }
+.glyphicon-menu-up                { content: "\e260"; }

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Index{% endblock %}
+
+{% block extraCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='plugins/wow_book/wow_book.css' ) }}" />
+{% endblock %}
+
+{% block bodyclasses %}is-book is-main-story{% endblock %}
+
+{% block content %}
+  <section class="book">
+    <div class="content">
+      <div>This is the cover 2</div>
+      <div>This is the page 1-1</div>
+      <div>This is the page 2</div>
+      <div>This is the page 3</div>
+      <div>the end</div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block extraScripts %}
+<script type="text/javascript" src="{{ url_for('static', filename='plugins/wow_book/wow_book.min.js') }}"></script>
+{% endblock %}
