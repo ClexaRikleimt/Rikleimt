@@ -28,6 +28,17 @@
   } //end Mobile
   // Tablet +
   @media (min-width: $screen-sm-min) {
+    .wowbook-toolbar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+    }
+
+    #page {
+      padding-top: $bookToolbarHeight + $grid-padding;
+    }
+
     #content {
       section {
         &.book {
