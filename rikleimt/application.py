@@ -3,9 +3,11 @@ from flask import Flask, request
 
 from flask_login import LoginManager
 from flask_babel import Babel
+from flask_bcrypt import Bcrypt
 
 login_manager = LoginManager()
 babel = Babel()
+bcrypt_ = Bcrypt()
 
 
 @babel.localeselector
@@ -32,6 +34,15 @@ def create_app():
 
     login_manager.init_app(app)
 
+    bcrypt_.init_app(app)
+
     babel.init_app(app)
+
+    # Register blueprints
+    from rikleimt.blueprints.api import api_bp
+    from rikleimt.blueprints.admin_pages import admin_pages_bp
+
+    app.register_blueprint(api_bp, url_prefix='/api')
+    app.register_blueprint(admin_pages_bp, url_prefix='/admin')
 
     return app

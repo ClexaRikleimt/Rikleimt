@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="nl">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>{% block title %}Rikleimt - Administrative pages{% endblock title %}</title>
+        <link rel="stylesheet" href="{{ url_for('.static', filename='css/bootstrap.min.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('.static', filename='css/font-awesome.min.css') }}" />
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        {% block head_content %}{% endblock head_content %}
+    </head>
+    <body>
+        <div class="container">
+            {% if current_user.is_authenticated %}
+            <div class="header">
+                <a href="#main_content" class="sr-only sr-only-focusable">Skip navigation</a>
+                <nav class="navbar navbar-default">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-header-collapse" aria-expanded="false">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="{{ url_for('.index') }}">
+                                {% block menu_brand %}Rikleimt - Administrative pages{% endblock menu_brand %}
+                            </a>
+                        </div>
+
+                        <div class="collapse" id="navbar-header-collapse">
+                            <ul class="nav navbar-nav">
+                                {{ current_user.menu }}
+                            </ul>
+                            {% if current_user.is_authenticated %}
+                                <ul class="nav navbar-nav navbar-right">
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-user" aria-hidden="true"></i><span class="sr-only">Logged in as</span>&nbsp;{{ current_user.name }}&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="{{ url_for('.logout') }}"><i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;Log out</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            {% endif %}
+
+            {% block page_header %}{% endblock page_header %}
+
+            {% with messages = get_flashed_messages(with_categories=True) %}
+                {% if messages %}
+                    <div id="flashes">
+                    {% for category, message in messages %}
+                        {% if category in ['info'] %}
+                            <div class="alert alert-info" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                {{ message }}
+                            </div>
+                        {% elif category in ['error'] %}
+                            <div class="alert alert-danger" role="alert">
+                                <i class="fa fa-exclamation-circle" aria-hidden="true"></i><span class="sr-only">Error: </span>
+                                {{ message }}
+                            </div>
+                        {% elif category in ['debug'] %}
+                            <div class="alert alert-warning" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                {{ message }}
+                            </div>
+                        {% else %}
+                            <div class="alert" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <div class="content" id="main_content" tabindex="-1" role="main">
+                {% block content %}{% endblock content %}
+            </div>
+        </div>
+
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="{{ url_for('.static', filename='js/bootstrap.min.js') }}"></script>
+
+        {% block footer_content %}{% endblock footer_content %}
+
+    </body>
+</html>

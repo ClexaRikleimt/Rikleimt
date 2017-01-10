@@ -1,6 +1,9 @@
-from flask.views import View
-from rikleimt.models import EpisodeSection, EpisodeDetails
+# encoding=utf-8
 import json
+
+from flask.views import View
+
+from rikleimt.models import EpisodeSection, EpisodeDetails
 
 
 class FirstChapter(View):

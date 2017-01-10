@@ -1,0 +1,40 @@
+{% extends 'admin_pages/base_cms.html' %}
+
+
+{% block title %}{{ super() }} - Roles{% endblock title %}
+
+{% block page_header %}
+    <div class="page-header">
+        <h1>Roles</h1>
+    </div>
+{% endblock page_header %}
+
+{% block content %}
+    <table class="table table-striped" id="users_table">
+        <thead>
+            <tr>
+                <th>Role</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for role in roles %}
+                <tr>
+                    <td>{{ role.name }}</td>
+                    <td><a href="{{ url_for('.edit_role', role_id=role.id) }}"><i class="fa fa-pencil" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="Edit role"></i><span class="sr-only">Edit role</span></a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-default" href="{{ url_for('.edit_role') }}">Create new role</a>
+{% endblock content %}
+
+{% block footer_content %}
+    <script type="application/javascript">
+        $(document).ready(function() {
+           $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+{% endblock footer_content %}

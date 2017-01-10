@@ -1,10 +1,11 @@
 # encoding=utf-8
+from hashlib import sha512
+
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 
-# from sqlalchemy import event, DDL
-
 from rikleimt.config import metadata
+from rikleimt.application import bcrypt_
 
 db = SQLAlchemy(metadata=metadata)
 
@@ -285,7 +286,7 @@ class User(db.Model, UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(256), nullable=False)
-    password = db.Column(db.Unicode(60), nullable=False)
+    password = db.Column(db.String(60), nullable=False)
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
     activated = db.Column(db.Boolean(name='activated'), nullable=False, default=False)
 
@@ -302,7 +303,23 @@ class User(db.Model, UserMixin):
         return self.activated
 
     def validate_password(self, password):
-        # TODO: Password logic here
+        return bcrypt_.check_password_hash(self.password, sha512(bytes(password, 'utf-8')).hexdigest())
+
+    @staticmethod
+    def hash_password(password):
+        return bcrypt_.generate_password_hash(sha512(bytes(password, 'utf-8')).hexdigest())
+
+    @property
+    def pages(self):
+        # {'endpoint': name}
+        data = {}
+        for page in self.role.pages:
+            data[page.endpoint] = page.name
+        return data
+
+    @property
+    def menu(self):
+        # TODO [Arlena]
         pass
 
     def __repr__(self):
@@ -332,11 +349,17 @@ class PageAccess(db.Model):
     __tablename__ = 'page_access'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Unicode(50), nullable=False, unique=True)
+    endpoint = db.Column(db.String(60), nullable=False, unique=True)
+    in_menu = db.Column(db.Boolean(name='in_menu'), nullable=False, default=False)
+    is_administrative = db.Column(db.Boolean(name='is_administrative'), nullable=False, default=False)
 
     roles = db.relationship('Role', secondary=roles_pages, back_populates='pages')
 
-    def __init__(self, name):
+    def __init__(self, name, endpoint, in_menu=False, is_administrative=False):
         self.name = name
+        self.endpoint = endpoint
+        self.in_menu = in_menu
+        self.is_administrative = is_administrative
 
     def __repr__(self):
         return '<{0} - {1!r}>'.format(self.__class__.__name__, self.name)

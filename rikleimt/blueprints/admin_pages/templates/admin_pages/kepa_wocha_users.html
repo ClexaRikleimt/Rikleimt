@@ -1,0 +1,43 @@
+{% extends 'admin_pages/base_cms.html' %}
+
+{% block title %}{{ super() }} - Users{% endblock title %}
+
+{% block page_header %}
+    <div class="page-header">
+        <h1>Users</h1>
+    </div>
+{% endblock page_header %}
+
+{% block content %}
+    <table class="table table-striped" id="users_table">
+        <thead>
+            <tr>
+                <th>User (email)</th>
+                <th>Role</th>
+                <th>Activated?</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.role.name }}</td>
+                    <td><i class="fa {% if user.activated %}fa-check-square{% else %}fa-check-minus{% endif %}" aria-hidden="true" data-userid="{{ user.id }}"></i><span class="sr-only">{% if user.activated %}activated{% else %}not activated{% endif %}</span></td>
+                    <td><a href="{{ url_for('.kepa_wocha_edit_user', user_id=user.id) }}"><i class="fa fa-pencil" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="Edit user"></i><span class="sr-only">Edit user</span></a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-default" href="{{ url_for('.kepa_wocha_edit_user') }}">Create new user</a>
+{% endblock content %}
+
+{% block footer_content %}
+    <script type="application/javascript">
+        $(document).ready(function() {
+           $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+{% endblock footer_content %}
