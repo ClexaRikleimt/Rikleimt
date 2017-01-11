@@ -14,6 +14,7 @@ def load_user(user_id):
     except (ValueError, AttributeError):
         return None
 
+
 # TODO: Add routes to app object
 app.add_url_rule('/', TemplateHome.endpoint, methods=['GET'], view_func=TemplateHome.as_view(TemplateHome.endpoint))
 app.add_url_rule('/book', TemplateBook.endpoint, view_func=TemplateBook.as_view(TemplateBook.endpoint), methods=['GET'])

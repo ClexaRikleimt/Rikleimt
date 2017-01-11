@@ -2,12 +2,12 @@
 from wtforms import Form as FormInsecure
 from wtforms import FormField, FieldList
 from flask_wtf import FlaskForm
-from wtforms.validators import DataRequired, Length, Email, EqualTo, InputRequired
+from wtforms.validators import DataRequired, Email, EqualTo, InputRequired
 from flask import Markup
 
 from rikleimt.models import Role
 from rikleimt.blueprints.admin_pages.form_utils import (
-    BS3StringField, BS3SelectField, BS3BooleanField, BS3PasswordField, CKTextAreaField
+    BS3StringField, BS3SelectField, BS3BooleanField, BS3PasswordField
 )
 
 
