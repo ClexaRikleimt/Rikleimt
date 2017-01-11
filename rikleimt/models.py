@@ -1,6 +1,7 @@
 # encoding=utf-8
 from hashlib import sha512
 
+from flask import render_template, Markup
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 
@@ -320,7 +321,13 @@ class User(db.Model, UserMixin):
     @property
     def menu(self):
         # TODO [Arlena]
-        pass
+        administrative_pages = [page for page in self.role.pages if page.is_administrative and page.in_menu]
+        other_pages = [page for page in self.role.pages if not page.is_administrative and page.in_menu]
+
+        menu = render_template('utils/admin_menu.html',
+                               administrative_pages=administrative_pages,
+                               other_pages=other_pages)
+        return Markup(menu)
 
     def __repr__(self):
         return '<{0} - {1!r}>'.format(self.__class__.__name__, self.email)

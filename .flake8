@@ -1,6 +1,9 @@
 [flake8]
-exclude = 
+exclude =
 	node_modules,
 	bower_components,
-	rikleimt/config.py
+	rikleimt/config.py,
+	rikleimt/templates,
+	rikleimt/blueprints/admin_pages/templates
+	rikleimt/blueprints/admin_pages/static
 max-line-length = 120

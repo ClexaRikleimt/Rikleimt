@@ -27,27 +27,26 @@
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
+
                             <a class="navbar-brand" href="{{ url_for('.index') }}">
                                 {% block menu_brand %}Rikleimt - Administrative pages{% endblock menu_brand %}
                             </a>
                         </div>
 
-                        <div class="collapse" id="navbar-header-collapse">
+                        <div class="collapse navbar-collapse" id="navbar-header-collapse">
                             <ul class="nav navbar-nav">
                                 {{ current_user.menu }}
                             </ul>
-                            {% if current_user.is_authenticated %}
-                                <ul class="nav navbar-nav navbar-right">
-                                    <li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fa fa-user" aria-hidden="true"></i><span class="sr-only">Logged in as</span>&nbsp;{{ current_user.name }}&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="{{ url_for('.logout') }}"><i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;Log out</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            {% endif %}
+                            <ul class="nav navbar-nav navbar-right">
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-user" aria-hidden="true"></i><span class="sr-only">Logged in as</span>&nbsp;{{ current_user.email }}&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="{{ url_for('.logout') }}"><i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;Log out</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </nav>

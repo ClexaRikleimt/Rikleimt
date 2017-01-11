@@ -308,8 +308,8 @@ class EditAdminPage(MethodView):
             page = PageAccess.query.filter(PageAccess.id == page_id).first()
             page.name = form.page_name.data
             page.endpoint = form.page_endpoint.data
-            form.in_menu = form.in_menu.data
-            form.is_administrative = form.is_administrative.data
+            page.in_menu = form.in_menu.data
+            page.is_administrative = form.is_administrative.data
 
             form_roles = set()
 
