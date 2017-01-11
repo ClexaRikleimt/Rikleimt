@@ -3,6 +3,7 @@ from wtforms import Form as FormInsecure
 from wtforms import FormField, FieldList
 from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired, Length, Email, EqualTo, InputRequired
+from flask import Markup
 
 from rikleimt.models import Role
 from rikleimt.blueprints.admin_pages.form_utils import (
@@ -83,3 +84,27 @@ book are not administrative, but a page where you edit which users have access t
     roles = FieldList(FormField(RoleHelperForm), 'Roles: ', validators=[
         DataRequired(message='This is a required field')
     ], min_entries=1)
+
+
+class LanguageForm(FlaskForm):
+    name = BS3StringField(label='Language name: ', validators=[
+        DataRequired(message='This is a required field.')
+    ])
+    locale = BS3StringField(label='Locale code: ', validators=[
+        DataRequired(message='This is a required field.')
+    ], help_text=Markup("""
+The `locale code`, or `language code` is a shortened form of the language name, following the locale syntax. It can
+appear in 3 different forms: <br />
+<ol>
+<li>`en` : A 2 letter lowercase language identifier, using a ISO 639-1 language identifier</li>
+<li>`pt_BR` : A 2 letter lowercase language identifier, followed by an underscore and a 2 letter uppercase
+country identifier. The lowercase part uses ISO 639-1 and the uppercase part is a ISO 3166 language name.</li>
+<li>`ru_UA@cyrillic` : This form will seldom be used. This uses the 2nd format, but ends with '@variant', where
+variant is a (lowercase) description (for example script designator). This way, you can also have a language with
+locale code `ru_UA@latin` for Russian spoken in Ukraine that uses the latin script.
+</ol>
+See <a href="https://www.gnu.org/software/gettext/manual/html_node/Usual-Language-Codes.html" target="_blank">
+language code</a> for the lowercase language identifiers and for the
+<a href="https://www.gnu.org/software/gettext/manual/html_node/Country-Codes.html" target="_blank">uppercase country
+identifiers.</a>
+"""))

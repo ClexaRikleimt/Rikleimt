@@ -3,7 +3,8 @@ from flask import Blueprint
 
 from rikleimt.application import login_manager
 from rikleimt.blueprints.admin_pages.views import (
-    Login, Logout, Index, KepaWochaUsers, KepaWochaEditUser, Roles, EditRole, AdminPages, EditAdminPage
+    Login, Logout, Index, KepaWochaUsers, KepaWochaEditUser, Roles, EditRole, AdminPages, EditAdminPage,
+    LanguagesIndex, EditLanguage
 )
 
 admin_pages_bp = Blueprint('admin_pages', __name__, static_folder='static', template_folder='templates')
@@ -38,6 +39,15 @@ admin_pages_bp.add_url_rule('/admin_pages/edit', EditAdminPage.endpoint, default
                             methods=['GET', 'POST'], view_func=edit_admin_page_view)
 admin_pages_bp.add_url_rule('/admin_pages/edit/<int:page_id>', EditAdminPage.endpoint, view_func=edit_admin_page_view,
                             methods=['GET', 'POST'])
+
+admin_pages_bp.add_url_rule('/languages', LanguagesIndex.endpoint, methods=['GET', 'POST'],
+                            view_func=LanguagesIndex.as_view(LanguagesIndex.endpoint))
+
+edit_language_view = EditLanguage.as_view(EditLanguage.endpoint)
+admin_pages_bp.add_url_rule('/languages/edit', EditLanguage.endpoint, defaults={'language_id': -1},
+                            methods=['GET', 'POST'], view_func=edit_language_view)
+admin_pages_bp.add_url_rule('/languages/edit/<int:language_id>', EditLanguage.endpoint, methods=['GET', 'POST'],
+                            view_func=edit_language_view)
 
 # =========================================================
 

@@ -6,10 +6,10 @@ from flask_login import login_required, login_user, logout_user
 from sqlalchemy.exc import IntegrityError
 
 from rikleimt.blueprints.admin_pages.forms import (
-    LoginForm, KepaWochaUserFormCreate, KepaWochaUserFormEdit, RoleForm, PageAccessForm, RoleHelperForm
+    LoginForm, KepaWochaUserFormCreate, KepaWochaUserFormEdit, RoleForm, PageAccessForm, RoleHelperForm, LanguageForm
 )
 from rikleimt.decorators import role_access
-from rikleimt.models import db, User, Role, PageAccess
+from rikleimt.models import db, User, Role, PageAccess, Language
 
 
 class Login(View):
@@ -107,7 +107,8 @@ class KepaWochaEditUser(MethodView):
 
         if form.validate_on_submit():
             if user_id == -1:
-                user = User(form.email.data, form.password.data, form.role.data, form.activated.data)
+                user = User(form.email.data, User.hash_password(form.password.data), form.role.data,
+                            form.activated.data)
                 db.session.add(user)
                 try:
                     db.session.commit()
@@ -332,10 +333,83 @@ class EditAdminPage(MethodView):
                 db.session.commit()
             except IntegrityError as exception:
                 db.session.rollback()
-                # TOOD: testing [Arlena]
+                # TODO: testing [Arlena]
                 flash('Failed to edit this administrative page. Tech data: {0}'.format(exception), 'error')
                 return render_template('admin_pages/admin_pages_edit.html', form=form, page_id=page_id,
                                        min_roles=self.min_roles)
             else:
                 flash('Successfully edited {0!r}'.format(form.page_name.data), 'info')
                 return redirect(url_for('.{0}'.format(AdminPages.endpoint)))
+
+
+class LanguagesIndex(View):
+    endpoint = 'languages_index'
+    decorators = [login_required, role_access]
+
+    def dispatch_request(self):
+        languages = Language.query.order_by('name').all()
+
+        return render_template('admin_pages/languages.html', languages=languages)
+
+
+class EditLanguage(MethodView):
+    endpoint = 'edit_language'
+    decorators = [login_required, role_access]
+
+    def get(self, language_id):
+        form = LanguageForm()
+
+        if language_id == -1:
+            # New language
+            pass
+        else:
+            # Pull info from db
+            lang = Language.query.filter(Language.id == language_id).first()
+            if not lang:
+                flash('The language that was selected for edit does not exist.', 'error')
+                return redirect(url_for('.{0}'.format(LanguagesIndex.endpoint)))
+
+            form.name.data = lang.name
+            form.locale.data = lang.locale_code
+
+        return render_template('admin_pages/languages_edit.html', form=form, language_id=language_id)
+
+    def post(self, language_id):
+        form = LanguageForm()
+
+        if not form.validate_on_submit():
+            return render_template('admin_pages/languages_edit.html', form=form, language_id=language_id)
+
+        if language_id == -1:
+            lang = Language(form.name.data, form.locale.data)
+            db.session.add(lang)
+
+            try:
+                db.session.commit()
+            except IntegrityError as exception:
+                db.session.rollback()
+                # TODO: testing [Arlena]
+                flash('Failed to create language {0!r}. Tech data: {1}'.format(form.name.data, exception), 'error')
+                return render_template('admin_pages/languages_edit.html', form=form, language_id=language_id)
+            else:
+                flash('Successfully created language {0!r}'.format(form.name.data), 'info')
+                return redirect(url_for('.{0}'.format(LanguagesIndex.endpoint)))
+        else:
+            lang = Language.query.filter(Language.id == language_id).first()
+            if not lang:
+                flash('The language that was selected for edit does not exist.', 'error')
+                return redirect(url_for('.{0}'.format(LanguagesIndex.endpoint)))
+
+            lang.name = form.name.data
+            lang.locale_code = form.locale.data
+
+            try:
+                db.session.commit()
+            except IntegrityError as exception:
+                db.session.rollback()
+                # TODO: testing [Arlena]
+                flash('Failed to edit language {0!r}. Tech data: {1}'.format(form.name.data, exception), 'error')
+                return render_template('admin_pages/languages_edit.html', form=form, language_id=language_id)
+            else:
+                flash('Successfully edited language {0!r}'.format(form.name.data), 'info')
+                return redirect(url_for('.{0}'.format(LanguagesIndex.endpoint)))
