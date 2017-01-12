@@ -61,7 +61,7 @@ class Language(db.Model):
     __tablename__ = 'language'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Unicode(60), nullable=False)
-    locale_code = db.Column(db.Unicode(70), nullable=False)
+    locale_code = db.Column(db.Unicode(30), nullable=False)
 
     def __init__(self, name, locale_code):
         self.name = name
@@ -75,14 +75,45 @@ class Episode(db.Model):
     __tablename__ = 'episode'
     episode_no = db.Column(db.Integer, primary_key=True)
     sfw = db.Column('sfw', db.Boolean(name='sfw'), nullable=False, default=True)
+    n_sections = db.Column(db.Integer, nullable=False)
 
-    details = db.relationship('EpisodeDetails', back_populates='episode')
+    details = db.relationship('EpisodeDetails', back_populates='episode', order_by='EpisodeDetails.language_id')
 
     sections = db.relationship('EpisodeSection', back_populates='episode', order_by='EpisodeSection.section_no')
 
-    def __init__(self, episode_no, sfw):
+    def __init__(self, episode_no, sfw, n_sections):
         self.episode_no = episode_no
         self.sfw = sfw
+        self.n_sections = n_sections
+
+    def is_fully_translated(self, language_id):
+        return db.session.query(db.func.count(EpisodeSection.id)).filter(
+            EpisodeSection.language_id == language_id and EpisodeSection.episode_no == self.episode_no
+        ).scalar() == self.n_sections
+
+    @property
+    def all_translations_present(self):
+        return db.session.query(db.func.count(Language.id)).scalar() == len(self.details)
+
+    @property
+    def languages_not_translated_to(self):
+        languages = {l.id: l.name for l in Language.query.all()}
+        for episode_version in self.details:
+            if episode_version.language_id in languages.keys():
+                languages.pop(episode_version.language_id)
+
+        return languages
+
+    @property
+    def languages_available_in(self):
+        languages = []
+        for episode_version in self.details:
+            languages.append({
+                'language_id': episode_version.language_id,
+                'language_name': episode_version.language.name,
+                'fully_translated': self.is_fully_translated(episode_version.language_id)
+            })
+        return languages
 
     def __repr__(self):
         return '<{0} - {1!r}>'.format(self.__class__.__name__, self.episode_no)
@@ -94,6 +125,7 @@ class EpisodeDetails(db.Model):
     episode_no = db.Column(db.Integer, db.ForeignKey('episode.episode_no'))
 
     episode = db.relationship('Episode', back_populates='details', uselist=False)
+    language = db.relationship('Language', uselist=False)
 
     title = db.Column(db.Unicode(120), nullable=True)
     warnings = db.Column('trigger_warnings', db.Unicode(1000), nullable=True)
@@ -179,13 +211,15 @@ class SideStory(db.Model):
     __tablename__ = 'side_story'
     id = db.Column(db.Integer, primary_key=True)
     sfw = db.Column('sfw', db.Boolean(name='sfw'), nullable=False, default=True)
+    n_sections = db.Column(db.Integer, nullable=False)
 
     details = db.relationship('SideStoryDetails', back_populates='side_story')
 
     sections = db.relationship('SideStorySection', back_populates='side_story', order_by='SideStorySection.section_no')
 
-    def __init__(self, sfw):
+    def __init__(self, sfw, n_sections):
         self.sfw = sfw
+        self.n_sections = n_sections
 
     def __repr__(self):
         return '<{0} - {1!r}>'.format(self.__class__.__name__, self.id)

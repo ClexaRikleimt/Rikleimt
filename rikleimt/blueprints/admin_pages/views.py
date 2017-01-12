@@ -6,10 +6,11 @@ from flask_login import login_required, login_user, logout_user
 from sqlalchemy.exc import IntegrityError
 
 from rikleimt.blueprints.admin_pages.forms import (
-    LoginForm, KepaWochaUserFormCreate, KepaWochaUserFormEdit, RoleForm, PageAccessForm, RoleHelperForm, LanguageForm
+    LoginForm, KepaWochaUserFormCreate, KepaWochaUserFormEdit, RoleForm, PageAccessForm, RoleHelperForm, LanguageForm,
+    CreateEpisodeForm, EditEpisodeForm
 )
 from rikleimt.decorators import role_access
-from rikleimt.models import db, User, Role, PageAccess, Language
+from rikleimt.models import db, User, Role, PageAccess, Language, Episode, EpisodeDetails, EpisodeSection
 
 
 class Login(View):
@@ -416,3 +417,164 @@ class EditLanguage(MethodView):
             else:
                 flash('Successfully edited language {0!r}'.format(form.name.data), 'info')
                 return redirect(url_for('.{0}'.format(LanguagesIndex.endpoint)))
+
+
+# Welcome to the monster of code that is the handling of episodes and editing them. Please, make yourself a warm
+# cup of coffee or tea before diving in. And comment on commits/slack with questions, as it is hard to
+# understand for the author too... :/
+class EpisodeIndex(View):
+    """View that shows an index of all episodes"""
+    endpoint = 'episode_index'
+    decorators = [login_required, role_access]
+
+    def dispatch_request(self):
+        episodes = Episode.query.all()
+
+        # Better to do those db queries up front, than having to repeat them in the template
+        episodes_languages = {}
+        for episode in episodes:
+            episodes_languages[episode.episode_no] = episode.languages_available_in
+
+        return render_template('admin_pages/episodes_index.html', episodes=episodes,
+                               episodes_languages=episodes_languages)
+
+
+class EditEpisode(MethodView):
+    """View that shows the form to edit static episode content"""
+    endpoint = 'edit_episode'
+    decorators = [login_required, role_access]
+
+    def get(self, episode_no):
+        if episode_no == -1:
+            # New episode, show different form
+            form = CreateEpisodeForm()
+            form.original_language.choices = [(l.id, l.name) for l in Language.query.all()]
+            # TODO: Intialise the form with total number of episodes + 1 as episode_no
+        else:
+            form = EditEpisodeForm()
+
+            # Pull info from db
+            episode = Episode.query.filter(Episode.episode_no == episode_no).first()
+            if not episode:
+                flash('The episode selected for edit does not exist.', 'error')
+                return redirect(url_for('.{0}'.format(EpisodeIndex.endpoint)))
+
+            form.episode_no.data = episode.episode_no
+            form.sfw.data = episode.sfw
+            form.n_sections.data = episode.n_sections
+
+        return render_template('admin_pages/edit_episode.html', form=form, episode_no=episode_no)
+
+    def post(self, episode_no):
+        if episode_no == -1:
+            # New episode, show different form
+            form = CreateEpisodeForm()
+            form.original_language.choices = [(l.id, l.name) for l in Language.query.all()]
+        else:
+            form = EditEpisodeForm()
+
+        if not form.validate_on_submit():
+            return render_template('admin_pages/edit_episode.html', form=form, episode_no=episode_no)
+
+        if episode_no == -1:
+            episode = Episode(form.episode_no.data, form.sfw.data, form.n_sections.data)
+            details = EpisodeDetails(form.original_language.data, form.episode_no.data,
+                                     form.episode_name.data if form.episode_name.data is not '' else None,
+                                     form.trigger_warnings.data if form.trigger_warnings.data is not '' else None)
+
+            db.session.add(episode)
+            db.session.add(details)
+
+            try:
+                db.session.commit()
+            except IntegrityError as exception:
+                db.session.rollback()
+                # TODO: testing [Arlena]
+                flash('Failed to create the new episode {0}. Tech data: {1!r}'.format(form.episode_no.data, exception),
+                      'error')
+                return render_template('admin_pages/edit_episode.html', form=form, episode_no=episode_no)
+            else:
+                flash('Successfully created episode {0}'.format(form.episode_no.data), 'info')
+                return redirect(url_for('.{0}'.format(EpisodeTranslationDetails.endpoint),
+                                        episode_no=episode.episode_no, language_id=form.original_language.data))
+        else:
+            episode = Episode.query.filter(Episode.episode_no == episode_no).first()
+            if not episode:
+                flash('The episode selected for edit does not exist.', 'error')
+                return redirect(url_for('.{0}'.format(EpisodeIndex.endpoint)))
+
+            episode.episode_no = form.episode_no.data
+            episode.sfw = form.sfw.data
+            episode.n_sections = form.sfw.data
+
+            try:
+                db.session.commit()
+            except IntegrityError as exception:
+                db.session.rollback()
+                # TODO: testing [Arlena]
+                flash('Failed to edit this episode. Tech data: {0!r}'.format(exception), 'error')
+                return render_template('admin_pages/edit_episode.html', form=form, episode_no=episode_no)
+            else:
+                flash('Successfully edited episode {0}'.format(form.episode_no.data), 'info')
+                return redirect(url_for('.{0}'.format(EpisodeViewDetails.endpoint), episode_no=episode_no))
+
+
+class EpisodeTranslationDetails(View):
+    """View that shows information about a given 'translation' of an episode, including the sections."""
+    endpoint = 'episode_translation_details'
+    decorators = [login_required, role_access]
+
+    def dispatch_request(self, episode_no, language_id):
+        details = EpisodeDetails.query.filter(EpisodeDetails.episode_no == episode_no
+                                              and EpisodeDetails.language_id == language_id).first()
+        if not details:
+            flash('Translation of this episode was not found', 'error')
+            return redirect(url_for('.{0}'.format(EpisodeViewDetails.endpoint), episode_no=episode_no))
+
+        sections = EpisodeSection.query.filter(
+            EpisodeSection.episode_no == episode_no and EpisodeSection.language_id == language_id
+        ).order_by(EpisodeSection.section_no).all()
+
+        return render_template('admin_pages/episode_translation_details.html', details=details, sections=sections)
+
+
+class EpisodeEditTranslation(MethodView):
+    """View that shows the form to edit translatable episode content"""
+    endpoint = 'edit_episode_translation'
+    decorators = [login_required, role_access]
+
+    def get(self, episode_no, language_id):
+        if language_id == -1:
+            # New translation
+            pass
+        raise NotImplementedError()
+
+    def post(self, episode_no, language_id):
+        raise NotImplementedError()
+
+
+class EpisodeViewDetails(View):
+    """View that shows the details of an episode, giving more info than the episode index"""
+    endpoint = 'episode_details'
+    decorators = [login_required, role_access]
+
+    def dispatch_request(self, episode_no):
+        episode = Episode.query.filter(Episode.episode_no == episode_no).first()
+        if not episode:
+            flash('Episode not found', 'error')
+            return redirect(url_for('.{0}'.format(EpisodeIndex.endpoint)))
+
+
+class EpisodeEditSection(MethodView):
+    """View that shows the form to edit a section of an episode"""
+    endpoint = 'edit_episode_section'
+    decorators = [login_required, role_access]
+
+    def get(self, episode_no, language_id, section_no):
+        if section_no == -1:
+            # new section
+            pass
+        raise NotImplementedError()
+
+    def post(self, episode_no, language_id, section_no):
+        raise NotImplementedError()

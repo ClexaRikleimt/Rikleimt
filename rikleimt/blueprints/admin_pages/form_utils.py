@@ -1,5 +1,5 @@
 # encoding=utf-8
-from wtforms import TextAreaField, BooleanField, StringField, PasswordField, SelectField
+from wtforms import TextAreaField, BooleanField, StringField, PasswordField, SelectField, IntegerField
 from wtforms.widgets import TextArea
 
 # Helpers
@@ -81,5 +81,18 @@ class BS3BooleanField(BooleanField):
                 kwargs.pop(attr)
 
         super(BS3BooleanField, self).__init__(**kwargs)
+
+        self.bs3 = BS3Helper(**bs3_kwargs)
+
+
+class BS3IntegerField(IntegerField):
+    def __init__(self, **kwargs):
+        bs3_kwargs = dict()
+        for attr in BS3_ATTRIBUTES:
+            if attr in kwargs:
+                bs3_kwargs[attr] = kwargs[attr]
+                kwargs.pop(attr)
+
+        super(BS3IntegerField, self).__init__(**kwargs)
 
         self.bs3 = BS3Helper(**bs3_kwargs)

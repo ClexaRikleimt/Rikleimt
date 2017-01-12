@@ -4,7 +4,8 @@ from flask import Blueprint
 from rikleimt.application import login_manager
 from rikleimt.blueprints.admin_pages.views import (
     Login, Logout, Index, KepaWochaUsers, KepaWochaEditUser, Roles, EditRole, AdminPages, EditAdminPage,
-    LanguagesIndex, EditLanguage
+    LanguagesIndex, EditLanguage, EpisodeIndex, EditEpisode, EpisodeTranslationDetails, EpisodeEditTranslation,
+    EpisodeViewDetails, EpisodeEditSection
 )
 
 admin_pages_bp = Blueprint('admin_pages', __name__, static_folder='static', template_folder='templates')
@@ -48,6 +49,33 @@ admin_pages_bp.add_url_rule('/languages/edit', EditLanguage.endpoint, defaults={
                             methods=['GET', 'POST'], view_func=edit_language_view)
 admin_pages_bp.add_url_rule('/languages/edit/<int:language_id>', EditLanguage.endpoint, methods=['GET', 'POST'],
                             view_func=edit_language_view)
+
+# Are you ready for the episodes? Even if you're not, here it is
+edit_episode_view = EditEpisode.as_view(EditEpisode.endpoint)
+episode_edit_translation_view = EpisodeEditTranslation.as_view(EpisodeEditTranslation.endpoint)
+episode_edit_section_view = EpisodeEditSection.as_view(EpisodeEditSection.endpoint)
+
+admin_pages_bp.add_url_rule('/episodes', EpisodeIndex.endpoint, view_func=EpisodeIndex.as_view(EpisodeIndex.endpoint),
+                            methods=['GET'])
+admin_pages_bp.add_url_rule('/episodes/edit', EditEpisode.endpoint, defaults={'episode_no': -1},
+                            methods=['GET', 'POST'], view_func=edit_episode_view)
+admin_pages_bp.add_url_rule('/episodes/edit/<int:episode_no>', EditEpisode.endpoint, view_func=edit_episode_view,
+                            methods=['GET', 'POST'])
+admin_pages_bp.add_url_rule('/episodes/<int:episode_no>', EpisodeViewDetails.endpoint, methods=['GET'],
+                            view_func=EpisodeViewDetails.as_view(EpisodeViewDetails.endpoint))
+admin_pages_bp.add_url_rule('/episodes/<int:episode_no>/language/<int:language_id>', EpisodeTranslationDetails.endpoint,
+                            methods=['GET'],
+                            view_func=EpisodeTranslationDetails.as_view(EpisodeEditTranslation.endpoint))
+admin_pages_bp.add_url_rule('/episodes/<int:episode_no>/edit', EpisodeEditTranslation.endpoint, methods=['GET', 'POST'],
+                            defaults={'language_id': -1}, view_func=episode_edit_translation_view)
+admin_pages_bp.add_url_rule('/episodes/<int:episode_no>/edit/language/<int:language_id>',
+                            EpisodeEditTranslation.endpoint, methods=['GET', 'POST'],
+                            view_func=episode_edit_translation_view)
+admin_pages_bp.add_url_rule('/episodes/<int:episode_no>/language/<int:language_id>/section/edit',
+                            EpisodeEditSection.endpoint, defaults={'section_no': -1}, methods=['GET', 'POST'],
+                            view_func=episode_edit_section_view)
+admin_pages_bp.add_url_rule('/episodes/<int:episode_no>/language/<int:language_id>/section/<int:section_no>/edit',
+                            EpisodeEditSection.endpoint, methods=['GET', 'POST'], view_func=episode_edit_section_view)
 
 # =========================================================
 
