@@ -354,7 +354,6 @@ class User(db.Model, UserMixin):
 
     @property
     def menu(self):
-        # TODO [Arlena]
         administrative_pages = [page for page in self.role.pages if page.is_administrative and page.in_menu]
         other_pages = [page for page in self.role.pages if not page.is_administrative and page.in_menu]
 

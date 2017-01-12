@@ -65,7 +65,7 @@ admin_pages_bp.add_url_rule('/episodes/<int:episode_no>', EpisodeViewDetails.end
                             view_func=EpisodeViewDetails.as_view(EpisodeViewDetails.endpoint))
 admin_pages_bp.add_url_rule('/episodes/<int:episode_no>/language/<int:language_id>', EpisodeTranslationDetails.endpoint,
                             methods=['GET'],
-                            view_func=EpisodeTranslationDetails.as_view(EpisodeEditTranslation.endpoint))
+                            view_func=EpisodeTranslationDetails.as_view(EpisodeTranslationDetails.endpoint))
 admin_pages_bp.add_url_rule('/episodes/<int:episode_no>/edit', EpisodeEditTranslation.endpoint, methods=['GET', 'POST'],
                             defaults={'language_id': -1}, view_func=episode_edit_translation_view)
 admin_pages_bp.add_url_rule('/episodes/<int:episode_no>/edit/language/<int:language_id>',

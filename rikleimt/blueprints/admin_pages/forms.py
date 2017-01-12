@@ -146,7 +146,7 @@ the prologue includes, has 7 scenes: prologue, 1, 2, 3, 3B, 4, 5.
 """)
 
 
-class EditEpisodeTranslation(FlaskForm):
+class EditEpisodeTranslationForm(FlaskForm):
     # Episode number will be part of the URL, the page displaying this form will be loaded via a link on either the
     # episode index or on the details page of the specific episode.
     language = BS3SelectField(label='Language of the translation: ', coerce=int, validators=[
@@ -156,7 +156,7 @@ class EditEpisodeTranslation(FlaskForm):
     trigger_warnings = CKTextAreaField(label='Are there any trigger warnings the reader should be aware of? ')
 
 
-class EpisodeSection(FlaskForm):
+class EpisodeSectionForm(FlaskForm):
     # Episode number will be part of the URL, the page displaying this form will be loaded via a link on the
     # episode details page.
     # Same for the specific language

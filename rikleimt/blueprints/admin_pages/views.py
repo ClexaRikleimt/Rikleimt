@@ -7,10 +7,13 @@ from sqlalchemy.exc import IntegrityError
 
 from rikleimt.blueprints.admin_pages.forms import (
     LoginForm, KepaWochaUserFormCreate, KepaWochaUserFormEdit, RoleForm, PageAccessForm, RoleHelperForm, LanguageForm,
-    CreateEpisodeForm, EditEpisodeForm
+    CreateEpisodeForm, EditEpisodeForm, EditEpisodeTranslationForm
 )
 from rikleimt.decorators import role_access
 from rikleimt.models import db, User, Role, PageAccess, Language, Episode, EpisodeDetails, EpisodeSection
+
+
+# TODO: Improve error messages on rollback actions
 
 
 class Login(View):
@@ -525,15 +528,16 @@ class EpisodeTranslationDetails(View):
     decorators = [login_required, role_access]
 
     def dispatch_request(self, episode_no, language_id):
-        details = EpisodeDetails.query.filter(EpisodeDetails.episode_no == episode_no
-                                              and EpisodeDetails.language_id == language_id).first()
+        details = EpisodeDetails.query.filter(db.and_(
+            EpisodeDetails.episode_no == episode_no, EpisodeDetails.language_id == language_id)
+        ).first()
         if not details:
             flash('Translation of this episode was not found', 'error')
             return redirect(url_for('.{0}'.format(EpisodeViewDetails.endpoint), episode_no=episode_no))
 
-        sections = EpisodeSection.query.filter(
-            EpisodeSection.episode_no == episode_no and EpisodeSection.language_id == language_id
-        ).order_by(EpisodeSection.section_no).all()
+        sections = EpisodeSection.query.filter(db.and_(
+            EpisodeSection.episode_no == episode_no, EpisodeSection.language_id == language_id
+        )).order_by(EpisodeSection.section_no).all()
 
         return render_template('admin_pages/episode_translation_details.html', details=details, sections=sections)
 
@@ -544,13 +548,103 @@ class EpisodeEditTranslation(MethodView):
     decorators = [login_required, role_access]
 
     def get(self, episode_no, language_id):
+        episode = Episode.query.filter(Episode.episode_no == episode_no).first()
+        if not episode:
+            flash('The episode that was selected for edit does not exist.', 'error')
+            return redirect(url_for('.{0}'.format(EpisodeIndex.endpoint)))
+
+        form = EditEpisodeTranslationForm()
+
         if language_id == -1:
-            # New translation
-            pass
-        raise NotImplementedError()
+            # New translation, prepare form with allowed languages
+            form.language.choices = [(id_, name) for id_, name in episode.languages_not_translated_to.items()]
+        else:
+            # Existing, pull info from db, put set the language selection to only include the current one
+            details = EpisodeDetails.query.filter(db.and_(
+                EpisodeDetails.episode_no == episode_no, EpisodeDetails.language_id == language_id
+            )).first()
+            if not details:
+                flash('The translation that was selected for edit does not exist.', 'error')
+                return redirect(url_for('.{0}'.format(EpisodeViewDetails.endpoint), episode_no=episode_no))
+
+            form.language.choices = [(language_id, details.language.name)]
+            form.language.data = language_id
+            form.episode_name.data = details.title
+            form.trigger_warnings.data = details.warnings
+
+        return render_template('admin_pages/edit_episode_translation.html', form=form, episode_no=episode_no,
+                               language_id=language_id)
 
     def post(self, episode_no, language_id):
-        raise NotImplementedError()
+        episode = Episode.query.filter(Episode.episode_no == episode_no).first()
+        if not episode:
+            flash('The episode that was selected for edit does not exist.', 'error')
+            return redirect(url_for('.{0}'.format(EpisodeIndex.endpoint)))
+
+        form = EditEpisodeTranslationForm()
+
+        if language_id == -1:
+            # New translation, add allowed languages to the form for validation
+            form.language.choices = [(id_, name) for id_, name in episode.languages_not_translated_to.items()]
+        else:
+            # Existing, put the language selection to only include the current one
+            language = Language.query.filter(Language.id == language_id).first()
+            if not language:
+                flash('The language that was selected to translate to does not exist.', 'error')
+
+            form.language.choices = [(language_id, language.name)]
+
+        if not form.validate_on_submit():
+            return render_template('admin_pages/edit_episode_translation.html', form=form, episode_no=episode_no,
+                                   language_id=language_id)
+        if language_id == -1:
+            # Add translation to database
+            translation = EpisodeDetails(form.language.data, episode_no, form.episode_name.data,
+                                         form.trigger_warnings.data)
+            db.session.add(translation)
+
+            try:
+                db.session.commit()
+            except IntegrityError as exception:
+                db.session.rollback()
+                # TODO: testing [Arlena]
+                flash('Failed to create a new translation of episode {0}. Tech data: {0!r}'.format(
+                    episode_no, exception
+                ), 'error')
+                return render_template('admin_pages/edit_episode_translation.html', form=form, episode_no=episode_no,
+                                       language_id=language_id)
+            else:
+                flash('Successfully created a new translation in {0} of episode {1}'.format(
+                    translation.language.name, episode_no
+                ), 'info')
+                return redirect(url_for('.{0}'.format(EpisodeViewDetails.endpoint), episode_no=episode_no))
+        else:
+            details = EpisodeDetails.query.filter(db.and_(
+                EpisodeDetails.episode_no == episode_no, EpisodeDetails.language_id == language_id
+            )).first()
+            if not details:
+                flash('The translation that was selected for edit does not exist.', 'error')
+                return redirect(url_for('.{0}'.format(EpisodeViewDetails.endpoint), episode_no=episode_no))
+
+            # The language part has become static on editing, so we won't have to send a change for that to the db
+            details.title = form.episode_name.data
+            details.warnings = form.trigger_warnings.data
+
+            try:
+                db.session.commit()
+            except IntegrityError as exception:
+                db.session.rollback()
+                # TODO: testing [Arlena]
+                flash('Failed to edit the translation of episode {0}. Tech data: {0!r}'.format(
+                    episode_no, exception
+                ), 'error')
+                return render_template('admin_pages/edit_episode_translation.html', form=form, episode_no=episode_no,
+                                       language_id=language_id)
+            else:
+                flash('Successfully edited the {0} translation of episode {1}'.format(
+                    details.language.name, episode_no
+                ), 'info')
+                return redirect(url_for('.{0}'.format(EpisodeViewDetails.endpoint), episode_no=episode_no))
 
 
 class EpisodeViewDetails(View):
@@ -563,6 +657,9 @@ class EpisodeViewDetails(View):
         if not episode:
             flash('Episode not found', 'error')
             return redirect(url_for('.{0}'.format(EpisodeIndex.endpoint)))
+
+        # TODO: complete template in the morning
+        return render_template('admin_pages/episode_details.html', episode=episode)
 
 
 class EpisodeEditSection(MethodView):
