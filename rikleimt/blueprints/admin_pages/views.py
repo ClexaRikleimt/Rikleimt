@@ -27,7 +27,10 @@ class Login(View):
                 return render_template('admin_pages/login.html', form=form)
             if user.validate_password(form.password.data):
                 # Valid login
-                login_user(user, form.remember.data)
+                if not login_user(user, form.remember.data):
+                    flash('This account is not yet or no longer allowed to log in. Contact kepa-wocha with questions.',
+                          'error')
+                    return render_template('admin_pages/login.html', form=form)
 
                 next_ = request.args.get('next')
                 # TODO: validate `next_` (now vulnerable for open redirects) [Arlena]
@@ -118,7 +121,7 @@ class KepaWochaEditUser(MethodView):
                     flash('Failed to create the user. Technical data: {0}'.format(exception), 'error')
                     return render_template('admin_pages/kepa_wocha_user_edit.html', form=form, user_id=user_id)
                 else:
-                    flash('Successfully created the new user.')
+                    flash('Successfully created the new user.', 'info')
                     return redirect(url_for('.{0}'.format(KepaWochaUsers.endpoint)))
             else:
                 user = User.query.filter(User.id == user_id).first()
