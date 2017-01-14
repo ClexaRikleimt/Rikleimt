@@ -4,15 +4,11 @@ node_modules
 npm-debug.log
 assets/styles/devtools/_imagehelper.scss
 favicons.zip
-
 .idea/
-
 rikleimt/static/plugins/
 rikleimt/__pycache__/
 rikleimt/config.py
-
 static/plugins/
-
 config.py
 __pycache__/
-
+*.pyc
