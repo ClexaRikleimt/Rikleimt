@@ -60,11 +60,7 @@
       </div>
     </header> <!-- /#siteHeader -->
 
-    <section id="content" role="document">
-      <div class="inner">
-        {% block content %}{% endblock %}
-      </div>
-    </section>
+    {% block content %}{% endblock %}
 
     <footer id="siteFooter" role="contentinfo">
       <div class="sub">
@@ -78,6 +74,7 @@
   </div> <!-- /#page -->
 
   <script type='text/javascript' src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script type='text/javascript' src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
   {% assets 'js_main' %}
     <script type='text/javascript' src='{{ ASSET_URL }}'></script>

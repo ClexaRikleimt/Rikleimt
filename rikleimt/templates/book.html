@@ -9,24 +9,54 @@
 {% block bodyclasses %}is-book is-main-story{% endblock %}
 
 {% block content %}
-  <section class="book">
-    <div class="content">
-      <div>This is the cover 2</div>
-      <div>
-        <div class="text">
-          <p><a href="#" data-toggle="tooltip" title="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, tempora.">Lorem</a> ipsum dolor sit amet, <a href="#" data-toggle="tooltip" title="Some tooltip text!">consectetur adipisicing</a> <a href="#" data-toggle="tooltip" title="Some tooltip text!">elit</a>. Commodi optio, quidem earum eius aliquid nostrum cupiditate necessitatibus iure laudantium. Deserunt!</p>
-          <p>Accusantium, consequatur. <a href="#" data-toggle="tooltip" title="Some tooltip text!">Voluptas</a> animi, perferendis aspernatur corporis ea ipsum esse! <a href="#" data-toggle="tooltip" title="Some tooltip text!">Asperiores ipsa consequatur nemo accusantium quibusdam</a> impedit quae, amet explicabo.</p>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi odit placeat doloribus corrupti dolorem magnam possimus ipsa repudiandae, tenetur neque.</p>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Soluta, similique sit ea natus aperiam. Aut dignissimos impedit, tenetur nisi delectus exercitationem. Necessitatibus rerum eum vel libero, impedit voluptates hic dolore. Asperiores iusto accusantium mollitia debitis, itaque quaerat veritatis dolores consequatur expedita omnis error dolorem facilis sequi tempora similique possimus corporis.</p>
-          <p>Dolorem sit recusandae iste temporibus repellat, ut maiores quia facere laboriosam quisquam porro, alias, beatae explicabo, voluptates incidunt dolor excepturi. Ea, porro, minima! Iste nesciunt ratione sapiente, corrupti, vero, rerum aut amet perferendis numquam soluta perspiciatis tenetur, voluptas praesentium quaerat nemo itaque accusamus aliquam magni molestias inventore? Asperiores dicta, dignissimos.</p>
-          <p>In dolorem sit beatae necessitatibus dolore molestiae quos voluptatibus sunt adipisci repellat, temporibus, vel inventore, cumque veniam laborum neque quas, sapiente. Quod quibusdam placeat dolorem, aliquid, impedit odio provident nulla recusandae facere ipsum esse, at ea totam quasi qui. Aspernatur nobis, quisquam nesciunt veritatis distinctio sint aperiam, suscipit iure quis.</p>
+  <section id="content" role="document">
+    <div class="inner">
+      <section class="book">
+        <div class="content">
+          <div>This is the cover 2</div>
+          <div>
+            <div class="text">
+              <p><a href="#" data-toggle="tooltip" title="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo, tempora.">Lorem</a> ipsum dolor sit amet, <a href="#" data-toggle="tooltip" title="Some tooltip text!">consectetur adipisicing</a> <a href="#" data-toggle="tooltip" title="Some tooltip text!">elit</a>. Commodi optio, quidem earum eius aliquid nostrum cupiditate necessitatibus iure laudantium. Deserunt!</p>
+              <p>Accusantium, consequatur. <a href="#" data-toggle="tooltip" title="Some tooltip text!">Voluptas</a> animi, perferendis aspernatur corporis ea ipsum esse! <a href="#" data-toggle="tooltip" title="Some tooltip text!">Asperiores ipsa consequatur nemo accusantium quibusdam</a> impedit quae, amet explicabo.</p>
+              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi odit placeat doloribus corrupti dolorem magnam possimus ipsa repudiandae, tenetur neque.</p>
+              <p>Lorem ipsum dolor <a href="#" data-toggle="wikibox" data-title="Wiki word" data-content="And here's some amazing content. It's very engaging. Right?">sit amet, consectetur</a> adipisicing elit. Soluta, similique sit ea natus aperiam. Aut dignissimos impedit, tenetur nisi delectus exercitationem. Necessitatibus rerum eum vel libero, impedit voluptates hic dolore. Asperiores iusto accusantium mollitia debitis, itaque quaerat veritatis dolores consequatur expedita omnis error dolorem facilis sequi tempora similique possimus corporis.</p>
+              <p>Dolorem sit recusandae iste temporibus repellat, <a href="#" data-toggle="wikibox" data-title="Another incredible word from the Wiki" data-content="And here's some amazing content. It's very engaging. Right?">ut maiores quia facere</a> laboriosam quisquam porro, alias, beatae explicabo, voluptates incidunt dolor excepturi. Ea, porro, minima! Iste nesciunt ratione sapiente, corrupti, vero, rerum aut amet perferendis numquam soluta perspiciatis tenetur, voluptas praesentium quaerat nemo itaque accusamus aliquam magni molestias inventore? Asperiores dicta, dignissimos.</p>
+              <p>In dolorem sit beatae necessitatibus dolore molestiae quos voluptatibus sunt adipisci repellat, temporibus, vel inventore, cumque veniam laborum neque quas, sapiente. Quod quibusdam placeat dolorem, aliquid, impedit odio provident nulla recusandae facere ipsum esse, at ea totam quasi qui. Aspernatur nobis, quisquam nesciunt veritatis distinctio sint aperiam, suscipit iure quis.</p>
+            </div>
+          </div>
+          <div>This is the page 2</div>
+          <div>This is the page 3</div>
+          <div>the end</div>
         </div>
-      </div>
-      <div>This is the page 2</div>
-      <div>This is the page 3</div>
-      <div>the end</div>
+      </section>
     </div>
   </section>
+
+  <div id="wikibox">
+    <div class="wrap">
+      <header>
+        <h2>[[ Word from the Wiki ]]</h2>
+      </header>
+
+      <div class="content">
+        <div class="text">
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam, tempore!</p>
+
+          <div class="img"><img src="{{ url_for('static', filename='images/global/logo.png') }}" /></div>
+
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci accusantium, velit cumque optio mollitia hic. Nihil laudantium ratione atque, minus non quidem maxime nemo enim omnis alias ad, sequi porro.</p>
+          <p>Error aliquam, odio corrupti aliquid ducimus corporis cupiditate veniam perspiciatis non repellat, architecto iure. Dolorem.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <ul>
+        <li class="move"><button title="[[ Move ]]"><span>[[ Move ]]</span></button></li>
+        <li class="close"><button title="[[ Close ]]"><span>[[ Close ]]</span></button></li>
+      </ul>
+    </div>
+  </div>
 {% endblock %}
 
 {% block extraScripts %}

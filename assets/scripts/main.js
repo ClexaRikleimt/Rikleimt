@@ -136,6 +136,14 @@
       setupBook: function() {
         // Setup the book
 
+        // Prepare the Wiki box
+        var $wikibox = $("#wikibox");
+
+        $wikibox.draggable({
+          containment: 'body',
+          cancel: '#wikibox .wrap, #wikibox .close'
+        });
+
         // Clone the book to apply WowBook only on some resolutions more easily
         $('#content section.book > .content').clone().attr('id', 'mybook').removeClass('content').appendTo($("#content section.book"));
 
@@ -173,12 +181,38 @@
               });
             }
 
+            // Tooltips (Trig translations)
             $('[data-toggle="tooltip"]').tooltip({
               placement: 'top auto',
               viewport: 'section.book'
             });
 
             $('[data-toggle="tooltip"]').click(function(){
+              $(this).blur();
+
+              return false;
+            });
+
+
+            // Use the Wiki box
+            $('[data-toggle="wikibox"]').click(function(){
+              // Calculate the content box height from the title height
+              $wikibox.find('.content').css({
+                height: ($wikibox.find('.wrap').outerHeight() - $wikibox.find('header').outerHeight()) + 'px'
+              });
+
+              // Show
+              $wikibox.fadeIn();
+
+              $(this).blur();
+
+              return false;
+            });
+
+            // Hide the Wiki box
+            $wikibox.find('.close button').click(function(){
+              $wikibox.fadeOut();
+
               $(this).blur();
 
               return false;

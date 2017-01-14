@@ -308,6 +308,18 @@ $clrGalleryThumbsArrowHoverText: $clrLinkQuietHover;
 $clrGalleryThumbsArrowActiveText: $clrLinkQuietActive;
 
 
+// -- WIKI BOX ----------------------------------
+$clrWikiboxBG: $clrContentBG;
+$clrWikiboxOuterBG: contrast-color($clrWikiboxBG, darken($clrWikiboxBG, 30%), lighten($clrWikiboxBG, 30%));
+
+$clrWikiboxControlsItemCloseNormalBG: #C00;
+$clrWikiboxControlsItemCloseHoverBG: contrast-color($clrContentBG, darken($clrWikiboxControlsItemCloseNormalBG, 10%), lighten($clrWikiboxControlsItemCloseNormalBG, 10%));
+$clrWikiboxControlsItemCloseActiveBG: contrast-color($clrContentBG, darken($clrWikiboxControlsItemCloseHoverBG, 5%), lighten($clrWikiboxControlsItemCloseHoverBG, 5%));
+$clrWikiboxControlsItemCloseNormalText: contrast-color($clrWikiboxControlsItemCloseNormalBG, #000, #FFF);
+$clrWikiboxControlsItemCloseHoverText: contrast-color($clrWikiboxControlsItemCloseHoverBG, #000, #FFF);
+$clrWikiboxControlsItemCloseActiveText: contrast-color($clrWikiboxControlsItemCloseActiveBG, #000, #FFF);
+
+
 // -- PAGER ----------------------------------
 // [...]
 
