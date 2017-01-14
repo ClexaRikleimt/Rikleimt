@@ -53,7 +53,7 @@ $hasOuterWrap: false; // Set as true if site needs to have a "fixed-width" wrapp
 
 
 // -- TEXTS ----------------------------------
-$baseFont: Arial, Helvetica, sans-serif;
+$baseFont: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
 $baseFontSize: 14px;
 
 $headingFont: "SourceSansPro", $baseFont;
@@ -68,10 +68,10 @@ $headingFontItalic: "SourceSansProItalic", $baseFont;
 $headingFontBoldItalic: "SourceSansProBoldItalic", $baseFont;
 // $headingFontBlackItalic: "SourceSansProBlackItalic", $baseFont;
 
-$textFont: "SourceSansPro", $baseFont;
-$textFontBold: "SourceSansProBold", $baseFont;
-$textFontItalic: "SourceSansProItalic", $baseFont;
-$textFontBoldItalic: "SourceSansProBoldItalic", $baseFont;
+// $textFont: "SourceSansPro", $baseFont;
+// $textFontBold: "SourceSansProBold", $baseFont;
+// $textFontItalic: "SourceSansProItalic", $baseFont;
+// $textFontBoldItalic: "SourceSansProBoldItalic", $baseFont;
 
 // $iconFont: "Glyphicons";
 $iconFont: "Glyphicons Halflings";
