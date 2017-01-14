@@ -11,7 +11,8 @@
     "matchHeight": "~0.7.0",
     "jquery-hoverintent": "^1.8.1",
     "slick-carousel": "^1.6.0",
-    "jquery-touch-events": "^1.0.5"
+    "jquery-touch-events": "^1.0.5",
+    "jquery-ui-touch-punch": "*"
   },
   "overrides": {
     "bootstrap-sass": {
