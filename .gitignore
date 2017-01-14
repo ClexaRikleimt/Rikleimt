@@ -11,4 +11,3 @@ rikleimt/config.py
 static/plugins/
 config.py
 __pycache__/
-*.pyc
