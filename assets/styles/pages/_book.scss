@@ -2,8 +2,35 @@
   #content {
     section {
       &.book {
+        a {
+          &[data-toggle="tooltip"] {
+            text-decoration: none;
+            border-bottom: .05vw #000 dotted;
+          }
+        }
+
+        .tooltip {
+          &.top {
+            padding: 0;
+
+            .tooltip-arrow {
+              bottom: auto;
+              top: 100%;
+            }
+          } //end .is-book #content section.book .tooltip.top
+
+          &.bottom {
+            padding: 0;
+
+            .tooltip-arrow {
+              top: auto;
+              bottom: 100%;
+            }
+          } //end .is-book #content section.book .tooltip.bottom
+        } //end .is-book #content section.book .tooltip
+
         .wowbook-page-content {
-          padding: $gutter-width;
+          padding: $spacingXL;
         }
       } //end .is-book #content section.book
     } //end .is-book #content section
@@ -58,7 +85,7 @@
     #content {
       section {
         &.book {
-          @include stretch($offset-top: $bookToolbarHeight, $offset-bottom: $footerHeight);
+          @include stretch($offset-top: ($bookToolbarHeight + $grid-padding), $offset-right: $grid-padding, $offset-bottom: ($footerHeight + $grid-padding), $offset-left: $grid-padding);
 
           position: fixed;
           z-index: 500;
