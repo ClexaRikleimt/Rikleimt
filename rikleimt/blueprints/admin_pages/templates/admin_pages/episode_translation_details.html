@@ -8,8 +8,10 @@
 
 {% block content %}
 
-    <h2>Trigger warnings</h2>
-    <p>{{ details.warnings }}</p>
+    {% if details.warnings is not none and details.warnings != '' %}
+        <h2>Trigger warnings</h2>
+        <p>{{ details.warnings }}</p>
+    {% endif %}
 
     <a href="{{ url_for('.edit_episode_translation', episode_no=details.episode_no, language_id=details.language_id) }}" class="btn btn-default">Edit episode details</a>
 

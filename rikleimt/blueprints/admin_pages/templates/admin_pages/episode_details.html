@@ -6,7 +6,21 @@
     <h1>Episode {{ episode.episode_no }}</h1>
 {% endblock page_header %}
 
-{# TODO: Continue this in the morning when I can think clear again... #}
+{# TODO: Check this another time when I can think clear again... #}
+
+<p>Sections: {{ episode.n_sections }}</p>
+
+<div>Available in:
+    <ul>
+        {% for language in episode.languages_available_in %}
+            <li>language['language_name']</li>
+        {% endfor %}
+    </ul>
+
+    {% if not episode.all_translations_present %}
+        <a href="{{ url_for('.edit_episode_translation', episode_no=episode.episode_no) }}" class="btn btn-default">Add translation</a>
+    {% endif %}
+</div>
 
 {% block content %}
     <h2>Sections</h2>
@@ -18,5 +32,14 @@
                 <th></th>
             </tr>
         </thead>
+
+        <tbody>
+            {% for section in episode.sections %}
+                <tr>
+                    <td>{{ section.section_no }}</td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+        </tbody>
     </table>
 {% endblock content %}

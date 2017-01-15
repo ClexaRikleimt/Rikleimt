@@ -79,7 +79,8 @@ class Episode(db.Model):
 
     details = db.relationship('EpisodeDetails', back_populates='episode', order_by='EpisodeDetails.language_id')
 
-    sections = db.relationship('EpisodeSection', back_populates='episode', order_by='EpisodeSection.section_no')
+    sections = db.relationship('EpisodeSection', back_populates='episode',
+                               order_by='EpisodeSection.section_no, EpisodeSection.language_id')
 
     def __init__(self, episode_no, sfw, n_sections):
         self.episode_no = episode_no
