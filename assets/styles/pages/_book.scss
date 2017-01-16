@@ -32,6 +32,10 @@
 
         .wowbook-page-content {
           padding: $spacingXL;
+
+          .text {
+            user-select: initial;
+          }
         }
       } //end .is-book #content section.book
     } //end .is-book #content section
