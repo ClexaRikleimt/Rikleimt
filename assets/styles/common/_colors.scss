@@ -320,6 +320,17 @@ $clrWikiboxControlsItemCloseHoverText: contrast-color($clrWikiboxControlsItemClo
 $clrWikiboxControlsItemCloseActiveText: contrast-color($clrWikiboxControlsItemCloseActiveBG, #000, #FFF);
 
 
+// Mobile, Tablet
+$sm-clrWikiboxBG: $clrQuietBG2;
+
+$sm-clrWikiboxTrigNormalBG: contrast-color($sm-clrWikiboxBG, darken($sm-clrWikiboxBG, 30%), lighten($sm-clrWikiboxBG, 30%));
+$sm-clrWikiboxTrigHoverBG: darken($sm-clrWikiboxTrigNormalBG, 10%);
+$sm-clrWikiboxTrigActiveBG: darken($sm-clrWikiboxTrigHoverBG, 5%);
+$sm-clrWikiboxTrigNormalText: contrast-color($sm-clrWikiboxTrigNormalBG, #000, #FFF);
+$sm-clrWikiboxTrigHoverText: contrast-color($sm-clrWikiboxTrigHoverBG, #000, #FFF);
+$sm-clrWikiboxTrigActiveText: contrast-color($sm-clrWikiboxTrigActiveBG, #000, #FFF);
+
+
 // -- PAGER ----------------------------------
 // [...]
 

@@ -196,13 +196,16 @@
 
             // Use the Wiki box
             $('[data-toggle="wikibox"]').click(function(){
+              // Change the box contents
+              // [...]
+
               // Calculate the content box height from the title height
               $wikibox.find('.content').css({
                 height: ($wikibox.find('.wrap').outerHeight() - $wikibox.find('header').outerHeight()) + 'px'
               });
 
               // Show
-              $wikibox.fadeIn();
+              $wikibox.addClass('opened');
 
               $(this).blur();
 
@@ -211,11 +214,15 @@
 
             // Hide the Wiki box
             $wikibox.find('.close button').click(function(){
-              $wikibox.fadeOut();
+              $wikibox.removeClass('opened');
 
               $(this).blur();
 
               return false;
+            });
+
+            $wikibox.find('.wrap > header').swipedown(function(){
+              $wikibox.removeClass('opened');
             });
           },
         }, function(){
