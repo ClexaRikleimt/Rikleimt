@@ -67,6 +67,10 @@
       left: 0;
     }
 
+    .wowbook-thumbnails {
+      position: fixed !important;
+    }
+
     #page {
       padding-top: $bookToolbarHeight + $grid-padding;
     }
