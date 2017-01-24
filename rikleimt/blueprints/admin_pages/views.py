@@ -6,7 +6,7 @@ from flask_login import login_required, login_user, logout_user
 from sqlalchemy.exc import IntegrityError
 
 from rikleimt.blueprints.admin_pages.forms import (
-    LoginForm, KepaWochaUserFormCreate, KepaWochaUserFormEdit, RoleForm, PageAccessForm, RoleHelperForm, LanguageForm,
+    LoginForm, Rik3UserFormCreate, Rik3, RoleForm, PageAccessForm, RoleHelperForm, LanguageForm,
     CreateEpisodeForm, EditEpisodeForm, EditEpisodeTranslationForm
 )
 from rikleimt.decorators import role_access
@@ -62,19 +62,19 @@ class Index(View):
         return render_template('admin_pages/index.html')
 
 
-class KepaWochaUsers(View):
-    endpoint = 'kepa_wocha_users'
+class Rik3Users(View):
+    endpoint = 'rik3_users'
     decorators = [login_required, role_access]
 
     def dispatch_request(self):
         users = User.query.all()
 
-        return render_template('admin_pages/kepa_wocha_users.html', users=users)
+        return render_template('admin_pages/rik3_users.html', users=users)
 
 
-class KepaWochaEditUser(MethodView):
+class Rik3EditUser(MethodView):
     # TODO: Optimise (DRY) [Arlena]
-    endpoint = 'kepa_wocha_edit_user'
+    endpoint = 'rik3_edit_user'
     decorators = [login_required, role_access]
 
     @staticmethod
@@ -85,32 +85,32 @@ class KepaWochaEditUser(MethodView):
     def get(self, user_id):
         if user_id == -1:
             # New user
-            form = self._prepare_form(KepaWochaUserFormCreate())
+            form = self._prepare_form(Rik3UserFormCreate())
         else:
             user = User.query.filter(User.id == user_id).first()
             if not user:
                 flash('The user that was selected to edit does not exist.', 'error')
-                return redirect(url_for('.{0}'.format(KepaWochaUsers.endpoint)))
+                return redirect(url_for('.{0}'.format(Rik3Users.endpoint)))
 
-            form = self._prepare_form(KepaWochaUserFormEdit())
+            form = self._prepare_form(Rik3())
 
             form.email.data = user.email
             form.role.data = user.role_id
             form.activated.data = user.activated
 
-        return render_template('admin_pages/kepa_wocha_user_edit.html', form=form, user_id=user_id)
+        return render_template('admin_pages/rik3_user_edit.html', form=form, user_id=user_id)
 
     def post(self, user_id):
         if user_id == -1:
             # New user
-            form = self._prepare_form(KepaWochaUserFormCreate())
+            form = self._prepare_form(Rik3UserFormCreate())
         else:
             user = User.query.filter(User.id == user_id).first()
             if not user:
                 flash('The user that was selected to edit does not exist.', 'error')
-                return redirect(url_for('.{0}'.format(KepaWochaUsers.endpoint)))
+                return redirect(url_for('.{0}'.format(Rik3Users.endpoint)))
 
-            form = self._prepare_form(KepaWochaUserFormEdit())
+            form = self._prepare_form(Rik3())
 
         if form.validate_on_submit():
             if user_id == -1:
@@ -123,10 +123,10 @@ class KepaWochaEditUser(MethodView):
                     db.session.rollback()
                     # TODO: testing [Arlena]
                     flash('Failed to create the user. Technical data: {0}'.format(exception), 'error')
-                    return render_template('admin_pages/kepa_wocha_user_edit.html', form=form, user_id=user_id)
+                    return render_template('admin_pages/rik3_user_edit.html', form=form, user_id=user_id)
                 else:
                     flash('Successfully created the new user.', 'info')
-                    return redirect(url_for('.{0}'.format(KepaWochaUsers.endpoint)))
+                    return redirect(url_for('.{0}'.format(Rik3Users.endpoint)))
             else:
                 user = User.query.filter(User.id == user_id).first()
                 user.email = form.email.data
@@ -139,12 +139,12 @@ class KepaWochaEditUser(MethodView):
                     db.session.rollback()
                     # TODO: testing [Arlena]
                     flash('Failed to edit the user. Technical data: {0}'.format(exception), 'error')
-                    return render_template('admin_pages/kepa_wocha_user_edit.html', form=form, user_id=user_id)
+                    return render_template('admin_pages/rik3_user_edit.html', form=form, user_id=user_id)
                 else:
                     flash('Successfully edited the user.', 'info')
-                    return redirect(url_for('.{0}'.format(KepaWochaUsers.endpoint)))
+                    return redirect(url_for('.{0}'.format(Rik3Users.endpoint)))
 
-        return render_template('admin_pages/kepa_wocha_user_edit.html', form=form, user_id=user_id)
+        return render_template('admin_pages/rik3_user_edit.html', form=form, user_id=user_id)
 
 
 class Roles(View):

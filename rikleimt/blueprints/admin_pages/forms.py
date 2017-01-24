@@ -37,7 +37,7 @@ class LoginForm(FlaskForm):
     remember = BS3BooleanField(label='Remember me? ')
 
 
-class KepaWochaUserFormCreate(FlaskForm):
+class Rik3UserFormCreate(FlaskForm):
     email = BS3StringField(label='Email address: ', validators=[
         DataRequired(message='This is a required field.'),
         Email(message='This is not a valid email address.')
@@ -51,7 +51,7 @@ class KepaWochaUserFormCreate(FlaskForm):
     activated = BS3BooleanField(label='Activate user? ')
 
 
-class KepaWochaUserFormEdit(FlaskForm):
+class Rik3(FlaskForm):
     email = BS3StringField(label='Email address: ', validators=[
         DataRequired(message='This is a required field.')
     ])

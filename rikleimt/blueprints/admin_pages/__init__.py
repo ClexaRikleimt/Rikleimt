@@ -3,7 +3,7 @@ from flask import Blueprint
 
 from rikleimt.application import login_manager
 from rikleimt.blueprints.admin_pages.views import (
-    Login, Logout, Index, KepaWochaUsers, KepaWochaEditUser, Roles, EditRole, AdminPages, EditAdminPage,
+    Login, Logout, Index, Rik3Users, Rik3EditUser, Roles, EditRole, AdminPages, EditAdminPage,
     LanguagesIndex, EditLanguage, EpisodeIndex, EditEpisode, EpisodeTranslationDetails, EpisodeEditTranslation,
     EpisodeViewDetails, EpisodeEditSection
 )
@@ -16,10 +16,10 @@ admin_pages_bp.add_url_rule('/login', Login.endpoint, view_func=Login.as_view(Lo
 admin_pages_bp.add_url_rule('/logout', Logout.endpoint, view_func=Logout.as_view(Logout.endpoint), methods=['GET'])
 admin_pages_bp.add_url_rule('/', Index.endpoint, view_func=Index.as_view(Index.endpoint), methods=['GET'])
 
-admin_pages_bp.add_url_rule('/users', KepaWochaUsers.endpoint, methods=['GET'],
-                            view_func=KepaWochaUsers.as_view(KepaWochaUsers.endpoint))
+admin_pages_bp.add_url_rule('/users', Rik3Users.endpoint, methods=['GET'],
+                            view_func=Rik3Users.as_view(Rik3Users.endpoint))
 
-kw_edit_user_view = KepaWochaEditUser.as_view(KepaWochaEditUser.endpoint)
+kw_edit_user_view = Rik3EditUser.as_view(Rik3EditUser.endpoint)
 admin_pages_bp.add_url_rule('/users/edit', defaults={'user_id': -1}, view_func=kw_edit_user_view,
                             methods=['GET', 'POST'])
 admin_pages_bp.add_url_rule('/users/edit/<int:user_id>', view_func=kw_edit_user_view, methods=['GET', 'POST'])
