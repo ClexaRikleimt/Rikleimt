@@ -51,7 +51,7 @@ class Rik3UserFormCreate(FlaskForm):
     activated = BS3BooleanField(label='Activate user? ')
 
 
-class Rik3(FlaskForm):
+class Rik3UserFormEdit(FlaskForm):
     email = BS3StringField(label='Email address: ', validators=[
         DataRequired(message='This is a required field.')
     ])

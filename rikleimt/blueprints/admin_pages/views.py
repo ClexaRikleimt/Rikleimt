@@ -6,7 +6,7 @@ from flask_login import login_required, login_user, logout_user
 from sqlalchemy.exc import IntegrityError
 
 from rikleimt.blueprints.admin_pages.forms import (
-    LoginForm, Rik3UserFormCreate, Rik3, RoleForm, PageAccessForm, RoleHelperForm, LanguageForm,
+    LoginForm, Rik3UserFormCreate, Rik3UserFormEdit, RoleForm, PageAccessForm, RoleHelperForm, LanguageForm,
     CreateEpisodeForm, EditEpisodeForm, EditEpisodeTranslationForm
 )
 from rikleimt.decorators import role_access
@@ -92,7 +92,7 @@ class Rik3EditUser(MethodView):
                 flash('The user that was selected to edit does not exist.', 'error')
                 return redirect(url_for('.{0}'.format(Rik3Users.endpoint)))
 
-            form = self._prepare_form(Rik3())
+            form = self._prepare_form(Rik3UserFormEdit())
 
             form.email.data = user.email
             form.role.data = user.role_id
@@ -110,7 +110,7 @@ class Rik3EditUser(MethodView):
                 flash('The user that was selected to edit does not exist.', 'error')
                 return redirect(url_for('.{0}'.format(Rik3Users.endpoint)))
 
-            form = self._prepare_form(Rik3())
+            form = self._prepare_form(Rik3UserFormEdit())
 
         if form.validate_on_submit():
             if user_id == -1:
