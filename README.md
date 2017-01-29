@@ -15,10 +15,10 @@ For within the Slengswichakru, the [Poedit](https://poedit.net/) program is an e
 2. (Within the python environment that has the babel package) use the following command: 
    `pybabel extract -F babel.cfg  -k lazy_gettext -o translations/messages.pot .`
 3. Intialise the translations for each translation required: 
-   `pybabel init -i translations/messages.pot -d translations -l <language_id>`, where <language_id> 
+   `pybabel init -i translations/messages.pot -d translations -l <language_id>`, where `<language_id>` 
    is the 2 character identifier for that language, for example 'de' for German
-4. Send the translations/<language_id>/LC_MESSAGES/messages.po file to the Slengswichakru for translation
-5. Put the returned message.po files given by Slengswichakru back in the translations/<language_id>/LC_MESSAGES/ 
+4. Send the `translations/<language_id>/LC_MESSAGES/messages.po` file to the Slengswichakru for translation
+5. Put the returned message.po files given by Slengswichakru back in the `translations/<language_id>/LC_MESSAGES/` 
    folder. Overwrite the empty version
 6. To compile the translated message.po files into usable translations, use the following command: 
    `pybabel compile -d translations`
