@@ -8,3 +8,4 @@ flask-babel
 flask-assets
 flask-bcrypt
 flake8
+Sphinx
