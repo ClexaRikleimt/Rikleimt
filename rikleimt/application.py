@@ -1,10 +1,12 @@
 # encoding=utf-8
 from flask import Flask, request
 
+from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_babel import Babel
 from flask_bcrypt import Bcrypt
 
+db_migrate = Migrate()
 login_manager = LoginManager()
 babel = Babel()
 bcrypt_ = Bcrypt()
@@ -26,6 +28,7 @@ def create_app():
 
     from rikleimt.models import db
     db.init_app(app)
+    db_migrate.init_app(app, db)
 
     from rikleimt.assets import assets
     assets.init_app(app)
