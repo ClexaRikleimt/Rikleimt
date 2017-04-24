@@ -24,13 +24,13 @@
                     <td>{{ user.email }}</td>
                     <td>{{ user.role.name }}</td>
                     <td>{% if user.activated %}<i class="fa fa-check-square" aria-hidden="true"></i>{% endif %}<span class="sr-only">{% if user.activated %}activated{% else %}not activated{% endif %}</span></td>
-                    <td><a href="{{ url_for('.kepa_wocha_edit_user', user_id=user.id) }}"><i class="fa fa-pencil" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="Edit user"></i><span class="sr-only">Edit user</span></a></td>
+                    <td><a href="{{ url_for('.rik3_edit_user', user_id=user.id) }}"><i class="fa fa-pencil" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="Edit user"></i><span class="sr-only">Edit user</span></a></td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <a class="btn btn-default" href="{{ url_for('.kepa_wocha_edit_user') }}">Create new user</a>
+    <a class="btn btn-default" href="{{ url_for('.rik3_edit_user') }}">Create new user</a>
 {% endblock content %}
 
 {% block footer_content %}
