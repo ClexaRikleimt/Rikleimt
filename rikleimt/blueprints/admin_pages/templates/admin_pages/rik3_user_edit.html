@@ -14,7 +14,7 @@
 {% endblock page_header %}
 
 {% block content %}
-    <form method="POST" action="{{ url_for('.kepa_wocha_edit_user', user_id=user_id) }}">
+    <form method="POST" action="{{ url_for('.rik3_edit_user', user_id=user_id) }}">
         {{ form.hidden_tag() }}
 
         {{ render_field(form.email) }}
