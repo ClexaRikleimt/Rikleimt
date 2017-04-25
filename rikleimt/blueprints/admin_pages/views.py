@@ -1,16 +1,26 @@
 # encoding=utf-8
+import datetime
+
 from flask import render_template, url_for, flash, request, redirect
 from flask.views import View, MethodView
-from flask_login import login_required, login_user, logout_user
+from flask_login import login_required, login_user, logout_user, current_user
 
+from sqlalchemy import and_
 from sqlalchemy.exc import IntegrityError
 
 from rikleimt.blueprints.admin_pages.forms import (
     LoginForm, Rik3UserFormCreate, Rik3UserFormEdit, RoleForm, PageAccessForm, RoleHelperForm, LanguageForm,
-    CreateEpisodeForm, EditEpisodeForm, EditEpisodeTranslationForm
+    CreateEpisodeForm, EditEpisodeForm, EditEpisodeTranslationForm, EpisodeSectionForm
 )
+from rikleimt.blueprints.admin_pages.exceptions import IncompleteEpisodeSectionException
 from rikleimt.decorators import role_access
-from rikleimt.models import db, User, Role, PageAccess, Language, Episode, EpisodeDetails, EpisodeSection
+from rikleimt.models import (
+    db,
+    # Models:
+    User, Role, PageAccess, Language, Episode, EpisodeDetails, EpisodeSection, EpisodeRevision, EpisodeText,
+    # Exceptions:
+    RevisionNotFoundException
+)
 
 
 # TODO: Improve error messages on rollback actions
@@ -669,9 +679,115 @@ class EpisodeEditSection(MethodView):
 
     def get(self, episode_no, language_id, section_no):
         if section_no == -1:
-            # new section
-            pass
-        raise NotImplementedError()
+            # New section
+            form = EpisodeSectionForm()
+            return render_template('admin_pages/edit_episode_section.html', episode_no=episode_no,
+                                   language_id=language_id, current_section_no=section_no, form=form)
+        else:
+            # Get info about section from database
+            section = EpisodeSection.query.filter(and_(
+                EpisodeSection.episode_no == episode_no,
+                EpisodeSection.section_no == section_no,
+                EpisodeSection.language_id == language_id
+            )).first()
+            if not section:
+                flash('Section not found', 'error')
+                return redirect(url_for('.{0}'.format(EpisodeViewDetails.endpoint), episode_no=episode_no))
+
+            try:
+                text = section.text
+            except RevisionNotFoundException:
+                text = ''
+
+            form = EpisodeSectionForm()
+            form.section_no.data = section_no
+            form.section_text.data = text
+
+            return render_template('admin_pages/edit_episode_section.html', episode_no=episode_no,
+                                   language_id=language_id, current_section_no=section_no, form=form)
 
     def post(self, episode_no, language_id, section_no):
-        raise NotImplementedError()
+        form = EpisodeSectionForm()
+
+        if not form.validate_on_submit():
+            return render_template('admin_pages/edit_episode_section.html', episode_no=episode_no,
+                                   language_id=language_id, current_section_no=section_no, form=form)
+
+        if section_no == -1:
+            # TODO: Check if the combination of episode and language exists
+
+            # New section, let the fun start...
+            # TODO: Do not trust client side validation and check `form.selection_text.data` before inserting
+            section = EpisodeSection(episode_no, form.section_no.data, language_id)
+            text = EpisodeText(form.section_text.data)
+
+            db.session.add_all([section, text])
+            db.session.commit()
+
+            # Push together the first revision of this section
+            revision = EpisodeRevision(section.id, text.id, current_user.id, datetime.datetime.utcnow())
+            db.session.add(revision)
+            db.session.commit()
+
+            # Finalise the section by adding the revision id
+            section.current_revision_id = revision.id
+            db.session.commit()
+
+            flash('Successfully created section {0} for language {1} in episode {2}'.format(
+                section.section_no, section.language.name, episode_no
+            ), 'info')
+            return redirect(url_for('.{0}'.format(EpisodeViewDetails.endpoint), episode_no=episode_no))
+        else:
+            # Get info about section from database
+            section = EpisodeSection.query.filter(and_(
+                EpisodeSection.episode_no == episode_no,
+                EpisodeSection.section_no == section_no,
+                EpisodeSection.language_id == language_id
+            )).first()
+            if not section:
+                flash('Section not found', 'error')
+                return redirect(url_for('.{0}'.format(EpisodeViewDetails.endpoint), episode_no=episode_no))
+
+            current_revision_id = section.current_revision_id
+
+            try:
+                current_text = section.text
+            except RevisionNotFoundException:
+                # No revision present, should not be possible. Raise exception to stop processing
+                # TODO: Implement handling of this exception
+                raise IncompleteEpisodeSectionException
+
+            if current_text != form.section_text.data:
+                # Text was edited, make a new revision
+                text = EpisodeText(form.section_text.data)
+                db.session.add(text)
+                db.session.commit()
+
+                revision = EpisodeRevision(section.id, text.id, current_user.id, datetime.datetime.utcnow(),
+                                           current_revision_id)
+                db.session.add(revision)
+                db.session.commit()
+
+                section.current_revision_id = revision
+                db.session.commit()
+
+            section.section_no = form.section_no.data
+
+            try:
+                db.session.commit()  # Might trigger an integrity error
+            except IntegrityError:
+                # TODO: Test, test, test!!!
+                flash('This combination of section number, episode number and language does already exist. '
+                      'Please check if you are editing the correct section.')
+                form.section_no.errors.append(
+                    'This section number is already in use in combination with episode number {0} and language {1}.'
+                    .format(episode_no, section.language.name)
+                )
+                return render_template('admin_pages/edit_episode_section.html', episode_no=episode_no,
+                                       language_id=language_id, current_section_no=section_no, form=form)
+            else:
+                flash('Updated episode {0}, section {1} in {2}'.format(episode_no, section.section_no,
+                                                                       section.language.name),
+                      'info')
+                return redirect(url_for('.{0}'.format(EpisodeViewDetails.endpoint), episode_no=episode_no))
+

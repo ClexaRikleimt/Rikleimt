@@ -5,6 +5,8 @@ from flask import render_template, Markup
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 
+from sqlalchemy import and_
+
 from rikleimt.config import metadata
 from rikleimt.application import bcrypt_
 
@@ -153,25 +155,44 @@ class EpisodeSection(db.Model):
     section_no = db.Column(db.Integer, nullable=False)
     language_id = db.Column(db.Integer, db.ForeignKey('language.id'), nullable=False)
 
-    episode = db.relationship('Episode', back_populates='sections')
+    # Can be 0 during page creation
+    current_revision_id = db.Column(db.Integer, db.ForeignKey('episode_revision.id'), nullable=True)
 
-    text = db.relationship('EpisodeText', secondary=lambda: EpisodeRevision.__table__,
-                           primaryjoin="EpisodeSection.id == EpisodeRevision.section_id",
-                           secondaryjoin="EpisodeRevision.text_id == EpisodeText.id",
-                           lazy='dynamic', viewonly=True)
+    episode = db.relationship('Episode', back_populates='sections')
+    language = db.relationship('Language', uselist=False)
+
+    # text = db.relationship('EpisodeText', secondary=lambda: EpisodeRevision.__table__,
+    #                        primaryjoin="EpisodeSection.current_revision_id == EpisodeRevision.id",
+    #                        secondaryjoin="EpisodeRevision.text_id == EpisodeText.id",
+    #                        lazy='dynamic', viewonly=True)
 
     __table_args__ = (
         db.UniqueConstraint('episode_no', 'section_no', 'language_id', name='uq_episode_section_identifier'),
     )
 
-    def __init__(self, episode_no, section_no, language_id):
+    def __init__(self, episode_no, section_no, language_id, revision_id=None):
         self.episode_no = episode_no
         self.section_no = section_no
         self.language_id = language_id
+        self.current_revision_id = revision_id
 
     def __repr__(self):
         return '<{0} - Episode {1}, Section {2} in language {3}>'.format(self.__class__.__name__, self.episode_no,
-                                                                         self.section_no, self.language_id)
+                                                                         self.section_no, self.language.name)
+
+    @property
+    def text(self):
+        if self.current_revision_id == 0:
+            raise RevisionNotFoundException('There is no revision associated with this section.')
+
+        text = db.session.query(EpisodeText).join(
+            EpisodeRevision, EpisodeText.id == EpisodeRevision.text_id
+        ).join(
+            EpisodeSection, EpisodeSection.id == EpisodeRevision.section_id
+        ).filter(
+            EpisodeRevision.id == self.current_revision_id
+        ).first()
+        return text.content
 
 
 class EpisodeRevision(db.Model):
@@ -404,3 +425,8 @@ class PageAccess(db.Model):
 
     def __repr__(self):
         return '<{0} - {1!r}>'.format(self.__class__.__name__, self.name)
+
+
+# Model related exceptions
+class RevisionNotFoundException(Exception):
+    pass
