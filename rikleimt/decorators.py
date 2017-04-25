@@ -17,5 +17,5 @@ def role_access(func):
                 return func(*args, **kwargs)
         except AttributeError:
             # current_user is None
-            return login_required(func)
+            return login_required(func)(*args, **kwargs)
     return decorated_view
