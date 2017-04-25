@@ -62,12 +62,15 @@ CKEDITOR.dialog.add('translateDialog', function(editor) {
             var selection = editor.getSelection();
             var element = selection.getStartElement();
 
+            var selected_text = selection.getSelectedText();
+
             if (element) {
                 element = element.getAscendant('span', true);
             }
 
-            if (!element || element.getName() != 'span') {
+            if (!element || element.getName() !== 'span') {
                 element = editor.document.createElement('span');
+                element.setText(selected_text);
                 element.addClass('translation');
                 this.insertMode = true;
             }
@@ -77,9 +80,7 @@ CKEDITOR.dialog.add('translateDialog', function(editor) {
 
             this.element = element;
 
-            if (!this.insertMode) {
-                this.setupContent(this.element);
-            }
+            this.setupContent(this.element);
         },
         onOk: function() {
             var dialog = this,
