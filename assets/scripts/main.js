@@ -143,6 +143,8 @@
         var root = 'https://jsonplaceholder.typicode.com';
 
         var book = $('#mybook').wowBook({
+          width: 1140,
+          height: 700,
           thumbnailsPosition: 'bottom',
           // flipSound: false,
           flipSoundFile: [
@@ -152,8 +154,8 @@
           flipSoundPath: "/static/plugins/wow_book/sound/",
           scaleToFit: "section.book",
           centeredWhenClosed: true,
-          toolbar: "lastLeft, left, right, lastRight, toc, zoomin, zoomout, flipsound, fullscreen, thumbnails",
-          fullscreenElement: "section.book",
+          responsiveHandleWidth: 30,
+          toolbar: "lastLeft, left, right, lastRight, toc, zoomin, zoomout, flipsound, thumbnails",
           responsiveSinglePage: function( book ){
             // return true (and activate single page mode)
             return $("body.tablet").length;
@@ -170,6 +172,17 @@
                 book.insertPage("<div> This is the other page </div>");
               });
             }
+
+            $('[data-toggle="tooltip"]').tooltip({
+              placement: 'top auto',
+              viewport: 'section.book'
+            });
+
+            $('[data-toggle="tooltip"]').click(function(){
+              $(this).blur();
+
+              return false;
+            });
           },
         }, function(){
           book.showThumbnails();

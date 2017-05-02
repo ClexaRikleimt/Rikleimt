@@ -1,9 +1,21 @@
 [flake8]
 exclude =
-	node_modules,
-	bower_components,
-	rikleimt/config.py,
-	rikleimt/templates,
-	rikleimt/blueprints/admin_pages/templates,
-	rikleimt/blueprints/admin_pages/static
+	  rikleimt/templates,
+    rikleimt/static,
+	  rikleimt/blueprints/admin_pages/templates,
+	  rikleimt/blueprints/admin_pages/static,
+    .flake8,
+    .gitignore,
+    node_modules,
+    bower_components,
+    rikleimt/config.py,
+    rikleimt/__init__.pyc,
+    rikleimt/application.pyc,
+    rikleimt/assets.pyc,
+    rikleimt/blueprints/__init__.pyc,
+    rikleimt/blueprints/api/__init__.pyc,
+    rikleimt/blueprints/api/views.pyc,
+    rikleimt/config.pyc,
+    rikleimt/models.pyc,
+    rikleimt/views.pyc
 max-line-length = 120
