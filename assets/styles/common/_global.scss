@@ -31,14 +31,14 @@ a {
 }
 
 h1 {
-  @include fontface($size: 35px, $family: $headingFontBold);
+  @include fontface($size: 35px, $weight: bold);
 
   margin: 0;
   padding: 0;
 }
 
 h2 {
-  @include fontface($size: 30px, $family: $headingFontBold);
+  @include fontface($size: 30px, $weight: bold);
 
   margin: 0 0 $spacingSmall 0;
 
@@ -48,7 +48,7 @@ h2 {
 }
 
 h3 {
-  @include fontface($size: 23px, $family: $headingFont);
+  @include fontface($size: 23px);
 
   margin: 0 0 $spacingSmall 0;
 
@@ -58,7 +58,7 @@ h3 {
 }
 
 h4 {
-  @include fontface($size: 17px, $family: $headingFont);
+  @include fontface($size: 17px);
 
   text-transform: uppercase;
   margin: 0;
@@ -549,6 +549,10 @@ p.last {
     display: block;
   }
 } //end .tab-content
+
+.tooltip {
+  font: $baseFontSize $baseFont;
+}
 
 
 
