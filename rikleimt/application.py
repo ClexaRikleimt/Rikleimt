@@ -6,6 +6,8 @@ from flask_login import LoginManager
 from flask_babel import Babel
 from flask_bcrypt import Bcrypt
 
+from rikleimt.utils import WikiArticleConverter
+
 db_migrate = Migrate()
 login_manager = LoginManager()
 babel = Babel()
@@ -40,6 +42,9 @@ def create_app():
     bcrypt_.init_app(app)
 
     babel.init_app(app)
+
+    # Register processors
+    app.url_map.converters['article'] = WikiArticleConverter
 
     # Register blueprints
     from rikleimt.blueprints.api import api_bp
