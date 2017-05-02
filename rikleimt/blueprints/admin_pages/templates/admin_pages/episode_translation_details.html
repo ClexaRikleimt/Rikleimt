@@ -1,0 +1,50 @@
+{% extends 'admin_pages/base_cms.html' %}
+
+{% block title %}{{ super() }} - Episode {{ details.episode_no }} in {{ details.language.name }}{% endblock title %}
+
+{% block page_header %}
+    <h1>Episode {{ details.episode_no }}{% if details.title is not none and details.title != '' %} ({{ details.title }}{% endif %} <small>{{ details.language.name }}</small></h1>
+{% endblock page_header %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-2"><b>Trigger warnings</b></div>
+        <div class="col-md-10">{% if details.warnings is not none and details.warnings != '' %}N/a{% else %}{{ details.warnings }}{% endif %}</div>
+    </div>
+
+    <a href="{{ url_for('.edit_episode_translation', episode_no=details.episode_no, language_id=details.language_id) }}" class="btn btn-default">Edit episode details</a>
+
+    <p>&nbsp;</p>
+
+    {% if sections|length > 0 %}
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th colspan="2">Section</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for section in sections %}
+                    <tr>
+                        <td>Section {{ section.section_no }}</td>
+                        <td><a href="{{ url_for('.edit_episode_section', episode_no=section.episode_no, language_id=section.language_id, section_no=section.section_no) }}"><i class="fa fa-pencil" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="Edit section"></i><span class="sr-only">Edit section</span></a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+
+    {% if sections|length < details.episode.n_sections %}
+        <a href="{{ url_for('.edit_episode_section', episode_no=details.episode_no, language_id=details.language_id) }}">Add section</a>
+    {% endif %}
+{% endblock content %}
+
+{% block footer_content %}
+    <script type="application/javascript">
+        $(document).ready(function() {
+           $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+{% endblock footer_content %}

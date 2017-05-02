@@ -1,0 +1,42 @@
+{% extends 'admin_pages/base_cms.html' %}
+
+{% block title %}{{ super() }} - Users{% endblock title %}
+
+{% block page_header %}
+    <div class="page-header">
+        <h1>Users</h1>
+    </div>
+{% endblock page_header %}
+
+{% block content %}
+    <table class="table table-striped table-bordered" id="users_table">
+        <thead>
+            <tr>
+                <th>User (email)</th>
+                <th>Role</th>
+                <th colspan="2">Activated?</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.role.name }}</td>
+                    <td>{% if user.activated %}<i class="fa fa-check-square" aria-hidden="true"></i>{% endif %}<span class="sr-only">{% if user.activated %}activated{% else %}not activated{% endif %}</span></td>
+                    <td><a href="{{ url_for('.rik3_edit_user', user_id=user.id) }}"><i class="fa fa-pencil" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="Edit user"></i><span class="sr-only">Edit user</span></a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-default" href="{{ url_for('.rik3_edit_user') }}">Create new user</a>
+{% endblock content %}
+
+{% block footer_content %}
+    <script type="application/javascript">
+        $(document).ready(function() {
+           $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+{% endblock footer_content %}

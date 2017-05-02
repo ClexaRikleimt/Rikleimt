@@ -1,0 +1,32 @@
+{% extends 'admin_pages/base_cms.html' %}
+{% from 'admin_pages/utils/form_macro.html' import render_field %}
+
+{% block title %}{{ super() }} - User create/edit{% endblock title %}
+
+{% block page_header %}
+    <div class="page-header">
+        {% if user_id == -1 %}
+            <h1>Create new user</h1>
+        {% else %}
+            <h1>Edit existing user</h1>
+        {% endif %}
+    </div>
+{% endblock page_header %}
+
+{% block content %}
+    <form method="POST" action="{{ url_for('.rik3_edit_user', user_id=user_id) }}">
+        {{ form.hidden_tag() }}
+
+        {{ render_field(form.email) }}
+        {% if user_id == -1 %}
+            {{ render_field(form.password) }}
+            {{ render_field(form.confirm_password) }}
+        {% endif %}
+        {{ render_field(form.role) }}
+        {{ render_field(form.activated) }}
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-default">Save</button>
+        </div>
+    </form>
+{% endblock content %}

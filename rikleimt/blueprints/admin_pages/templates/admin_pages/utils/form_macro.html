@@ -1,0 +1,24 @@
+{% macro render_field(field, class_='', inline=False) %}
+    <div class="form-group">
+        {% if field.errors %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% if inline %}
+            {{ field.label() }}
+        {% else %}
+            {{ field.label(class_='control-label') }}
+        {% endif %}
+        <div>
+            {% if field.bs3.help_text is not none %}
+                {{ field(class_='form-control {0}'.format(class_), **{'aria-describedby': '{0}_help'.format(field.id) }) }}
+                <span id="{{ '{0}_help'.format(field.id) }}" class="help-block">{{ field.bs3.help_text }}</span>
+            {% else %}
+                {{ field(class_='form-control {0}'.format(class_)) }}
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}

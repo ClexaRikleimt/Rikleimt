@@ -1,10 +1,14 @@
 # encoding=utf-8
+from hashlib import sha512
+
+from flask import render_template, Markup
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 
-# from sqlalchemy import event, DDL
+from sqlalchemy import and_
 
 from rikleimt.config import metadata
+from rikleimt.application import bcrypt_
 
 db = SQLAlchemy(metadata=metadata)
 
@@ -59,7 +63,7 @@ class Language(db.Model):
     __tablename__ = 'language'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Unicode(60), nullable=False)
-    locale_code = db.Column(db.Unicode(70), nullable=False)
+    locale_code = db.Column(db.Unicode(30), nullable=False)
 
     def __init__(self, name, locale_code):
         self.name = name
@@ -73,14 +77,46 @@ class Episode(db.Model):
     __tablename__ = 'episode'
     episode_no = db.Column(db.Integer, primary_key=True)
     sfw = db.Column('sfw', db.Boolean(name='sfw'), nullable=False, default=True)
+    n_sections = db.Column(db.Integer, nullable=False)
 
-    details = db.relationship('EpisodeDetails', back_populates='episode')
+    details = db.relationship('EpisodeDetails', back_populates='episode', order_by='EpisodeDetails.language_id')
 
-    sections = db.relationship('EpisodeSection', back_populates='episode', order_by='EpisodeSection.section_no')
+    sections = db.relationship('EpisodeSection', back_populates='episode',
+                               order_by='EpisodeSection.section_no, EpisodeSection.language_id')
 
-    def __init__(self, episode_no, sfw):
+    def __init__(self, episode_no, sfw, n_sections):
         self.episode_no = episode_no
         self.sfw = sfw
+        self.n_sections = n_sections
+
+    def is_fully_translated(self, language_id):
+        return db.session.query(db.func.count(EpisodeSection.id)).filter(
+            EpisodeSection.language_id == language_id and EpisodeSection.episode_no == self.episode_no
+        ).scalar() == self.n_sections
+
+    @property
+    def all_translations_present(self):
+        return db.session.query(db.func.count(Language.id)).scalar() == len(self.details)
+
+    @property
+    def languages_not_translated_to(self):
+        languages = {l.id: l.name for l in Language.query.all()}
+        for episode_version in self.details:
+            if episode_version.language_id in languages.keys():
+                languages.pop(episode_version.language_id)
+
+        return languages
+
+    @property
+    def languages_available_in(self):
+        languages = []
+        for episode_version in self.details:
+            languages.append({
+                'language_id': episode_version.language_id,
+                'language_name': episode_version.language.name,
+                'fully_translated': self.is_fully_translated(episode_version.language_id)
+            })
+        return languages
 
     def __repr__(self):
         return '<{0} - {1!r}>'.format(self.__class__.__name__, self.episode_no)
@@ -92,6 +128,7 @@ class EpisodeDetails(db.Model):
     episode_no = db.Column(db.Integer, db.ForeignKey('episode.episode_no'))
 
     episode = db.relationship('Episode', back_populates='details', uselist=False)
+    language = db.relationship('Language', uselist=False)
 
     title = db.Column(db.Unicode(120), nullable=True)
     warnings = db.Column('trigger_warnings', db.Unicode(1000), nullable=True)
@@ -118,25 +155,39 @@ class EpisodeSection(db.Model):
     section_no = db.Column(db.Integer, nullable=False)
     language_id = db.Column(db.Integer, db.ForeignKey('language.id'), nullable=False)
 
-    episode = db.relationship('Episode', back_populates='sections')
+    # Can be 0 during section creation
+    current_revision_id = db.Column(db.Integer, db.ForeignKey('episode_revision.id'), nullable=True)
 
-    text = db.relationship('EpisodeText', secondary=lambda: EpisodeRevision.__table__,
-                           primaryjoin="EpisodeSection.id == EpisodeRevision.section_id",
-                           secondaryjoin="EpisodeRevision.text_id == EpisodeText.id",
-                           lazy='dynamic', viewonly=True)
+    episode = db.relationship('Episode', back_populates='sections')
+    language = db.relationship('Language', uselist=False)
 
     __table_args__ = (
         db.UniqueConstraint('episode_no', 'section_no', 'language_id', name='uq_episode_section_identifier'),
     )
 
-    def __init__(self, episode_no, section_no, language_id):
+    def __init__(self, episode_no, section_no, language_id, revision_id=None):
         self.episode_no = episode_no
         self.section_no = section_no
         self.language_id = language_id
+        self.current_revision_id = revision_id
 
     def __repr__(self):
         return '<{0} - Episode {1}, Section {2} in language {3}>'.format(self.__class__.__name__, self.episode_no,
-                                                                         self.section_no, self.language_id)
+                                                                         self.section_no, self.language.name)
+
+    @property
+    def text(self):
+        if self.current_revision_id == 0:
+            raise RevisionNotFoundException('There is no revision associated with this section.')
+
+        text = db.session.query(EpisodeText).join(
+            EpisodeRevision, EpisodeText.id == EpisodeRevision.text_id
+        ).join(
+            EpisodeSection, EpisodeSection.id == EpisodeRevision.section_id
+        ).filter(
+            EpisodeRevision.id == self.current_revision_id
+        ).first()
+        return text.content
 
 
 class EpisodeRevision(db.Model):
@@ -177,13 +228,15 @@ class SideStory(db.Model):
     __tablename__ = 'side_story'
     id = db.Column(db.Integer, primary_key=True)
     sfw = db.Column('sfw', db.Boolean(name='sfw'), nullable=False, default=True)
+    n_sections = db.Column(db.Integer, nullable=False)
 
     details = db.relationship('SideStoryDetails', back_populates='side_story')
 
     sections = db.relationship('SideStorySection', back_populates='side_story', order_by='SideStorySection.section_no')
 
-    def __init__(self, sfw):
+    def __init__(self, sfw, n_sections):
         self.sfw = sfw
+        self.n_sections = n_sections
 
     def __repr__(self):
         return '<{0} - {1!r}>'.format(self.__class__.__name__, self.id)
@@ -285,7 +338,7 @@ class User(db.Model, UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(256), nullable=False)
-    password = db.Column(db.Unicode(60), nullable=False)
+    password = db.Column(db.String(60), nullable=False)
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
     activated = db.Column(db.Boolean(name='activated'), nullable=False, default=False)
 
@@ -302,8 +355,29 @@ class User(db.Model, UserMixin):
         return self.activated
 
     def validate_password(self, password):
-        # TODO: Password logic here
-        pass
+        return bcrypt_.check_password_hash(self.password, sha512(bytes(password, 'utf-8')).hexdigest())
+
+    @staticmethod
+    def hash_password(password):
+        return bcrypt_.generate_password_hash(sha512(bytes(password, 'utf-8')).hexdigest())
+
+    @property
+    def pages(self):
+        # {'endpoint': name}
+        data = {}
+        for page in self.role.pages:
+            data[page.endpoint] = page.name
+        return data
+
+    @property
+    def menu(self):
+        administrative_pages = [page for page in self.role.pages if page.is_administrative and page.in_menu]
+        other_pages = [page for page in self.role.pages if not page.is_administrative and page.in_menu]
+
+        menu = render_template('utils/admin_menu.html',
+                               administrative_pages=administrative_pages,
+                               other_pages=other_pages)
+        return Markup(menu)
 
     def __repr__(self):
         return '<{0} - {1!r}>'.format(self.__class__.__name__, self.email)
@@ -332,11 +406,22 @@ class PageAccess(db.Model):
     __tablename__ = 'page_access'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Unicode(50), nullable=False, unique=True)
+    endpoint = db.Column(db.String(60), nullable=False, unique=True)
+    in_menu = db.Column(db.Boolean(name='in_menu'), nullable=False, default=False)
+    is_administrative = db.Column(db.Boolean(name='is_administrative'), nullable=False, default=False)
 
     roles = db.relationship('Role', secondary=roles_pages, back_populates='pages')
 
-    def __init__(self, name):
+    def __init__(self, name, endpoint, in_menu=False, is_administrative=False):
         self.name = name
+        self.endpoint = endpoint
+        self.in_menu = in_menu
+        self.is_administrative = is_administrative
 
     def __repr__(self):
         return '<{0} - {1!r}>'.format(self.__class__.__name__, self.name)
+
+
+# Model related exceptions
+class RevisionNotFoundException(Exception):
+    pass

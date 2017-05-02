@@ -2,8 +2,11 @@ flask
 werkzeug
 jinja2
 flask_sqlalchemy
+flask-migrate
 flask_login
 flask-wtf
 flask-babel
 flask-assets
+flask-bcrypt
 flake8
+Sphinx

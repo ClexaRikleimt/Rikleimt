@@ -1,33 +1,23 @@
 # encoding=utf-8
 from rikleimt.application import create_app, login_manager
-from rikleimt.blueprints.api import api_bp
-from rikleimt.views import Login, TemplateHome, TemplateBook
+from rikleimt.views import TemplateHome, TemplateBook
+from rikleimt.models import User
 
 
 app = create_app()
 
-login_manager.login_view = Login.endpoint
-# In case we'd like to translate the backend as well, put a gettext call around the following message
-login_manager.login_message = 'Please login before viewing this page'
-login_manager.login_message_category = 'error'
 
+@login_manager.user_loader
+def load_user(user_id):
+    try:
+        return User.query.filter(User.id == int(user_id)).first()
+    except (ValueError, AttributeError):
+        return None
 
-# TODO: Uncomment this part when ~the User database model is created~ and imported [Arlena]
-# @login_manager.user_loader
-# def load_user(user_id):
-#     try:
-#         return User.query.filter(User.id == int(user_id)).first()
-#     except (ValueError, AttributeError):
-#         return None
-
-# TODO: Register blueprints
-app.register_blueprint(api_bp, url_prefix='/api')
 
 # TODO: Add routes to app object
 app.add_url_rule('/', TemplateHome.endpoint, methods=['GET'], view_func=TemplateHome.as_view(TemplateHome.endpoint))
 app.add_url_rule('/book', TemplateBook.endpoint, view_func=TemplateBook.as_view(TemplateBook.endpoint), methods=['GET'])
-
-print(app.url_map)
 
 
 #   @app.route('/db/addText/')

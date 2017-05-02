@@ -1,0 +1,40 @@
+{% extends 'admin_pages/base_cms.html' %}
+{% from 'admin_pages/utils/form_macro.html' import render_field %}
+
+{% block title %}{{ super() }}{% if language_id == -1 %}Create{% else %}Edit{% endif %} translation{% endblock title %}
+
+{% block head_content %}
+    <script type="application/javascript" src="{{ url_for('.static', filename='ckeditor/ckeditor.js') }}"></script>
+{% endblock head_content %}
+
+{% block page_header %}
+    <div class="page-header">
+        {% if language_id == -1 %}
+            <h1>Create new translation for episode {{ episode_no }}</h1>
+        {% else %}
+            <h1>Edit translation for episode {{ episode_no }}</h1>
+        {% endif %}
+    </div>
+{% endblock page_header %}
+
+{% block content %}
+    <form method="POST" action="{{ url_for('.edit_episode_translation', episode_no=episode_no, language_id=language_id) }}">
+        {{ form.hidden_tag() }}
+
+        {{ render_field(form.language) }}
+        {{ render_field(form.episode_name) }}
+        {{ render_field(form.trigger_warnings) }}
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-default">Save</button>
+        </div>
+    </form>
+{% endblock %}
+
+{% block footer_content %}
+    {% if episode_no == -1 %}
+        <script type="application/javascript">
+            CKEDITOR.replace('{{ form.trigger_warnings.name }}');
+        </script>
+    {% endif %}
+{% endblock footer_content %}
