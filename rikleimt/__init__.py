@@ -101,4 +101,4 @@ app.add_url_rule('/book', TemplateBook.endpoint, view_func=TemplateBook.as_view(
 #     return "Database dropped"
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
