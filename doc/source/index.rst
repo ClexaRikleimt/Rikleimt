@@ -3,8 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Clexa Rikleimt - Website's documentation!
-====================================================
+Documentation for the Clexa Rikleimt website (in development)
+=============================================================
+The following pages contain the documentation for the website of the Clexa Rikleimt project. This documentation is
+meant for both new and existing developers of the website, as well as the project management, or rather the council,
+to get an idea of how things work and what should be done in the future. It will function as an introduction to new
+developers to get a view of how the codebase is set up and for existing developers as a reference.
+
 
 .. toctree::
    :maxdepth: 2

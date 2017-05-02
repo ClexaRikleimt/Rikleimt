@@ -161,7 +161,6 @@ class EpisodeSection(db.Model):
     episode = db.relationship('Episode', back_populates='sections')
     language = db.relationship('Language', uselist=False)
 
-
     __table_args__ = (
         db.UniqueConstraint('episode_no', 'section_no', 'language_id', name='uq_episode_section_identifier'),
     )
