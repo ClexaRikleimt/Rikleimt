@@ -155,16 +155,12 @@ class EpisodeSection(db.Model):
     section_no = db.Column(db.Integer, nullable=False)
     language_id = db.Column(db.Integer, db.ForeignKey('language.id'), nullable=False)
 
-    # Can be 0 during page creation
+    # Can be 0 during section creation
     current_revision_id = db.Column(db.Integer, db.ForeignKey('episode_revision.id'), nullable=True)
 
     episode = db.relationship('Episode', back_populates='sections')
     language = db.relationship('Language', uselist=False)
 
-    # text = db.relationship('EpisodeText', secondary=lambda: EpisodeRevision.__table__,
-    #                        primaryjoin="EpisodeSection.current_revision_id == EpisodeRevision.id",
-    #                        secondaryjoin="EpisodeRevision.text_id == EpisodeText.id",
-    #                        lazy='dynamic', viewonly=True)
 
     __table_args__ = (
         db.UniqueConstraint('episode_no', 'section_no', 'language_id', name='uq_episode_section_identifier'),

@@ -627,14 +627,14 @@ class EpisodeEditTranslation(MethodView):
                 flash('Successfully created a new translation in {0} of episode {1}'.format(
                     translation.language.name, episode_no
                 ), 'info')
-                return redirect(url_for('.{0}'.format(EpisodeViewDetails.endpoint), episode_no=episode_no))
+                return redirect(url_for('.{0}'.format(EpisodeIndex.endpoint)))
         else:
             details = EpisodeDetails.query.filter(db.and_(
                 EpisodeDetails.episode_no == episode_no, EpisodeDetails.language_id == language_id
             )).first()
             if not details:
                 flash('The translation that was selected for edit does not exist.', 'error')
-                return redirect(url_for('.{0}'.format(EpisodeViewDetails.endpoint), episode_no=episode_no))
+                return redirect(url_for('.{0}'.format(EpisodeIndex.endpoint)))
 
             # The language part has become static on editing, so we won't have to send a change for that to the db
             details.title = form.episode_name.data
@@ -654,7 +654,7 @@ class EpisodeEditTranslation(MethodView):
                 flash('Successfully edited the {0} translation of episode {1}'.format(
                     details.language.name, episode_no
                 ), 'info')
-                return redirect(url_for('.{0}'.format(EpisodeViewDetails.endpoint), episode_no=episode_no))
+                return redirect(url_for('.{0}'.format(EpisodeIndex.endpoint)))
 
 
 class EpisodeViewDetails(View):
@@ -692,7 +692,8 @@ class EpisodeEditSection(MethodView):
             )).first()
             if not section:
                 flash('Section not found', 'error')
-                return redirect(url_for('.{0}'.format(EpisodeViewDetails.endpoint), episode_no=episode_no))
+                return redirect(url_for('.{0}'.format(EpisodeTranslationDetails.endpoint), episode_no=episode_no,
+                                        language_id=language_id))
 
             try:
                 text = section.text
@@ -736,7 +737,8 @@ class EpisodeEditSection(MethodView):
             flash('Successfully created section {0} for language {1} in episode {2}'.format(
                 section.section_no, section.language.name, episode_no
             ), 'info')
-            return redirect(url_for('.{0}'.format(EpisodeViewDetails.endpoint), episode_no=episode_no))
+            return redirect(url_for('.{0}'.format(EpisodeTranslationDetails.endpoint), episode_no=episode_no,
+                                    language_id=language_id))
         else:
             # Get info about section from database
             section = EpisodeSection.query.filter(and_(
@@ -746,7 +748,8 @@ class EpisodeEditSection(MethodView):
             )).first()
             if not section:
                 flash('Section not found', 'error')
-                return redirect(url_for('.{0}'.format(EpisodeViewDetails.endpoint), episode_no=episode_no))
+                return redirect(url_for('.{0}'.format(EpisodeTranslationDetails.endpoint), episode_no=episode_no,
+                                        language_id=language_id))
 
             current_revision_id = section.current_revision_id
 
@@ -768,7 +771,7 @@ class EpisodeEditSection(MethodView):
                 db.session.add(revision)
                 db.session.commit()
 
-                section.current_revision_id = revision
+                section.current_revision_id = revision.id
                 db.session.commit()
 
             section.section_no = form.section_no.data
@@ -776,6 +779,7 @@ class EpisodeEditSection(MethodView):
             try:
                 db.session.commit()  # Might trigger an integrity error
             except IntegrityError:
+                db.session.rollback()
                 # TODO: Test, test, test!!!
                 flash('This combination of section number, episode number and language does already exist. '
                       'Please check if you are editing the correct section.')
@@ -789,5 +793,6 @@ class EpisodeEditSection(MethodView):
                 flash('Updated episode {0}, section {1} in {2}'.format(episode_no, section.section_no,
                                                                        section.language.name),
                       'info')
-                return redirect(url_for('.{0}'.format(EpisodeViewDetails.endpoint), episode_no=episode_no))
+                return redirect(url_for('.{0}'.format(EpisodeTranslationDetails.endpoint), episode_no=episode_no,
+                                        language_id=language_id))
 
