@@ -132,39 +132,39 @@ class Rik3EditUser(MethodView):
 
             form = self._prepare_form(Rik3UserFormEdit())
 
-        if form.validate_on_submit():
-            if user_id == -1:
-                user = User(form.email.data, User.hash_password(form.password.data), form.role.data,
-                            form.activated.data)
-                db.session.add(user)
-                try:
-                    db.session.commit()
-                except IntegrityError as exception:
-                    db.session.rollback()
-                    # TODO: testing [Arlena]
-                    flash('Failed to create the user. Technical data: {0}'.format(exception), 'error')
-                    return render_template('admin_pages/rik3_user_edit.html', form=form, user_id=user_id)
-                else:
-                    flash('Successfully created the new user.', 'info')
-                    return redirect(url_for('.{0}'.format(Rik3Users.endpoint)))
+        if not form.validate_on_submit():
+            return render_template('admin_pages/rik3_user_edit.html', form=form, user_id=user_id)
+
+        if user_id == -1:
+            user = User(form.email.data, User.hash_password(form.password.data), form.role.data,
+                        form.activated.data)
+            db.session.add(user)
+            try:
+                db.session.commit()
+            except IntegrityError as exception:
+                db.session.rollback()
+                # TODO: testing [Arlena]
+                flash('Failed to create the user. Technical data: {0}'.format(exception), 'error')
+                return render_template('admin_pages/rik3_user_edit.html', form=form, user_id=user_id)
             else:
-                user = User.query.filter(User.id == user_id).first()
-                user.email = form.email.data
-                user.role_id = form.role.data
-                user.activated = form.activated.data
+                flash('Successfully created the new user.', 'info')
+                return redirect(url_for('.{0}'.format(Rik3Users.endpoint)))
+        else:
+            user = User.query.filter(User.id == user_id).first()
+            user.email = form.email.data
+            user.role_id = form.role.data
+            user.activated = form.activated.data
 
-                try:
-                    db.session.commit()
-                except IntegrityError as exception:
-                    db.session.rollback()
-                    # TODO: testing [Arlena]
-                    flash('Failed to edit the user. Technical data: {0}'.format(exception), 'error')
-                    return render_template('admin_pages/rik3_user_edit.html', form=form, user_id=user_id)
-                else:
-                    flash('Successfully edited the user.', 'info')
-                    return redirect(url_for('.{0}'.format(Rik3Users.endpoint)))
-
-        return render_template('admin_pages/rik3_user_edit.html', form=form, user_id=user_id)
+            try:
+                db.session.commit()
+            except IntegrityError as exception:
+                db.session.rollback()
+                # TODO: testing [Arlena]
+                flash('Failed to edit the user. Technical data: {0}'.format(exception), 'error')
+                return render_template('admin_pages/rik3_user_edit.html', form=form, user_id=user_id)
+            else:
+                flash('Successfully edited the user.', 'info')
+                return redirect(url_for('.{0}'.format(Rik3Users.endpoint)))
 
 
 class Roles(View):
@@ -472,7 +472,8 @@ class EditEpisode(MethodView):
             # New episode, show different form
             form = CreateEpisodeForm()
             form.original_language.choices = [(l.id, l.name) for l in Language.query.all()]
-            # TODO: Intialise the form with total number of episodes + 1 as episode_no
+            n_total_episodes = Episode.query.count()
+            form.episode_no.data = n_total_episodes + 1
         else:
             form = EditEpisodeForm()
 
