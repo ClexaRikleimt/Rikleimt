@@ -13,7 +13,7 @@ developers to get a view of how the codebase is set up and for existing develope
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Documentation:
 
    project
    glossary
@@ -22,6 +22,7 @@ developers to get a view of how the codebase is set up and for existing develope
    backend_intro
    backend/database
    backend/blueprints
+   backend/admin_pages/access_rights
    backend/admin_pages/view_pages
    backend/admin_pages/forms
    backend/admin_pages/edit_pages
