@@ -1,5 +1,6 @@
 # encoding=utf-8
 import datetime
+from urllib.parse import urlparse, urljoin
 
 from flask import render_template, url_for, flash, request, redirect
 from flask.views import View, MethodView
@@ -30,6 +31,9 @@ class Login(View):
     endpoint = 'login'
 
     def dispatch_request(self):
+        if current_user.is_authenticated:
+            return redirect(url_for('.index'))
+
         error_message = 'This combination of email and password was not found.'
 
         form = LoginForm()
@@ -38,21 +42,27 @@ class Login(View):
             if user is None:
                 # User is not known, flash message and return
                 flash(error_message, 'error')
-                return render_template('admin_pages/login.html', form=form)
+                return render_template('admin_pages/login.html', form=form, url_args=request.args)
             if user.validate_password(form.password.data):
                 # Valid login
                 if not login_user(user, form.remember.data):
-                    flash('This account is not yet or no longer allowed to log in. Contact kepa-wocha with questions.',
+                    flash('This account is not yet or no longer allowed to log in. Contact the Council for questions.',
                           'error')
-                    return render_template('admin_pages/login.html', form=form)
+                    return render_template('admin_pages/login.html', form=form, url_args=request.args)
 
                 next_ = request.args.get('next')
-                # TODO: validate `next_` (now vulnerable for open redirects) [Arlena]
-                return redirect(next_ or url_for('.index'))
+
+                ref_url = urlparse(request.host_url)
+                test_url = urlparse(urljoin(request.host_url, next_))
+
+                if test_url.scheme in ('http', 'https') and test_url.netloc != ref_url.netloc:
+                    return redirect(next_)
+                else:
+                    return url_for('.index')
             else:
                 flash(error_message, 'error')
-                render_template('admin_pages/login.html', form=form)
-        return render_template('admin_pages/login.html', form=form)
+                return render_template('admin_pages/login.html', form=form, url_args=request.args)
+        return render_template('admin_pages/login.html', form=form, url_args=request.args)
 
 
 class Logout(View):
