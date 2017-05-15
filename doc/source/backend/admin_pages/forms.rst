@@ -9,14 +9,14 @@ WTForms
 WTForms is build on 4 key concepts:
 
 - `Forms` are the core container of WTForms. Forms represent a collection of fields, which can be accessed on the form
-dictionary-style or attribute style.
+  dictionary-style or attribute style.
 - `Fields` do most of the heavy lifting. Each field represents a data type and the field handles coercing form input to
-that datatype. For example, IntegerField and StringField represent two different data types. Fields contain a number of
-useful properties, such as a label, description, and a list of validation errors, in addition to the data the field
-contains.
+  that datatype. For example, IntegerField and StringField represent two different data types. Fields contain a number of
+  useful properties, such as a label, description, and a list of validation errors, in addition to the data the field
+  contains.
 - Every field has a `Widget` instance. The widget’s job is rendering an HTML representation of that field. Widget
-instances can be specified for each field but every field has one by default which makes sense. Some fields are simply
-conveniences, for example TextAreaField is simply a StringField with the default widget being a TextArea.
+  instances can be specified for each field but every field has one by default which makes sense. Some fields are simply
+  conveniences, for example TextAreaField is simply a StringField with the default widget being a TextArea.
 - In order to specify validation rules, fields contain a list of `Validators`.
 
 Above this, Flask-wtforms extends the functionality. For example, Flask-wtforms includes an enhanced form, the
@@ -58,7 +58,7 @@ with the form above:
 Then, in the template file, import the form macros that help creating forms at the top, directly after extending the
 template.
 
-.. code-block:: jinja2
+.. code-block:: jinja
 
   {% extends 'admin_pages/base_cms.html' %}
   {% from 'admin_pages/utils/form_macro.html' import render_field, render_field_horizontal %}
@@ -71,7 +71,7 @@ template.
 Next, create a form in the template, and call the relevant rendering function for each field in the form. Please see the
 `utils/form_macro.html` file in the templates folder to look up the parameters this macro takes.
 
-.. code-block:: jinja2
+.. code-block:: jinja
 
   <form method="POST" action="{{ url_for('.edit_episode', episode_no=episode_no) }}">
       {{ form.hidden_tag() }}
