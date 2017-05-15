@@ -21,14 +21,26 @@
         <table class="table table-striped table-bordered">
             <thead>
                 <tr>
-                    <th colspan="2">Section</th>
+                    <th colspan="3">Section</th>
                 </tr>
             </thead>
             <tbody>
                 {% for section in sections %}
                     <tr>
-                        <td>Section {{ section.section_no }}</td>
+                        <td>{{ section.readable_name if section.readable_name is not none else section.section_no}}</td>
                         <td><a href="{{ url_for('.edit_episode_section', episode_no=section.episode_no, language_id=section.language_id, section_no=section.section_no) }}"><i class="fa fa-pencil" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="Edit section"></i><span class="sr-only">Edit section</span></a></td>
+                        <td>{% if not loop.first %}
+                            <button class="btn section_move_up" data-section-id="{{ section.id }}">
+                                <i class="fa fa-arrow-up" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="Move section up"></i>
+                                <span class="sr-only">Move section up</span>
+                            </button>&nbsp;&nbsp;&nbsp;{% endif %}
+                            {% if not loop.last %}
+                                <button class="btn section_move_down" data-section-id="{{ section.id }}">
+                                    <i class="fa fa-arrow-down" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="Move section down"></i>
+                                    <span class="sr-only">Move section down</span>
+                                </button>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -46,5 +58,13 @@
         $(document).ready(function() {
            $('[data-toggle="tooltip"]').tooltip();
         });
+
+        var swap_url = {{ url_for('api.admin_swap_episode_sections', section_id=5, other_section_id=7) }}; // Random numbers so easy replaceable
+
+        $('.section_move_down').on('click', function() {
+            var section_id = this.dataset.sectionId;
+            var other_section_id = $(this).parent().parent().next().find('.btn').dataset.sectionId;
+            // FIXME: nevermind, page reload required... either javascript mess or extra dependency (vue)
+        })
     </script>
 {% endblock footer_content %}

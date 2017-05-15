@@ -155,6 +155,9 @@ class EpisodeSection(db.Model):
     section_no = db.Column(db.Integer, nullable=False)
     language_id = db.Column(db.Integer, db.ForeignKey('language.id'), nullable=False)
 
+    # Will only be displayed in admin pages, not exposed to the general public
+    readable_name = db.Column(db.Unicode(120), nullable=True)
+
     # Can be 0 during section creation
     current_revision_id = db.Column(db.Integer, db.ForeignKey('episode_revision.id'), nullable=True)
 
@@ -165,11 +168,12 @@ class EpisodeSection(db.Model):
         db.UniqueConstraint('episode_no', 'section_no', 'language_id', name='uq_episode_section_identifier'),
     )
 
-    def __init__(self, episode_no, section_no, language_id, revision_id=None):
+    def __init__(self, episode_no, section_no, language_id, revision_id=None, name=None):
         self.episode_no = episode_no
         self.section_no = section_no
         self.language_id = language_id
         self.current_revision_id = revision_id
+        self.readable_name = name
 
     def __repr__(self):
         return '<{0} - Episode {1}, Section {2} in language {3}>'.format(self.__class__.__name__, self.episode_no,

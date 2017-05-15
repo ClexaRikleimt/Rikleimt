@@ -8,9 +8,17 @@
             {% endfor %}
         {% endif %}
         {% if inline %}
-            {{ field.label() }}
+            {% if field.flags.required %}
+                <label for="{{ field.id }}">{{ field.label.text }}<span style="color:red;">*</span></label>
+            {% else %}
+                {{ field.label() }}
+            {% endif %}
         {% else %}
-            {{ field.label(class_='control-label') }}
+            {% if field.flags.required %}
+                <label for="{{ field.id }}" class="control-label">{{ field.label.text }}<span style="color: red;">*</span></label>
+            {% else %}
+                {{ field.label(class_='control-label') }}
+            {% endif %}
         {% endif %}
         <div>
             {% if field.bs3.help_text is not none %}
@@ -18,6 +26,55 @@
                 <span id="{{ '{0}_help'.format(field.id) }}" class="help-block">{{ field.bs3.help_text }}</span>
             {% else %}
                 {{ field(class_='form-control {0}'.format(class_)) }}
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro render_field_horizontal(field, class_='', label_width=2, addon_before='', addon_after='', aria_label='', addon_before_described_by=false, addon_after_described_by=false) %}
+    <div class="form-group">
+        {% if field.errors %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% if field.flags.required %}
+            <label for="{{ field.id }}" class="{{ 'control-label col-sm-{0}'.format(label_width) }}">{{ field.label.text }}<span style="color: red;">*</span></label>
+        {% else %}
+            {{ field.label(class_='control-label col-sm-{0}'.format(label_width)) }}
+        {% endif %}
+        <div class="col-sm-{{ 12 - label_width }}">
+            {% if addon_before != '' or addon_after != '' %}
+                <div class="input-group">
+            {% endif %}
+
+            {% if addon_before != '' %}
+                    <span class="input-group-addon" id="{{ field.id }}_addon_before">{{ addon_before }}</span>
+            {% endif %}
+
+                {% if field.bs3.help_text is not none %}
+                    {# Has a help text already, so skipping the aria-describedby check TODO? #}
+                    {{ field(class_='form-control {0}'.format(class_), **{'aria-describedby': '{0}_help'.format(field.id) }) }}
+                {% elif addon_before_described_by %}
+                    {{ field(class_='form-control {0}'.format(class_), **{'aria-describedby': '{0}_addon_before'.format(field.id) }) }}
+                {% elif addon_after_described_by %}
+                    {{ field(class_='form-control {0}'.format(class_), **{'aria-describedby': '{0}_addon_after'.format(field.id) }) }}
+                {% elif aria_label != '' %}
+                    {{ field(class_='form-control {0}'.format(class_), **{'aria-label': aria_label}) }}
+                {% else %}
+                    {{ field(class_='form-control {0}'.format(class_)) }}
+                {% endif %}
+
+            {% if addon_after != '' %}
+                    <span class="input-group-addon" id="{{ field.id }}_addon_after">{{ addon_after }}</span>
+            {% endif %}
+            {% if addon_before != '' or addon_after != '' %}
+                </div>
+            {% endif %}
+            {% if field.bs3.help_text is not none %}
+                <span id="{{ '{0}_help'.format(field.id) }}" class="help-block">{{ field.bs3.help_text }}</span>
             {% endif %}
         </div>
     </div>

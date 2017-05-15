@@ -1,8 +1,8 @@
 Limiting access to content
 ==========================
 In order to edit content on the website, a user needs to log in on the administrative pages. At least 1 account is
-pre-made. Each page has a list of user roles that have access to that page. Each account belongs to at least 1 user
-role. For example, the page where new accounts are created (for security sake it is not possible to create new accounts
+pre-made. Each page has a list of user roles that have access to that page. Each account belongs to 1 user role.
+For example, the page where new accounts are created (for security sake it is not possible to create new accounts
 on the outside) is only accessible by the user role `Rikleimt3`. Say that you have an account that is not in that user
 role, it won't be able to access that page.
 

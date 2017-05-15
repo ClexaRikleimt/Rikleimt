@@ -1,8 +1,11 @@
 # encoding=utf-8
 import json
 
-from flask.views import View
+from flask.views import View, MethodView, make_response
+from flask_login import login_required
 
+from rikleimt.decorators import role_access
+from rikleimt.exceptions import APIBadRequestException
 from rikleimt.models import EpisodeSection, EpisodeDetails
 
 
@@ -56,3 +59,33 @@ class NextSection(View):
             return_text = section.text.first().content
             return_json = json.dumps({'text': return_text})
         return return_json, 200, {'ContentType': 'application/json'}
+
+
+class APIAdminSwapEpisodeSections(MethodView):
+    endpoint = 'admin_swap_episode_sections'
+    decorators = [login_required, role_access]
+
+    def post(self, section_id, other_section_id):
+        section = EpisodeSection.query.filter(EpisodeSection.id == section_id).first()
+        if not section:
+            raise APIBadRequestException()
+
+        other_section = EpisodeSection.query.filter(EpisodeSection.id == other_section_id).first()
+        if not other_section:
+            raise APIBadRequestException()
+
+        if section.episode_no != other_section.episode_no or section.language_id != other_section.language_id:
+            # Not in the same translation of the same episode
+            raise APIBadRequestException()
+
+        section.section_no, other_section.section_no = other_section.section_no, section.section_no
+
+        db.session.commit()
+
+        response = make_response(json.dumps({
+            'status': 200,
+            'message': u'Swapped section_no (position) of sections {0} and {1}'.format(section_id, other_section_id)
+        }))
+        response.mimetype = 'application/json'
+
+        return response

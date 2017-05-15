@@ -120,7 +120,7 @@ class CreateEpisodeForm(FlaskForm):
         InputRequired()
     ], help_text="""
 The episodes will be uploaded in the same set of scenes as they were written in. For example, the first episode,
-the prologue includes, has 7 scenes: prologue, 1, 2, 3, 3B, 4, 5.
+the prologue including, has 7 scenes: prologue, 1, 2, 3, 3B, 4, 5.
 """)
     original_language = BS3SelectField(label='Language of the untranslated content: ', coerce=int, validators=[
         DataRequired()
@@ -142,7 +142,7 @@ class EditEpisodeForm(FlaskForm):
         InputRequired()
     ], help_text="""
 The episodes will be uploaded in the same set of scenes as they were written in. For example, the first episode,
-the prologue includes, has 7 scenes: prologue, 1, 2, 3, 3B, 4, 5.
+the prologue including, has 7 scenes: prologue, 1, 2, 3, 3B, 4, 5.
 """)
 
 
@@ -167,6 +167,9 @@ This needs to be a number. Say this is scene 3 of episode 1, the section number 
 the first section. Then scene 3B would get the section number of 5, and scene 5 would become section number 7. This
 number is used to put the scenes in the correct order when displaying the text.
 """)
+    section_name = BS3StringField(label='Name: ', validators=[
+        InputRequired()
+    ])
     section_text = CKTextAreaField(label='Finally, the text of the scene: ', validators=[
         InputRequired()
     ])

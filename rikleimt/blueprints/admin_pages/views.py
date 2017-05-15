@@ -692,6 +692,12 @@ class EpisodeEditSection(MethodView):
         if section_no == -1:
             # New section
             form = EpisodeSectionForm()
+            # Populate the section number field with the next logical section
+            n_sections = EpisodeSection.query.filter(and_(
+                EpisodeSection.language_id == language_id,
+                EpisodeSection.episode_no == episode_no
+            )).count()
+            form.section_no.data = n_sections + 1
             return render_template('admin_pages/edit_episode_section.html', episode_no=episode_no,
                                    language_id=language_id, current_section_no=section_no, form=form)
         else:
@@ -713,6 +719,7 @@ class EpisodeEditSection(MethodView):
 
             form = EpisodeSectionForm()
             form.section_no.data = section_no
+            form.section_name.data = section.readable_name
             form.section_text.data = text
 
             return render_template('admin_pages/edit_episode_section.html', episode_no=episode_no,
@@ -730,7 +737,7 @@ class EpisodeEditSection(MethodView):
 
             # New section, let the fun start...
             # TODO: Do not trust client side validation and check `form.selection_text.data` before inserting
-            section = EpisodeSection(episode_no, form.section_no.data, language_id)
+            section = EpisodeSection(episode_no, form.section_no.data, language_id, name=form.section_name.data)
             text = EpisodeText(form.section_text.data)
 
             db.session.add_all([section, text])
@@ -786,6 +793,7 @@ class EpisodeEditSection(MethodView):
                 db.session.commit()
 
             section.section_no = form.section_no.data
+            section.readable_name = form.section_name.data
 
             try:
                 db.session.commit()  # Might trigger an integrity error
