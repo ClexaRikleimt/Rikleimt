@@ -1,12 +1,13 @@
 # encoding=utf-8
 import json
 
-from flask.views import View, MethodView, make_response
+from flask import make_response
+from flask.views import View, MethodView
 from flask_login import login_required
 
-from rikleimt.decorators import role_access
-from rikleimt.exceptions import APIBadRequestException
-from rikleimt.models import EpisodeSection, EpisodeDetails
+from ...decorators import role_access
+from ...exceptions import APIBadRequestException
+from ...models import EpisodeSection, EpisodeDetails, db
 
 
 class FirstChapter(View):

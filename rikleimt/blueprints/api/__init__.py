@@ -1,5 +1,5 @@
 from flask import Blueprint
-from rikleimt.blueprints.api.views import FirstChapter, NextSection, APIAdminSwapEpisodeSections
+from .views import FirstChapter, NextSection, APIAdminSwapEpisodeSections
 
 api_bp = Blueprint('api', __name__)
 

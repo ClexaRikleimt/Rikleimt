@@ -9,13 +9,14 @@ from flask_login import login_required, login_user, logout_user, current_user
 from sqlalchemy import and_
 from sqlalchemy.exc import IntegrityError
 
-from rikleimt.blueprints.admin_pages.forms import (
+from .forms import (
     LoginForm, Rik3UserFormCreate, Rik3UserFormEdit, RoleForm, PageAccessForm, RoleHelperForm, LanguageForm,
     CreateEpisodeForm, EditEpisodeForm, EditEpisodeTranslationForm, EpisodeSectionForm
 )
-from rikleimt.blueprints.admin_pages.exceptions import IncompleteEpisodeSectionException
-from rikleimt.decorators import role_access
-from rikleimt.models import (
+from .exceptions import IncompleteEpisodeSectionException
+from ...decorators import role_access
+from ...exceptions import APIBadRequestException
+from ...models import (
     db,
     # Models:
     User, Role, PageAccess, Language, Episode, EpisodeDetails, EpisodeSection, EpisodeRevision, EpisodeText,

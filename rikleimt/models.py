@@ -7,8 +7,8 @@ from flask_login import UserMixin
 
 from sqlalchemy import and_
 
-from rikleimt.config import metadata
-from rikleimt.application import bcrypt_
+from .config import metadata
+from .application import bcrypt_
 
 db = SQLAlchemy(metadata=metadata)
 

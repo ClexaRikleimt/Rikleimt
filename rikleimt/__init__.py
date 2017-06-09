@@ -1,7 +1,7 @@
 # encoding=utf-8
-from rikleimt.application import create_app, login_manager
-from rikleimt.views import TemplateHome, TemplateBook
-from rikleimt.models import User
+from .application import create_app, login_manager
+from .views import TemplateHome, TemplateBook
+from .models import User
 
 
 app = create_app()

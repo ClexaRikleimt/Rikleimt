@@ -6,7 +6,7 @@ from flask_login import LoginManager
 from flask_babel import Babel
 from flask_bcrypt import Bcrypt
 
-from rikleimt.utils import WikiArticleConverter
+from .utils import WikiArticleConverter
 
 db_migrate = Migrate()
 login_manager = LoginManager()
@@ -28,11 +28,11 @@ def create_app():
     # Configure the app
     app.config.from_object('rikleimt.config')
 
-    from rikleimt.models import db
+    from .models import db
     db.init_app(app)
     db_migrate.init_app(app, db)
 
-    from rikleimt.assets import assets
+    from .assets import assets
     assets.init_app(app)
     with app.app_context():
         assets.url = app.static_url_path
@@ -47,8 +47,8 @@ def create_app():
     app.url_map.converters['article'] = WikiArticleConverter
 
     # Register blueprints
-    from rikleimt.blueprints.api import api_bp
-    from rikleimt.blueprints.admin_pages import admin_pages_bp
+    from .blueprints.api import api_bp
+    from .blueprints.admin_pages import admin_pages_bp
 
     app.register_blueprint(api_bp, url_prefix='/api')
     app.register_blueprint(admin_pages_bp, url_prefix='/admin')

@@ -1,8 +1,8 @@
 # encoding=utf-8
 from flask import Blueprint
 
-from rikleimt.application import login_manager
-from rikleimt.blueprints.admin_pages.views import (
+from ...application import login_manager
+from .views import (
     Login, Logout, Index, Rik3Users, Rik3EditUser, Roles, EditRole, AdminPages, EditAdminPage,
     LanguagesIndex, EditLanguage, EpisodeIndex, EditEpisode, EpisodeTranslationDetails, EpisodeEditTranslation,
     EpisodeViewDetails, EpisodeEditSection

@@ -5,8 +5,8 @@ from flask_wtf import FlaskForm
 from wtforms.validators import DataRequired, Email, EqualTo, InputRequired
 from flask import Markup
 
-from rikleimt.models import Role
-from rikleimt.blueprints.admin_pages.form_utils import (
+from ...models import Role
+from .form_utils import (
     BS3StringField, BS3SelectField, BS3BooleanField, BS3PasswordField, BS3IntegerField, CKTextAreaField
 )
 
