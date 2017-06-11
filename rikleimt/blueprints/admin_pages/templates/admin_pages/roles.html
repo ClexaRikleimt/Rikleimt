@@ -1,4 +1,5 @@
 {% extends 'admin_pages/base_cms.html' %}
+{% from 'admin_pages/utils/form_macro.html' import render_field_horizontal %}
 
 
 {% block title %}{{ super() }} - Roles{% endblock title %}
@@ -18,19 +19,108 @@
         </thead>
 
         <tbody>
-            {% for role in roles %}
+            <template v-for="role in roles">
                 <tr>
-                    <td>{{ role.name }}</td>
-                    <td><a href="{{ url_for('.edit_role', role_id=role.id) }}"><i class="fa fa-pencil" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="Edit role"></i><span class="sr-only">Edit role</span></a></td>
+                    <td><% role.name %></td>
+                    <td>
+                        <a @click="call_edit" :data-role-id="role.id" :data-role-name="role.name">
+                            <i class="fa fa-pencil" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="Edit role"></i>
+                            <span class="sr-only">Edit role</span>
+                        </a>
+                    </td>
                 </tr>
-            {% endfor %}
+            </template>
+
+{#            {% for role in roles %}#}
+{#                <tr>#}
+{#                    <td>{{ role.name }}</td>#}
+{#                    <td><a href="{{ url_for('.edit_role', role_id=role.id) }}" @click="edit" data-role-id=""><i class="fa fa-pencil" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="Edit role"></i><span class="sr-only">Edit role</span></a></td>#}
+{#                </tr>#}
+{#            {% endfor %}#}
         </tbody>
     </table>
 
+    <a class="btn btn-default" @click="call_edit" data-role-id="0" data-role-name="">Create new role (not working yet)</a>
     <a class="btn btn-default" href="{{ url_for('.edit_role') }}">Create new role</a>
+
+    <div class="modal fade" id="role_edit_modal" tabindex="-1" role="dialog" aria-labelledby="role_edit_modal_title">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form class="form-horizontal" id="role_edit_modal_form">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="menu_edit_modal_title" data-role-id="0"></h4>
+                    </div>
+                    <div class="modal-body">
+                        {# Populate with javascript based on data-role-id of calling button #}
+                        {{ utils.render_field_horizontal(form.name, '', 3) }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="menu_edit_modal_delete_button">Delete role</button>
+                        <button type="button" class="btn btn-primary" id="menu_edit_modal_save_button">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock content %}
 
 {% block footer_content %}
+    {# Vue.js - Development #}
+    <script src="{{ url_for('.static', filename='js/vue.js') }}"></script>
+    {# Vue.js - Production TODO switch to the below scripts when going to production#}
+    <!--<script src="{{ url_for('.static', filename='js/vue.min.js') }}"></script>-->
+
+    <script type="application/javascript">
+        var url_api_roles = '{{ url_for('.api_get_roles') }}';
+        var url_api_role_create = '{{ url_for('.api_edit_role', _method='POST') }}';
+        var url_api_role_edit = '{{ url_for('.api_edit_role', _method='PUT') }}';
+
+        var app = new Vue({
+            delimiters: ['<%', '%>'],
+            el: '#content',
+            data: {
+                roles: []
+            },
+            created: function() {
+                this.fetch_data();
+            }
+            methods: {
+                fetch_data: function() {
+                    var self = this;
+                    $.getJSON(url_api_roles).done(function(data) {
+                        self.roles = data;
+                    });
+                },
+                call_edit: function(event) {
+                    var role_id = event.target.dataset.roleId;
+                    var role_name = event.target.dataset.roleName;
+
+                    var modal_title = $('#role_edit_modal_title');
+                    modal_title.data('role-id', role_id);
+
+                    if (role_id === '-1') {
+                        // New role, display empty form
+                        modal_title.html('New role');
+                        $('#{{ form.name.id }}').val('');
+                    }
+                    else {
+                        modal_title.html('Edit role');
+                        $('#{{ form.name.id }}').val(role_name)
+                    }
+                    $('#role_edit_modal').modal('show');
+                },
+                edit: function(event) {
+                    // TODO
+                },
+                delete: function() {
+                    // TODO
+                }
+            }
+        })
+    </script>
+
     <script type="application/javascript">
         $(document).ready(function() {
            $('[data-toggle="tooltip"]').tooltip();

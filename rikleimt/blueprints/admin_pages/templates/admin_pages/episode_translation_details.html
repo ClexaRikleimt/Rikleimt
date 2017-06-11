@@ -59,7 +59,7 @@
            $('[data-toggle="tooltip"]').tooltip();
         });
 
-        var swap_url = {{ url_for('api.admin_swap_episode_sections', section_id=5, other_section_id=7) }}; // Random numbers so easy replaceable
+{#        var swap_url = {{ url_for('api.admin_swap_episode_sections', section_id=5, other_section_id=7) }}; // Random numbers so easy replaceable#}
 
         $('.section_move_down').on('click', function() {
             var section_id = this.dataset.sectionId;
