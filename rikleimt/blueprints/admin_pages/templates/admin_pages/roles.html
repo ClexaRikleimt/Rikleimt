@@ -23,25 +23,17 @@
                 <tr>
                     <td><% role.name %></td>
                     <td>
-                        <a @click="call_edit" :data-role-id="role.id" :data-role-name="role.name">
+                        <button class="btn" @click="call_edit" :data-role-id="role.id" :data-role-name="role.name">
                             <i class="fa fa-pencil" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="Edit role"></i>
                             <span class="sr-only">Edit role</span>
-                        </a>
+                        </button>
                     </td>
                 </tr>
             </template>
-
-{#            {% for role in roles %}#}
-{#                <tr>#}
-{#                    <td>{{ role.name }}</td>#}
-{#                    <td><a href="{{ url_for('.edit_role', role_id=role.id) }}" @click="edit" data-role-id=""><i class="fa fa-pencil" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="Edit role"></i><span class="sr-only">Edit role</span></a></td>#}
-{#                </tr>#}
-{#            {% endfor %}#}
         </tbody>
     </table>
 
-    <a class="btn btn-default" @click="call_edit" data-role-id="0" data-role-name="">Create new role (not working yet)</a>
-    <a class="btn btn-default" href="{{ url_for('.edit_role') }}">Create new role</a>
+    <a class="btn btn-default" @click="call_edit" data-role-id="-1" data-role-name="">Create new role</a>
 
     <div class="modal fade" id="role_edit_modal" tabindex="-1" role="dialog" aria-labelledby="role_edit_modal_title">
         <div class="modal-dialog" role="document">
@@ -49,16 +41,16 @@
                 <form class="form-horizontal" id="role_edit_modal_form">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="menu_edit_modal_title" data-role-id="0"></h4>
+                        <h4 class="modal-title" id="role_edit_modal_title" data-role-id="0"></h4>
                     </div>
                     <div class="modal-body">
                         {# Populate with javascript based on data-role-id of calling button #}
-                        {{ utils.render_field_horizontal(form.name, '', 3) }}
+                        {{ render_field_horizontal(form.name, '', 3) }}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-danger" id="menu_edit_modal_delete_button">Delete role</button>
-                        <button type="button" class="btn btn-primary" id="menu_edit_modal_save_button">Save</button>
+                        <button type="button" class="btn btn-danger" id="menu_edit_modal_delete_button" @click="delete_role">Delete role</button>
+                        <button type="button" class="btn btn-primary" id="menu_edit_modal_save_button" @click="edit_role">Save</button>
                     </div>
                 </form>
             </div>
@@ -73,24 +65,38 @@
     <!--<script src="{{ url_for('.static', filename='js/vue.min.js') }}"></script>-->
 
     <script type="application/javascript">
-        var url_api_roles = '{{ url_for('.api_get_roles') }}';
-        var url_api_role_create = '{{ url_for('.api_edit_role', _method='POST') }}';
-        var url_api_role_edit = '{{ url_for('.api_edit_role', _method='PUT') }}';
+        var url_api_roles_list = '{{ url_for('role_list') }}';
+        var url_api_roles_detail = '{{ url_for('role_detail', id=7158) }}';
 
         var app = new Vue({
             delimiters: ['<%', '%>'],
-            el: '#content',
+            el: '#main_content',
             data: {
                 roles: []
             },
             created: function() {
                 this.fetch_data();
-            }
+            },
             methods: {
                 fetch_data: function() {
                     var self = this;
-                    $.getJSON(url_api_roles).done(function(data) {
-                        self.roles = data;
+
+                    $.ajax({
+                        url: url_api_roles_list,
+                        headers: {
+                            Accept: 'application/vnd.api+json'
+                        },
+                        datatype: 'json'
+                    }).done(function(data) {
+                        self.roles = [];
+                        $.each(data.data, function(i, item) {
+                            self.roles.push(
+                                {
+                                    id: item.id,
+                                    name: item.attributes.name
+                                }
+                            )
+                        });
                     });
                 },
                 call_edit: function(event) {
@@ -111,11 +117,82 @@
                     }
                     $('#role_edit_modal').modal('show');
                 },
-                edit: function(event) {
-                    // TODO
+                edit_role: function(event) {
+                    var modal_title = $('#role_edit_modal_title');
+                    var role_id = modal_title.data('role-id');
+
+                    var role_name = $('#{{ form.name.id }}').val();
+
+                    if (role_id === '-1') {
+                        // New role, create resource
+                        var data_create = {
+                            data: {
+                                type: 'role',
+                                attributes: {
+                                    name: role_name
+                                }
+                            }
+                        };
+
+                        $.ajax({
+                            url: url_api_roles_list,
+                            method: 'POST',
+                            headers: {
+                                "Content-Type": 'application/vnd.api+json',
+                                Accept: 'application/vnd.api+json'
+                            },
+                            datatype: 'json',
+                            data: JSON.stringify(data_create)
+                        }).done(function(data) {
+                            console.log(data);
+                        });
+                    }
+                    else {
+                        // Existing role, edit resource
+                        var data_edit = {
+                            data: {
+                                type: 'role',
+                                id: role_id,
+                                attributes: {
+                                    name: role_name
+                                }
+                            }
+                        };
+
+                        $.ajax({
+                            url: url_api_roles_detail.replace('7158', role_id),
+                            method: 'PATCH',
+                            headers: {
+                                "Content-Type": 'application/vnd.api+json',
+                                Accept: 'application/vnd.api+json'
+                            },
+                            datatype: 'json',
+                            data: JSON.stringify(data_edit)
+                        }).done(function(data) {
+                            console.log(data);
+                        });
+                    }
+                    $('#role_edit_modal').modal('hide');
+                    this.fetch_data();
                 },
-                delete: function() {
-                    // TODO
+                delete_role: function() {
+                    var modal_title = $('#role_edit_modal_title');
+                    var role_id = modal_title.data('role-id');
+
+                    if (role_id !== '-1') {
+                        $.ajax({
+                            url: url_api_roles_detail.replace('7158', role_id),
+                            method: 'DELETE',
+                            headers: {
+                                Accept: 'application/vnd.api+json'
+                            },
+                            datatype: 'json'
+                        }).done(function(data) {
+                            console.log(data);
+                        });
+                        this.fetch_data();
+                    }
+                    $('#role_edit_modal').modal('hide');
                 }
             }
         })

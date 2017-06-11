@@ -8,5 +8,6 @@ flask-wtf
 flask-babel
 flask-assets
 flask-bcrypt
+flask-REST-JSONAPI
 flake8
 Sphinx

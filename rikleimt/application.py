@@ -13,6 +13,9 @@ login_manager = LoginManager()
 babel = Babel()
 bcrypt_ = Bcrypt()
 
+from rikleimt.api import RikleimtApi
+api = RikleimtApi()
+
 
 @babel.localeselector
 def get_locale():
@@ -50,7 +53,31 @@ def create_app():
     from .blueprints.api import api_bp
     from .blueprints.admin_pages import admin_pages_bp
 
+    api.init_app(app)
+    setup_api(api)
+
     app.register_blueprint(api_bp, url_prefix='/api')
     app.register_blueprint(admin_pages_bp, url_prefix='/admin')
 
     return app
+
+
+def setup_api(api_):
+    from .api import (
+        RoleList, RoleDetail, RoleRelationship,
+        UserList, UserDetail, UserRelationship,
+        PageList, PageDetail, PageRelationship
+    )
+
+    api_.route(RoleList, 'role_list', '/roles')
+    api_.route(RoleDetail, 'role_detail', '/roles/<int:id>')
+    api_.route(RoleRelationship, 'role_users', '/roles/<int:id>/relationships/users')
+    api_.route(RoleRelationship, 'role_pages', '/roles/<int:id>/relationships/pages')
+
+    api_.route(UserList, 'user_list', '/users')
+    api_.route(UserDetail, 'user_detail', '/users/<int:id>')
+    api_.route(UserRelationship, 'user_role', '/users/<int:id>/relationships/role')
+
+    api_.route(PageList, 'page_list', '/pages')
+    api_.route(PageDetail, 'page_detail', '/pages/<int:id>')
+    api_.route(PageRelationship, 'page_roles', '/pages/<int:id>/relationships/roles')

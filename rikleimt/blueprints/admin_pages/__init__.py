@@ -5,9 +5,7 @@ from ...application import login_manager
 from .views import (
     Login, Logout, Index, Rik3Users, Rik3EditUser, Roles, EditRole, AdminPages, EditAdminPage,
     LanguagesIndex, EditLanguage, EpisodeIndex, EditEpisode, EpisodeTranslationDetails, EpisodeEditTranslation,
-    EpisodeViewDetails, EpisodeEditSection,
-    # Internal API Calls
-    APIGetRoles, APIEditRole
+    EpisodeViewDetails, EpisodeEditSection
 )
 
 admin_pages_bp = Blueprint('admin_pages', __name__, static_folder='static', template_folder='templates')
@@ -78,12 +76,6 @@ admin_pages_bp.add_url_rule('/episodes/<int:episode_no>/language/<int:language_i
                             view_func=episode_edit_section_view)
 admin_pages_bp.add_url_rule('/episodes/<int:episode_no>/language/<int:language_id>/section/<int:section_no>/edit',
                             EpisodeEditSection.endpoint, methods=['GET', 'POST'], view_func=episode_edit_section_view)
-
-# Internal API
-admin_pages_bp.add_url_rule('/api/roles', APIGetRoles.endpoint, methods=['GET'],
-                            view_func=APIGetRoles.as_view(APIGetRoles.endpoint))
-admin_pages_bp.add_url_rule('/api/role/edit', APIEditRole.endpoint, methods=['POST', 'PUT'],
-                            view_func=APIEditRole.as_view(APIEditRole.endpoint))
 
 # =========================================================
 

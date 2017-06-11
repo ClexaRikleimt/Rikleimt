@@ -175,8 +175,9 @@ class Roles(View):
 
     def dispatch_request(self):
         roles = Role.query.all()
+        form = RoleForm()
 
-        return render_template('admin_pages/roles.html', roles=roles)
+        return render_template('admin_pages/roles.html', roles=roles, form=form)
 
 
 class EditRole(MethodView):
@@ -816,81 +817,3 @@ class EpisodeEditSection(MethodView):
                       'info')
                 return redirect(url_for('.{0}'.format(EpisodeTranslationDetails.endpoint), episode_no=episode_no,
                                         language_id=language_id))
-
-
-# Internal API calls
-class APIGetRoles(MethodView):
-    endpoint = 'api_get_roles'
-    decorators = [login_required, role_access]
-
-    def get(self):
-        roles = Role.query.all()
-        resp = make_response(json.dumps(roles))
-        resp.mimetype = 'application/json'
-
-        return resp
-
-
-class APIEditRole(MethodView):
-    endpoint = 'api_edit_role'
-    decorators = [login_required, role_access]
-
-    def post(self):
-        if 'role_name' not in request.json:
-            raise APIBadRequestException()
-
-        role = Role(request.json['role_name'])
-        db.session.add(role)
-
-        try:
-            db.session.commit()
-        except IntegrityError:
-            resp = make_response(json.dumps({
-                'status': 409,
-                'message': 'A role with this name already exist. Please choose a different name.'
-            }))
-            resp.status_code = 409
-            resp.mimetype = 'application/json'
-
-            return resp
-        else:
-            resp = make_response(json.dumps({
-                'status': 200,
-                'message': 'Successfully created a new role with name {0}'.format(role.name)
-            }))
-            resp.mimetype = 'application/json'
-            return resp
-
-    def put(self):
-        if 'role_name' not in request.json or 'role_id' not in request.json:
-            raise APIBadRequestException()
-
-        role = Role.query.filter(Role.id == request.json['role_id']).first()
-        if not role:
-            resp = make_response(json.dumps({
-                'status': 404,
-                'message': 'No role with id {0} found'.format(request.json['role_id'])
-            }))
-            resp.status_code = 404
-            resp.mimetype = 'application/json'
-            return resp
-
-        role.name = request.json['role_name']
-
-        try:
-            db.session.commit()
-        except IntegrityError:
-            resp = make_response(json.dumps({
-                'status': 409,
-                'message': 'A role with this name already exist. Please choose a different name.'
-            }))
-            resp.status_code = 409
-            resp.mimetype = 'application/json'
-            return resp
-        else:
-            resp = make_response(json.dumps({
-                'status': 200,
-                'message': 'Successfully edited role with id {0}.'.format(role.id)
-            }))
-            resp.mimetype = 'application/json'
-            return resp
